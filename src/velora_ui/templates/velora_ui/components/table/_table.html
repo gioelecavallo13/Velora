@@ -1,0 +1,39 @@
+{% comment %}
+  Tabella statica.
+  Aspetta:
+    headers       : list[{label, key, width, extra_class, align}]
+    rows          : list[list[{value, align}]]
+    empty_message : str
+    extra_class   : str
+    id            : str
+    colspan       : int  (per la cella vuota)
+{% endcomment %}
+<div class="velora-table-wrapper">
+    <table class="velora-table {{ extra_class }}"{% if id %} id="{{ id }}"{% endif %}>
+        <thead>
+            <tr>
+                {% for header in headers %}
+                <th
+                    scope="col"
+                    class="velora-table__th {{ header.extra_class }}{% if header.align %} velora-table__cell--{{ header.align }}{% endif %}"
+                    {% if header.width %}style="width: {{ header.width }}"{% endif %}>
+                    {{ header.label }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr class="velora-table__row">
+                {% for cell in row %}
+                <td class="velora-table__td{% if cell.align %} velora-table__cell--{{ cell.align }}{% endif %}">{{ cell.value }}</td>
+                {% endfor %}
+            </tr>
+            {% empty %}
+            <tr class="velora-table__row velora-table__row--empty">
+                <td class="velora-table__td velora-table__td--empty" colspan="{{ colspan }}">{{ empty_message }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,61 @@
+// Velora UI - link essenziali (M4)
+//
+// Tre varianti di link "azione" che si trovano tipicamente nelle colonne
+// azioni delle tabelle:
+//   - velora-link-action  : arancio, primary action (es. "Modifica")
+//   - velora-link-nav     : blu sobrio, navigazione (es. "Dettagli")
+//   - velora-link-delete  : rosso, distruttivo (es. "Elimina")
+//
+// Sono testuali, non bottonati: li distingue il colore. Per le azioni
+// "bottone" si usa {% velora_btn_link %} che riusa le classi
+// `velora-btn--primary/secondary` definite in _title-bar.scss.
+
+.velora-link {
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  & + .velora-link {
+    margin-left: var(--velora-space-2);
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+    color: var(--velora-gray-400);
+    cursor: not-allowed;
+  }
+}
+
+.velora-link-action {
+  color: var(--velora-c-orange);
+
+  &:hover {
+    color: var(--velora-c-orange-dark);
+    text-decoration: underline;
+  }
+}
+
+.velora-link-nav {
+  color: var(--velora-c-menu-gray);
+
+  &:hover {
+    color: var(--velora-gray-900);
+    text-decoration: underline;
+  }
+}
+
+.velora-link-delete {
+  color: var(--velora-c-red);
+
+  &:hover {
+    color: #8a1c20;
+    text-decoration: underline;
+  }
+}

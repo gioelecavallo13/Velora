@@ -48,6 +48,21 @@ def index(request: HttpRequest) -> HttpResponse:
         {"value": "enterprise", "label": "Enterprise", "disabled": True},
     ]
 
+    table_headers = [
+        {"key": "id", "label": "#", "width": "60px", "align": "right"},
+        {"key": "name", "label": "Nome"},
+        {"key": "email", "label": "Email"},
+        {"key": "role", "label": "Ruolo"},
+        {"key": "amount", "label": "Importo", "align": "right"},
+    ]
+    table_rows = [
+        {"id": 1, "name": "Mario Rossi", "email": "mario@example.com", "role": "Admin", "amount": "€ 1.250,00"},
+        {"id": 2, "name": "Luca Bianchi", "email": "luca@example.com", "role": "Editor", "amount": "€ 480,50"},
+        {"id": 3, "name": "Giulia Verdi", "email": "giulia@example.com", "role": "Viewer", "amount": "€ 0,00"},
+        {"id": 4, "name": "Anna Neri", "email": "anna@example.com", "role": "Editor", "amount": "€ 2.100,75"},
+    ]
+    table_page = {"number": 2, "num_pages": 12}
+
     return render(
         request,
         "showcase/index.html",
@@ -58,5 +73,8 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_title_actions": title_actions,
             "showcase_role_choices": role_choices,
             "showcase_plan_choices": plan_choices,
+            "showcase_table_headers": table_headers,
+            "showcase_table_rows": table_rows,
+            "showcase_table_page": table_page,
         },
     )

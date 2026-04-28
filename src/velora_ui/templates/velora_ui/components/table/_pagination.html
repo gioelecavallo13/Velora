@@ -1,0 +1,42 @@
+{% comment %}
+  Paginazione.
+  Aspetta:
+    meta         : {number, num_pages, has_previous, has_next, ...}
+    pages        : list[{is_gap, number, url, is_current}]
+    previous_url : str
+    next_url     : str
+    extra_class  : str
+{% endcomment %}
+{% if meta.num_pages > 1 %}
+<nav class="velora-pagination {{ extra_class }}" aria-label="Paginazione">
+    <a
+        href="{% if meta.has_previous %}{{ previous_url }}{% else %}#{% endif %}"
+        class="velora-pagination__step velora-pagination__step--prev{% if not meta.has_previous %} is-disabled{% endif %}"
+        {% if not meta.has_previous %}aria-disabled="true" tabindex="-1"{% endif %}>
+        &lsaquo; Precedente
+    </a>
+
+    <ol class="velora-pagination__pages">
+        {% for entry in pages %}
+            {% if entry.is_gap %}
+            <li class="velora-pagination__gap" aria-hidden="true">&hellip;</li>
+            {% else %}
+            <li class="velora-pagination__page{% if entry.is_current %} is-current{% endif %}">
+                {% if entry.is_current %}
+                <span class="velora-pagination__page-link" aria-current="page">{{ entry.number }}</span>
+                {% else %}
+                <a href="{{ entry.url }}" class="velora-pagination__page-link">{{ entry.number }}</a>
+                {% endif %}
+            </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+
+    <a
+        href="{% if meta.has_next %}{{ next_url }}{% else %}#{% endif %}"
+        class="velora-pagination__step velora-pagination__step--next{% if not meta.has_next %} is-disabled{% endif %}"
+        {% if not meta.has_next %}aria-disabled="true" tabindex="-1"{% endif %}>
+        Successivo &rsaquo;
+    </a>
+</nav>
+{% endif %}

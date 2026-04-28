@@ -119,8 +119,10 @@ if (typeof window !== "undefined") {
 // non importano da questo file per evitare cicli; ognuno esporta un oggetto
 // {name, init} che noi passiamo al registry tramite register().
 import sidebarToggle from "./components/sidebar.js";
+import confirmComponent from "./components/confirm.js";
 
 register(sidebarToggle);
+register(confirmComponent);
 
 export default Velora;
 export { register, scan, VELORA_VERSION };

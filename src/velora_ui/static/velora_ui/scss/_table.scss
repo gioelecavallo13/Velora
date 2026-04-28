@@ -1,0 +1,131 @@
+// Velora UI - tabelle (M4)
+//
+// Tabelle dense da admin panel: zebra discreta, header sottilmente piu` scuro,
+// padding compatto. Lo wrapper permette overflow orizzontale su mobile senza
+// rompere il layout main.
+
+.velora-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border: var(--velora-border-width) solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  box-shadow: var(--velora-shadow-sm);
+}
+
+.velora-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+}
+
+.velora-table__th,
+.velora-table__td {
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: var(--velora-border-width) solid var(--velora-border-color);
+}
+
+.velora-table__th {
+  background-color: var(--velora-gray-50);
+  color: var(--velora-gray-700);
+  font-weight: var(--velora-fw-medium);
+  font-size: var(--velora-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.velora-table__row:last-child > .velora-table__td {
+  border-bottom: 0;
+}
+
+.velora-table__row:hover > .velora-table__td {
+  background-color: var(--velora-gray-50);
+}
+
+.velora-table__cell--right {
+  text-align: right;
+}
+
+.velora-table__cell--center {
+  text-align: center;
+}
+
+.velora-table__td--empty {
+  text-align: center;
+  color: var(--velora-gray-400);
+  font-style: italic;
+  padding: var(--velora-space-5);
+}
+
+// Paginazione
+.velora-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  margin-top: var(--velora-space-3);
+  font-size: var(--velora-fs-sm);
+}
+
+.velora-pagination__step {
+  padding: 4px 10px;
+  border: var(--velora-border-width) solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  background: #fff;
+  color: var(--velora-gray-700);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-gray-900);
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+    color: var(--velora-gray-400);
+    background-color: var(--velora-gray-50);
+    cursor: not-allowed;
+  }
+}
+
+.velora-pagination__pages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.velora-pagination__page-link {
+  display: inline-block;
+  min-width: 28px;
+  padding: 4px 8px;
+  text-align: center;
+  border: var(--velora-border-width) solid transparent;
+  border-radius: var(--velora-radius-sm);
+  color: var(--velora-gray-700);
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+  }
+}
+
+.velora-pagination__page.is-current > .velora-pagination__page-link {
+  background-color: var(--velora-c-orange);
+  color: #fff;
+  border-color: var(--velora-c-orange);
+  cursor: default;
+}
+
+.velora-pagination__gap {
+  color: var(--velora-gray-400);
+  padding: 0 4px;
+}

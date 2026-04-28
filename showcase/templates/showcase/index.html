@@ -1,5 +1,5 @@
 {% extends "velora_ui/base.html" %}
-{% load velora_layout velora_forms %}
+{% load velora_layout velora_forms velora_data velora_links %}
 
 {% comment %}
   Showcase placeholder M2. Eredita il layout `velora_ui/base.html` (header,
@@ -8,7 +8,7 @@
   dal catalogo vivente completo.
 {% endcomment %}
 
-{% block title %}Velora UI - Showcase M3{% endblock %}
+{% block title %}Velora UI - Showcase M4{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -96,7 +96,7 @@
         <li>Il context processor <code>velora_ui.context_processors.header_defaults</code> espone <code>velora_header_app_name</code> nei template.</li>
     </ul>
 
-    <p class="velora-text-muted">Prossimo passo: M4 Tabelle e link (Fase 6 del piano).</p>
+    <p class="velora-text-muted">Prossimo passo: M5 Feedback (Fase 7 del piano).</p>
 </div>
 
 <section class="showcase-section" id="form">
@@ -129,6 +129,29 @@
 
         {% velora_search_box name="q" placeholder="Cerca componenti..." submit_label="Cerca" %}
     </form>
+</section>
+
+<section class="showcase-section" id="tables">
+    <h2 class="showcase-section__title">Tabelle e link (M4)</h2>
+    <p class="showcase-section__intro">
+        <code>{% verbatim %}{% velora_table %}{% endverbatim %}</code>,
+        <code>{% verbatim %}{% velora_pagination %}{% endverbatim %}</code> e i 4 link essenziali
+        (action / nav / delete / btn_link).
+    </p>
+
+    {% velora_table headers=showcase_table_headers rows=showcase_table_rows %}
+
+    {% velora_pagination page=showcase_table_page base_url="/?status=open" %}
+
+    <p class="velora-mt-4">
+        {% velora_action_link url="#" label="Modifica" %}
+        {% velora_nav_link url="#" label="Dettagli" %}
+        {% velora_delete_link url="#" confirm_message="Eliminare definitivamente?" %}
+    </p>
+    <p class="velora-mt-2">
+        {% velora_btn_link url="#" label="Annulla" variant="secondary" %}
+        {% velora_btn_link url="#" label="Salva" variant="primary" %}
+    </p>
 </section>
 {% endblock %}
 
