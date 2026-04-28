@@ -11,8 +11,9 @@
  *   - Un MutationObserver osserva il body e auto-inizializza i nuovi nodi
  *     (es. dialog modali aperti via AJAX, righe di tabella aggiunte, ecc.)
  *
- * In v0.1 il registry e` vuoto: i componenti `toast.js` e `form.js` arrivano
- * in M5 (Fase 7). Questo file fornisce solo l'infrastruttura runtime.
+ * In v0.1 il registry e` minimale: il componente `sidebar-toggle` arriva in
+ * M2 (Fase 4), `toast.js` e `form.js` in M5 (Fase 7). Questo file fornisce
+ * l'infrastruttura runtime e importa i componenti registrati di default.
  */
 
 const VELORA_VERSION = "0.0.1";
@@ -114,5 +115,13 @@ if (typeof window !== "undefined") {
     window.Velora = Velora;
 }
 
+// Componenti registrati di default. Gli import sono ESM-hoisted: i componenti
+// non importano da questo file per evitare cicli; ognuno esporta un oggetto
+// {name, init} che noi passiamo al registry tramite register().
+import sidebarToggle from "./components/sidebar.js";
+
+register(sidebarToggle);
+
 export default Velora;
 export { register, scan, VELORA_VERSION };
+

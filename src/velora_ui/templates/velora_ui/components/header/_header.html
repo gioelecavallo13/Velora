@@ -1,0 +1,50 @@
+{% comment %}
+  Partial dell'header globale.
+
+  Aspettativa di contesto (set dal tag velora_header):
+    app_name      : str  -> nome dell'app, mostrato accanto al logo
+    app_icon_url  : str? -> URL del logo opzionale
+    items         : list -> elenco normalizzato di item (vedi velora_layout.py)
+    request       : HttpRequest? -> usato per evidenziare item attivo
+
+  In v0.1 supportiamo due tipi di item:
+    - "link"      -> voce di navigazione semplice
+    - "user-menu" -> voce dell'utente, sempre allineata a destra (in v0.2
+                     diventera` un dropdown reale)
+{% endcomment %}
+<div class="velora-header">
+    <a href="/" class="velora-header__brand">
+        {% if app_icon_url %}
+        <img src="{{ app_icon_url }}" alt="" class="velora-header__brand-icon">
+        {% endif %}
+        <span class="velora-header__brand-name">{{ app_name }}</span>
+    </a>
+
+    <button
+        type="button"
+        class="velora-header__sidebar-toggle"
+        data-velora-component="sidebar-toggle"
+        aria-label="Mostra/nascondi sidebar">
+        <span aria-hidden="true">&#9776;</span>
+    </button>
+
+    <nav class="velora-header__nav" aria-label="Menu principale">
+        {% for item in items %}{% if item.type == "link" %}
+        <a
+            href="{{ item.url }}"
+            class="velora-header__item velora-header__item--link {{ item.extra_class }}{% if item.active %} is-active{% endif %}">
+            {{ item.label }}
+        </a>
+        {% endif %}{% endfor %}
+    </nav>
+
+    <div class="velora-header__user">
+        {% for item in items %}{% if item.type == "user-menu" %}
+        <a
+            href="{{ item.url }}"
+            class="velora-header__item velora-header__item--user {{ item.extra_class }}">
+            {{ item.label }}
+        </a>
+        {% endif %}{% endfor %}
+    </div>
+</div>

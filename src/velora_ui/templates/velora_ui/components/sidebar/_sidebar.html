@@ -1,0 +1,32 @@
+{% comment %}
+  Partial della sidebar collassabile.
+
+  Per v0.1 espone solo lo scheletro: il contenuto reale (lista voci di menu)
+  viene popolato dalle pagine via {% block sidebar %} oppure passando una
+  variabile `velora_sidebar_items` nel contesto.
+
+  Lo stato collapsed/expanded e` gestito dal componente JS `sidebar-toggle`
+  (vedi js/src/components/sidebar.js): commuta la classe modificatore
+  `velora-app--sidebar-collapsed` sul body e persiste lo stato in localStorage
+  con chiave `velora.sidebar.collapsed`.
+
+  Per nascondere completamente la sidebar (es. in modali, embed, stampa) si
+  passa `?no_sidebar=1` in querystring: la condizione e` valutata in
+  `base.html` ed evita proprio il rendering di questo partial.
+{% endcomment %}
+<nav class="velora-sidebar" aria-label="Navigazione laterale">
+    <ul class="velora-sidebar__list">
+        {% for item in velora_sidebar_items %}
+        <li class="velora-sidebar__item{% if item.active %} is-active{% endif %}">
+            <a href="{{ item.url }}" class="velora-sidebar__link">
+                {% if item.icon %}<span class="velora-sidebar__icon" aria-hidden="true">{{ item.icon }}</span>{% endif %}
+                <span class="velora-sidebar__label">{{ item.label }}</span>
+            </a>
+        </li>
+        {% empty %}
+        <li class="velora-sidebar__item velora-sidebar__item--empty">
+            <span class="velora-sidebar__label">Nessuna voce di menu</span>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>

@@ -6,8 +6,9 @@
 //   3. typography -> regole base body / heading / link
 //   4. utilities  -> classi helper (display, flex, spacing, allineamenti)
 //
-// I partial successivi (componenti M2 layout, M3 form, M4 tabelle, M5
-// feedback) verranno aggiunti come @use in coda nelle milestone successive.
+// I partial successivi (componenti M3 form, M4 tabelle, M5 feedback) verranno
+// aggiunti come @use in coda nelle milestone successive. M2 layout (header,
+// sidebar, layout shell, title bar) e` gia` integrato.
 //
 // Build:
 //   sh tools/build_css.sh         (one-shot)
@@ -17,3 +18,9 @@
 @use "reset";
 @use "typography";
 @use "utilities";
+
+// M2 - Layout core
+@use "layout";
+@use "header";
+@use "sidebar";
+@use "title-bar";

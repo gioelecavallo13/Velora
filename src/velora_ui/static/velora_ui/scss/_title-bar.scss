@@ -1,0 +1,87 @@
+// Velora UI - title bar (M2)
+//
+// Barra titolo: titolo centrato + slot azioni a destra. Usata sotto l'header
+// per separare visivamente il chrome (header globale) dal contenuto della
+// pagina. La barra non e` sticky (per ora) per non confliggere con i panel
+// scrollabili interni.
+//
+// Include anche gli stili minimi per `velora-btn` (varianti primary /
+// secondary) usati dalle azioni; un componente bottone piu` completo arrivera`
+// in M5 (feedback) o in una sezione dedicata. Qui ci basta avere coerenza
+// visiva fra le azioni della title bar.
+
+.velora-title-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-3);
+  padding: var(--velora-space-3) var(--velora-space-6);
+  background: #fff;
+  border-bottom: var(--velora-border-width) solid var(--velora-border-color);
+  min-height: 48px;
+}
+
+.velora-title-bar__title {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  font-size: var(--velora-fs-md);
+  font-weight: var(--velora-fw-medium);
+  color: var(--velora-gray-900);
+
+  // Quando ci sono azioni, il titolo e` centrato visivamente: per evitare
+  // che si sposti se le azioni hanno larghezza diversa dallo spazio di
+  // sinistra, usiamo un trucco: nessuno per v0.1 - va bene approssimare.
+}
+
+.velora-title-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  flex-shrink: 0;
+}
+
+// Bottoni base usati dalle azioni della title bar.
+// Saranno estesi in milestone successive (M5).
+.velora-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: var(--velora-fs-sm);
+  font-family: inherit;
+  border: var(--velora-border-width) solid transparent;
+  border-radius: var(--velora-radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: 2px;
+  }
+}
+
+.velora-btn--primary {
+  background-color: var(--velora-c-orange);
+  color: #fff;
+  border-color: var(--velora-c-orange);
+
+  &:hover {
+    background-color: var(--velora-c-orange-dark);
+    border-color: var(--velora-c-orange-dark);
+    color: #fff;
+  }
+}
+
+.velora-btn--secondary {
+  background-color: #fff;
+  color: var(--velora-gray-700);
+  border-color: var(--velora-border-color);
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-gray-900);
+  }
+}

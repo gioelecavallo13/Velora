@@ -1,0 +1,51 @@
+{% load velora_assets %}<!doctype html>
+{% comment %}
+  Template base di Velora UI per pagine con layout admin (header + sidebar +
+  area contenuti).
+
+  Blocchi a disposizione:
+    title          -> contenuto del <title> (default: "Velora UI")
+    extra_head     -> tag aggiuntivi nel <head> (es. CSS specifico della view)
+    body_class     -> classi extra sul <body>, oltre a velora-app
+    header         -> override completo dell'header; default: {% velora_header %}
+                      con items dal contesto
+    sidebar        -> override completo della sidebar
+    title_bar      -> contenuto della barra titolo (di solito usa
+                      {% velora_title_bar %})
+    content        -> area contenuti principale
+    extra_js       -> tag <script> aggiuntivi prima della chiusura del body
+
+  La sidebar puo` essere nascosta passando ?no_sidebar=1 in querystring: utile
+  per modali/iframe che riusano lo stesso template ma hanno bisogno di tutta la
+  larghezza disponibile.
+{% endcomment %}
+{% load velora_layout %}
+<html lang="{{ LANGUAGE_CODE|default:'it' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Velora UI{% endblock %}</title>
+    {% velora_assets %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="velora-app{% if request.GET.no_sidebar %} velora-app--no-sidebar{% endif %} {% block body_class %}{% endblock %}">
+    <header class="velora-app__header">
+        {% block header %}{% velora_header items=velora_header_items %}{% endblock %}
+    </header>
+
+    {% if not request.GET.no_sidebar %}
+    <aside class="velora-app__sidebar">
+        {% block sidebar %}{% include "velora_ui/components/sidebar/_sidebar.html" %}{% endblock %}
+    </aside>
+    {% endif %}
+
+    <main class="velora-app__main">
+        {% block title_bar %}{% endblock %}
+        <div class="velora-app__content">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

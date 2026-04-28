@@ -1,74 +1,85 @@
-{% load velora_assets %}<!doctype html>
-<html lang="it">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Velora UI - Showcase (placeholder)</title>
-    {% velora_assets %}
-    <style>
-        /* Stili specifici della pagina placeholder showcase. */
-        /* Body, font, reset e link colors sono gia` forniti da velora.css. */
-        .showcase-card {
-            max-width: 720px;
-            margin: 80px auto;
-            background: #fff;
-            border: 1px solid var(--velora-border-color);
-            border-radius: var(--velora-radius-md);
-            padding: var(--velora-space-8) var(--velora-space-10);
-            box-shadow: var(--velora-shadow-sm);
-        }
-        .showcase-badge {
-            display: inline-block;
-            background: var(--velora-c-orange);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: var(--velora-radius-sm);
-            font-size: var(--velora-fs-xs);
-            margin-left: var(--velora-space-2);
-            vertical-align: middle;
-        }
-        .showcase-subtitle {
-            color: var(--velora-gray-400);
-            margin: 0 0 var(--velora-space-6);
-        }
-        .showcase-list {
-            line-height: 1.8;
-        }
-        .showcase-list li {
-            list-style: disc;
-            margin-left: var(--velora-space-5);
-        }
-    </style>
-</head>
-<body>
-    <div class="showcase-card">
-        <h1>Velora UI <span class="showcase-badge">v{{ velora_version }}</span></h1>
-        <p class="showcase-subtitle">Bootstrap + design system attivi. Showcase placeholder, in attesa dei componenti delle milestone successive.</p>
+{% extends "velora_ui/base.html" %}
+{% load velora_layout %}
 
-        <p>Questa pagina conferma che:</p>
-        <ul class="showcase-list">
-            <li>Il progetto Django host <code>velora_project</code> e` attivo.</li>
-            <li>L'app <code>showcase</code> e` correttamente registrata e instradata.</li>
-            <li>Il pacchetto <code>velora_ui</code> e` importabile (versione letta da <code>velora_ui.__version__</code>).</li>
-            <li>Il container <code>web</code> e il reverse proxy nginx stanno servendo correttamente sul virtual host configurato.</li>
-            <li>Il design system Velora (tokens + reset + typography + utilities) e` caricato via <code>{% verbatim %}{% velora_assets %}{% endverbatim %}</code>.</li>
-            <li>Il runtime JS Velora e` caricato (verifica in console: <code>window.Velora.version</code>).</li>
-        </ul>
+{% comment %}
+  Showcase placeholder M2. Eredita il layout `velora_ui/base.html` (header,
+  sidebar, content) e popola gli item header / sidebar e la title bar con
+  dati statici di esempio. In M6 (Fase 8) questo template sara` sostituito
+  dal catalogo vivente completo.
+{% endcomment %}
 
-        <p class="velora-text-muted">Prossimo passo: M2 Layout core (Fase 4 del piano).</p>
-    </div>
+{% block title %}Velora UI - Showcase M2{% endblock %}
 
-    <script>
-        // Smoke test inline: logga in console se il runtime Velora e` disponibile.
-        // Il listener attende DOMContentLoaded perche` velora.js e` un module
-        // (deferito), quindi window.Velora e` definito a fine parsing.
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.Velora && window.Velora.version) {
-                console.log("[showcase] Velora UI runtime caricato, versione " + window.Velora.version);
-            } else {
-                console.error("[showcase] Velora UI runtime NON disponibile - verifica console di rete");
-            }
-        });
-    </script>
-</body>
-</html>
+{% block extra_head %}
+<style>
+    /* Stili specifici della pagina showcase, non parte del design system. */
+    .showcase-card {
+        max-width: 720px;
+        margin: var(--velora-space-6) auto;
+        background: #fff;
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-md);
+        padding: var(--velora-space-6) var(--velora-space-8);
+        box-shadow: var(--velora-shadow-sm);
+    }
+    .showcase-badge {
+        display: inline-block;
+        background: var(--velora-c-orange);
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: var(--velora-radius-sm);
+        font-size: var(--velora-fs-xs);
+        margin-left: var(--velora-space-2);
+        vertical-align: middle;
+    }
+    .showcase-subtitle {
+        color: var(--velora-gray-400);
+        margin: 0 0 var(--velora-space-4);
+    }
+    .showcase-list { line-height: 1.8; }
+    .showcase-list li { list-style: disc; margin-left: var(--velora-space-5); }
+</style>
+{% endblock %}
+
+{% block header %}
+{% velora_header items=showcase_header_items %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include "velora_ui/components/sidebar/_sidebar.html" with velora_sidebar_items=showcase_sidebar_items %}
+{% endblock %}
+
+{% block title_bar %}
+{% velora_title_bar title="Showcase M2" actions=showcase_title_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="showcase-card">
+    <h1>Velora UI <span class="showcase-badge">v{{ velora_version }}</span></h1>
+    <p class="showcase-subtitle">M2 Layout core attivo: header, sidebar collassabile e title bar.</p>
+
+    <p>Questa pagina conferma che:</p>
+    <ul class="showcase-list">
+        <li>Il template <code>velora_ui/base.html</code> e` ereditabile dalle pagine del progetto host.</li>
+        <li>Il tag <code>{% verbatim %}{% velora_header %}{% endverbatim %}</code> renderizza item di tipo <code>link</code> e <code>user-menu</code>.</li>
+        <li>La sidebar e` collassabile cliccando l'icona &#9776; nell'header (stato persistito in localStorage).</li>
+        <li>Il tag <code>{% verbatim %}{% velora_title_bar %}{% endverbatim %}</code> renderizza titolo + azioni con varianti <code>primary</code>/<code>secondary</code>.</li>
+        <li>Aggiungere <code>?no_sidebar=1</code> alla URL nasconde la sidebar (utile per modali / iframe).</li>
+        <li>Il context processor <code>velora_ui.context_processors.header_defaults</code> espone <code>velora_header_app_name</code> nei template.</li>
+    </ul>
+
+    <p class="velora-text-muted">Prossimo passo: M3 Form core (Fase 5 del piano).</p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.Velora && window.Velora.version) {
+            console.log("[showcase] Velora UI runtime caricato, versione " + window.Velora.version);
+        } else {
+            console.error("[showcase] Velora UI runtime NON disponibile");
+        }
+    });
+</script>
+{% endblock %}

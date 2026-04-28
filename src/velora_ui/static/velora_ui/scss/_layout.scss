@@ -1,0 +1,70 @@
+// Velora UI - layout shell (M2)
+//
+// Implementa la griglia base header / sidebar / main area + i modificatori
+// `velora-app--no-sidebar` (sidebar nascosta da ?no_sidebar=1) e
+// `velora-app--sidebar-collapsed` (sidebar ridotta a icone, gestita dal
+// componente JS sidebar-toggle).
+//
+// L'altezza dell'header e la larghezza della sidebar sono definite come
+// custom properties in _tokens.scss, cosi` JS e CSS condividono la stessa
+// fonte di verita`.
+
+.velora-app {
+  display: grid;
+  grid-template-columns: var(--velora-sidebar-width) 1fr;
+  grid-template-rows: var(--velora-header-height) 1fr;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  min-height: 100vh;
+  background: var(--velora-gray-50);
+  transition: grid-template-columns 0.18s ease;
+}
+
+.velora-app--sidebar-collapsed {
+  grid-template-columns: var(--velora-sidebar-width-collapsed) 1fr;
+}
+
+.velora-app--no-sidebar {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "main";
+}
+
+.velora-app__header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: var(--velora-z-header);
+  background: var(--velora-c-menu-bg);
+  color: #fff;
+  display: flex;
+  align-items: stretch;
+}
+
+.velora-app__sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: var(--velora-header-height);
+  align-self: start;
+  height: calc(100vh - var(--velora-header-height));
+  z-index: var(--velora-z-sidebar);
+  background: var(--velora-c-menu-dark);
+  color: var(--velora-gray-100);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.velora-app__main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // permette agli children con overflow di scrollare
+}
+
+.velora-app__content {
+  flex: 1;
+  padding: var(--velora-space-6);
+  min-width: 0;
+}

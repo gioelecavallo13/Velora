@@ -1,0 +1,100 @@
+// Velora UI - header globale (M2)
+//
+// L'header e` una barra orizzontale fissa in alto, su fondo scuro
+// (var(--velora-c-menu-bg)). Layout: brand a sx, toggle sidebar, nav, user
+// menu allineato a destra (margin-left:auto).
+
+.velora-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 var(--velora-space-3);
+  font-size: var(--velora-fs-sm);
+  gap: var(--velora-space-2);
+}
+
+.velora-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  color: #fff;
+  text-decoration: none;
+  font-weight: var(--velora-fw-medium);
+  padding: 0 var(--velora-space-2);
+
+  &:hover {
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-header__brand-icon {
+  height: 20px;
+  width: 20px;
+  object-fit: contain;
+  display: block;
+}
+
+.velora-header__brand-name {
+  white-space: nowrap;
+}
+
+.velora-header__sidebar-toggle {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  padding: 0 var(--velora-space-2);
+  font-size: var(--velora-fs-md);
+  line-height: 1;
+  height: var(--velora-header-height);
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: -2px;
+  }
+}
+
+.velora-header__nav {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  height: var(--velora-header-height);
+}
+
+.velora-header__user {
+  margin-left: auto;
+  display: flex;
+  align-items: stretch;
+  height: var(--velora-header-height);
+}
+
+.velora-header__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--velora-space-3);
+  color: #fff;
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+  border-bottom: 2px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  &.is-active {
+    border-bottom-color: var(--velora-c-orange);
+    color: #fff;
+  }
+}
+
+.velora-header__item--user {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: var(--velora-fw-medium);
+}
