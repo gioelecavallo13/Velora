@@ -1,0 +1,179 @@
+// Velora UI - feedback (M5)
+//
+// Tre componenti correlati visivamente: alert inline (banner full-width),
+// label inline (badge a pillola) e toast (notifica fluttuante).
+// Condividono la palette per le 4-5 varianti semantiche.
+
+// ---- Alert -------------------------------------------------------------
+
+.velora-alert {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--velora-space-3);
+  padding: var(--velora-space-3) var(--velora-space-4);
+  margin: var(--velora-space-3) 0;
+  border-left: 3px solid currentColor;
+  border-radius: var(--velora-radius-sm);
+  font-size: var(--velora-fs-sm);
+  background-color: #fff;
+  box-shadow: var(--velora-shadow-sm);
+}
+
+.velora-alert__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.velora-alert__title {
+  margin: 0 0 4px;
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-alert__message {
+  margin: 0;
+  color: var(--velora-c-text);
+}
+
+.velora-alert__close {
+  flex-shrink: 0;
+  margin-left: var(--velora-space-2);
+  padding: 0 6px;
+  background: transparent;
+  border: 0;
+  font-size: var(--velora-fs-md);
+  line-height: 1;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.velora-alert--success {
+  color: var(--velora-c-green);
+  background-color: #f1f9ed;
+}
+.velora-alert--error {
+  color: var(--velora-c-red);
+  background-color: #fbeeef;
+}
+.velora-alert--warning {
+  color: var(--velora-c-orange-dark);
+  background-color: #fdf3e1;
+}
+.velora-alert--info {
+  color: var(--velora-c-menu-gray);
+  background-color: var(--velora-gray-50);
+}
+
+// ---- Label / badge -----------------------------------------------------
+
+.velora-label {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: var(--velora-fs-xs);
+  font-weight: var(--velora-fw-medium);
+  line-height: 1.4;
+  border-radius: 999px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.velora-label--success {
+  background-color: var(--velora-c-green);
+  color: #fff;
+}
+.velora-label--error {
+  background-color: var(--velora-c-red);
+  color: #fff;
+}
+.velora-label--warning {
+  background-color: var(--velora-c-orange);
+  color: #fff;
+}
+.velora-label--info {
+  background-color: var(--velora-c-menu-gray);
+  color: #fff;
+}
+.velora-label--neutral {
+  background-color: var(--velora-gray-100);
+  color: var(--velora-gray-700);
+}
+
+// ---- Toast -------------------------------------------------------------
+
+.velora-toast-container {
+  position: fixed;
+  top: var(--velora-space-4);
+  right: var(--velora-space-4);
+  z-index: var(--velora-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--velora-space-2);
+  max-width: min(360px, calc(100vw - 32px));
+  pointer-events: none; // i toast riabilitano pointer-events
+}
+
+.velora-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--velora-space-3);
+  padding: var(--velora-space-3) var(--velora-space-4);
+  background-color: #fff;
+  color: var(--velora-c-text);
+  border-left: 3px solid currentColor;
+  border-radius: var(--velora-radius-sm);
+  box-shadow: var(--velora-shadow-md);
+  font-size: var(--velora-fs-sm);
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.velora-toast--leaving {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.velora-toast__body {
+  flex: 1;
+  min-width: 0;
+  color: var(--velora-c-text);
+  word-break: break-word;
+}
+
+.velora-toast__close {
+  flex-shrink: 0;
+  margin: -2px -4px -2px 0;
+  padding: 0 6px;
+  background: transparent;
+  border: 0;
+  font-size: var(--velora-fs-md);
+  line-height: 1;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.velora-toast--success {
+  color: var(--velora-c-green);
+}
+.velora-toast--error {
+  color: var(--velora-c-red);
+}
+.velora-toast--warning {
+  color: var(--velora-c-orange-dark);
+}
+.velora-toast--info {
+  color: var(--velora-c-menu-gray);
+}

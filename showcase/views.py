@@ -1,7 +1,16 @@
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from velora_ui import __version__ as velora_version
+
+
+_TOAST_DEMO_LEVELS = {
+    "success": (messages.SUCCESS, "Toast emesso da django.contrib.messages (success)"),
+    "error": (messages.ERROR, "Toast emesso da django.contrib.messages (error)"),
+    "warning": (messages.WARNING, "Toast emesso da django.contrib.messages (warning)"),
+    "info": (messages.INFO, "Toast emesso da django.contrib.messages (info)"),
+}
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -62,6 +71,15 @@ def index(request: HttpRequest) -> HttpResponse:
         {"id": 4, "name": "Anna Neri", "email": "anna@example.com", "role": "Editor", "amount": "€ 2.100,75"},
     ]
     table_page = {"number": 2, "num_pages": 12}
+
+    # Demo del pattern django messages -> velora_toast_messages.
+    # Aggiungere ?toast=success|error|warning|info alla URL emette un
+    # messaggio del livello corrispondente; il template base.html lo
+    # converte automaticamente in toast Velora.
+    requested_toast = request.GET.get("toast", "")
+    if requested_toast in _TOAST_DEMO_LEVELS:
+        level, text = _TOAST_DEMO_LEVELS[requested_toast]
+        messages.add_message(request, level, text)
 
     return render(
         request,

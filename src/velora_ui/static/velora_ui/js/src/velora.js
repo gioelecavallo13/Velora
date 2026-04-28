@@ -120,9 +120,17 @@ if (typeof window !== "undefined") {
 // {name, init} che noi passiamo al registry tramite register().
 import sidebarToggle from "./components/sidebar.js";
 import confirmComponent from "./components/confirm.js";
+import toast from "./components/toast.js";
 
 register(sidebarToggle);
 register(confirmComponent);
+
+// `toast` non e` un componente DOM (non si attacca via data-velora-component):
+// e` un manager singleton con API imperativa (Velora.toast.success(...)).
+Velora.toast = toast;
+if (typeof window !== "undefined") {
+    window.Velora.toast = toast;
+}
 
 export default Velora;
 export { register, scan, VELORA_VERSION };

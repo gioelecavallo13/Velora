@@ -1,5 +1,5 @@
 {% extends "velora_ui/base.html" %}
-{% load velora_layout velora_forms velora_data velora_links %}
+{% load velora_layout velora_forms velora_data velora_links velora_feedback %}
 
 {% comment %}
   Showcase placeholder M2. Eredita il layout `velora_ui/base.html` (header,
@@ -8,7 +8,7 @@
   dal catalogo vivente completo.
 {% endcomment %}
 
-{% block title %}Velora UI - Showcase M4{% endblock %}
+{% block title %}Velora UI - Showcase M5{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -96,7 +96,7 @@
         <li>Il context processor <code>velora_ui.context_processors.header_defaults</code> espone <code>velora_header_app_name</code> nei template.</li>
     </ul>
 
-    <p class="velora-text-muted">Prossimo passo: M5 Feedback (Fase 7 del piano).</p>
+    <p class="velora-text-muted">Prossimo passo: M6 Showcase v0.1 (Fase 8 del piano).</p>
 </div>
 
 <section class="showcase-section" id="form">
@@ -151,6 +151,47 @@
     <p class="velora-mt-2">
         {% velora_btn_link url="#" label="Annulla" variant="secondary" %}
         {% velora_btn_link url="#" label="Salva" variant="primary" %}
+    </p>
+</section>
+
+<section class="showcase-section" id="feedback">
+    <h2 class="showcase-section__title">Feedback (M5)</h2>
+    <p class="showcase-section__intro">
+        Alert inline, badge e toast fluttuanti. I toast hanno API
+        imperativa <code>Velora.toast.success(msg)</code> ed e` integrato
+        anche col framework <code>django.contrib.messages</code>.
+    </p>
+
+    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Alert</h3>
+    {% velora_alert variant="success" title="Operazione completata" message="Il salvataggio e` riuscito senza errori." dismissible=True %}
+    {% velora_alert variant="error" message="Connessione al server fallita. Riprova fra qualche istante." dismissible=True %}
+    {% velora_alert variant="warning" message="La password scadra` fra 3 giorni." %}
+    {% velora_alert variant="info" message="Versione di anteprima: alcune feature potrebbero variare prima della release v0.1." %}
+
+    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Label / badge</h3>
+    <p>
+        {% velora_label variant="success" text="Attivo" %}
+        {% velora_label variant="error" text="Errore" %}
+        {% velora_label variant="warning" text="In attesa" %}
+        {% velora_label variant="info" text="Info" %}
+        {% velora_label variant="neutral" text="Bozza" %}
+    </p>
+
+    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Toast</h3>
+    <p>
+        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.success('Salvataggio riuscito')">success()</button>
+        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore inatteso')">error()</button>
+        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.warning('Attenzione, dati incompleti')">warning()</button>
+        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.info('Velora UI carica')">info()</button>
+        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore persistente: NON si chiude da solo', { persistent: true })">persistent()</button>
+    </p>
+
+    <p class="velora-mt-3" style="font-size:var(--velora-fs-xs);color:var(--velora-gray-400);">
+        Trigger lato server (django.contrib.messages):
+        <a href="?toast=success">?toast=success</a> &middot;
+        <a href="?toast=error">?toast=error</a> &middot;
+        <a href="?toast=warning">?toast=warning</a> &middot;
+        <a href="?toast=info">?toast=info</a>
     </p>
 </section>
 {% endblock %}

@@ -18,8 +18,13 @@
   La sidebar puo` essere nascosta passando ?no_sidebar=1 in querystring: utile
   per modali/iframe che riusano lo stesso template ma hanno bisogno di tutta la
   larghezza disponibile.
+
+  In coda al body emettiamo {% velora_toast_messages %}: i messaggi del
+  framework `django.contrib.messages` aggiunti dalle view (messages.success,
+  messages.error, ...) vengono trasformati automaticamente in toast Velora
+  senza che la view sappia nulla del JS.
 {% endcomment %}
-{% load velora_layout %}
+{% load velora_layout velora_feedback %}
 <html lang="{{ LANGUAGE_CODE|default:'it' }}">
 <head>
     <meta charset="utf-8">
@@ -46,6 +51,7 @@
         </div>
     </main>
 
+    {% velora_toast_messages %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,17 @@
+{% comment %}
+  Alert inline.
+  Aspetta: variant (success|error|warning|info), title, message, dismissible, extra_class.
+{% endcomment %}
+<div class="velora-alert velora-alert--{{ variant }} {{ extra_class }}" role="alert">
+    {% if dismissible %}
+    <button
+        type="button"
+        class="velora-alert__close"
+        aria-label="Chiudi"
+        onclick="this.closest('.velora-alert').remove();">&times;</button>
+    {% endif %}
+    <div class="velora-alert__body">
+        {% if title %}<p class="velora-alert__title">{{ title }}</p>{% endif %}
+        {% if message %}<p class="velora-alert__message">{{ message }}</p>{% endif %}
+    </div>
+</div>
