@@ -1,0 +1,65 @@
+// Velora UI - submenu verticale (v0.2)
+// Lista verticale di link con titolo opzionale, da inserire in pannelli
+// laterali / card / colonne secondarie. Differente dalla sidebar globale
+// (vedi _sidebar.scss).
+
+.velora-submenu {
+  background: #fff;
+  border: 1px solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  padding: var(--velora-space-2) 0;
+}
+
+.velora-submenu__title {
+  padding: var(--velora-space-2) var(--velora-space-4);
+  font-size: var(--velora-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--velora-gray-400);
+  font-weight: var(--velora-fw-medium);
+  border-bottom: 1px solid var(--velora-border-color);
+  margin-bottom: var(--velora-space-2);
+}
+
+.velora-submenu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.velora-submenu__item {
+  &.is-active .velora-submenu__link {
+    background-color: rgba(245, 160, 0, 0.08);
+    color: var(--velora-c-orange);
+    border-left-color: var(--velora-c-orange);
+    font-weight: var(--velora-fw-medium);
+  }
+}
+
+.velora-submenu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  padding: var(--velora-space-2) var(--velora-space-4);
+  border-left: 3px solid transparent;
+  color: var(--velora-c-text);
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-submenu__icon {
+  width: 16px;
+  text-align: center;
+  color: var(--velora-gray-400);
+  flex-shrink: 0;
+}
+
+.velora-submenu__label {
+  flex: 1;
+  min-width: 0;
+}

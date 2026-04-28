@@ -1,0 +1,46 @@
+// Velora UI - breadcrumb (v0.2)
+// Lista orizzontale di link con separatori chevron. L'ultimo item e`
+// non cliccabile (`aria-current="page"`) e leggermente piu` scuro.
+
+.velora-breadcrumb {
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-gray-500);
+}
+
+.velora-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  gap: 0;
+}
+
+.velora-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--velora-space-1);
+}
+
+.velora-breadcrumb__link {
+  color: var(--velora-c-menu-gray);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--velora-c-orange);
+    text-decoration: underline;
+  }
+}
+
+.velora-breadcrumb__current {
+  color: var(--velora-gray-900);
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-breadcrumb__separator {
+  margin: 0 var(--velora-space-2);
+  color: var(--velora-gray-400);
+  font-size: var(--velora-fs-xs);
+  user-select: none;
+}

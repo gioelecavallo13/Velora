@@ -1,0 +1,23 @@
+{% comment %}
+  Progress bar "X di Y" (10.12). Mostra contatore "current di total"
+  + label opzionale + barra (omessa se total <= 0).
+{% endcomment %}
+<div class="velora-progress-xy velora-progress-xy--{{ variant }} {{ extra_class }}"
+     {% if has_bar %}role="progressbar"
+     aria-valuenow="{{ current }}"
+     aria-valuemin="0"
+     aria-valuemax="{{ total }}"{% endif %}>
+    <div class="velora-progress-xy__header">
+        {% if label %}<span class="velora-progress-xy__label">{{ label }}</span>{% endif %}
+        <span class="velora-progress-xy__counter">
+            <strong class="velora-progress-xy__counter-current">{{ current }}</strong>
+            <span class="velora-progress-xy__counter-sep">di</span>
+            <span class="velora-progress-xy__counter-total">{{ total }}</span>
+        </span>
+    </div>
+    {% if has_bar %}
+    <div class="velora-progress-xy__track">
+        <div class="velora-progress-xy__fill" style="width: {{ pct }}%;"></div>
+    </div>
+    {% endif %}
+</div>

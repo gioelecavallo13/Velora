@@ -1,0 +1,64 @@
+// Velora UI - dropdown inline (10.5)
+// Wrapper `.velora-dropdown` con trigger e pannello. La classe `.is-open`
+// viene aggiunta dal componente JS `dropdown` per mostrare il pannello.
+
+.velora-dropdown {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.velora-dropdown__caret {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.velora-dropdown__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  padding: var(--velora-space-1) 0;
+  background: #fff;
+  color: var(--velora-c-text);
+  border: 1px solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  box-shadow: var(--velora-shadow-md);
+  z-index: var(--velora-z-dropdown);
+  display: none;
+}
+
+.velora-dropdown[data-velora-dropdown-align="right"] .velora-dropdown__panel {
+  left: auto;
+  right: 0;
+}
+
+.velora-dropdown.is-open .velora-dropdown__panel {
+  display: block;
+}
+
+.velora-dropdown__link {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  padding: var(--velora-space-2) var(--velora-space-4);
+  color: var(--velora-c-text);
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-dropdown__icon {
+  width: 16px;
+  text-align: center;
+  color: var(--velora-gray-400);
+  flex-shrink: 0;
+}

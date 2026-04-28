@@ -4,4 +4,4 @@ Esposizione del numero di versione del pacchetto. Tutto il resto e` sotto
 sottomoduli importabili lazy (apps, templatetags, widgets).
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

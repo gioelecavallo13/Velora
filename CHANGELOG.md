@@ -4,6 +4,72 @@ Tutte le modifiche significative a Velora UI sono documentate in questo file.
 
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il versionamento segue [Semantic Versioning](https://semver.org/) — pre-1.0 ogni `0.x.0` puo` introdurre breaking change documentati qui.
 
+## [0.2.0] — 2026-04-28
+
+Seconda release: **navigation e feedback ricchi**. Aggiunti header item interattivi (single/multi-menu, apps-menu, notifications, logo aggiuntivo), breadcrumb, submenu, drop-down inline, dialog modale (inline + remote AJAX), tooltip, toggle/copy link, settings link verde, tre varianti di progress bar.
+
+### Aggiunto
+
+#### Header item v0.2 (`velora_layout`)
+- 5 nuovi tipi item per `velora_header`:
+  - `single-menu`: trigger + dropdown panel di link, allineamento `left`/`right`.
+  - `multi-menu`: mega-menu a colonne (sezioni con titolo) per categorie ricche.
+  - `apps-menu`: griglia 3-colonne di app launcher con icone e colori personalizzabili (CSS custom property `--velora-app-tile-color`).
+  - `notifications`: campanella + badge contatore non lette + lista notifiche con stato `is-unread`, empty state, link footer "Vedi tutte".
+  - `logo`: marchio aggiuntivo inline (es. tenant, brand co-branded) con immagine + label.
+- Componente JS `header-menu`: toggle apri/chiudi, click fuori chiude, ESC chiude, mutua esclusione (un solo pannello aperto), focus restore.
+
+#### Navigation (`velora_navigation`)
+- `velora_breadcrumb`: lista di link con `aria-current="page"` sull'ultimo item, separatore configurabile (default `›`).
+- `velora_submenu`: lista verticale con titolo opzionale, indicatore `is-active` con border-left arancio, da inserire in pannelli laterali / card.
+
+#### Link avanzati (`velora_links`)
+- `velora_settings_link`: variante verde per azioni di configurazione.
+- `velora_toggle_link`: mostra/nasconde un blocco target (`is-toggled-hidden`), alterna label `show`/`hide`, sincronizza `aria-expanded`.
+- `velora_copy_link`: clipboard copy (statica via `value=` o dinamica via `target=` selector); usa `navigator.clipboard.writeText` con fallback `execCommand('copy')` per HTTP locali; integra `Velora.toast` per il feedback.
+- `velora_drop_down_link` e `velora_drop_down_button`: trigger inline (link sobrio o bottone primary/secondary) con pannello di menu items; allineamento `left`/`right`.
+- `velora_open_dialog_action_link`: apre un dialog modale gia` nel DOM (`target="#id"`) o scaricato via fetch (`url="..."`); size `sm`/`md`/`lg`, dialog title custom.
+
+#### Overlays (`velora_overlays`)
+- `velora_tooltip`: tag che emette **solo** gli attributi data-* (no wrapper extra) da iniettare in elementi esistenti; placement `top`/`bottom`/`left`/`right`, delay configurabile.
+- Componente JS `tooltip.js`: balloon globale singolo riusato fra tutti i trigger (no leak DOM), positioning con clamp al viewport, hover/focus per mostrare e mouseleave/blur/Escape per chiudere.
+- Componente JS `dropdown.js`: cugino di `header-menu` ma con geometria/casi d'uso differenti (link e button inline).
+- Componente JS `dialog.js`: backdrop chiudibile via `[data-dialog-close]`, ESC chiude, focus al primo focusable post-open + restore al trigger su close, body lock via classe `velora-app--dialog-open`, dialog generati al volo rimossi su close (no accumulo DOM); fragment remoto fetched con header `X-Requested-With: XMLHttpRequest` e post-fetch `Velora.scan(body)` per inizializzare componenti del fragment.
+- Componenti JS `toggle.js` e `copy.js` registrati e auto-inizializzati.
+
+#### Progress (`velora_navigation`)
+- `velora_progress_bar`: barra classica con `value`/`max`, percentuale, 5 variant (`default`/`success`/`warning`/`danger`/`info`) via CSS custom property `--velora-progress-fill`.
+- `velora_condensed_progress_breadcrumb`: wizard a fasi numerate con stati `is-done` (verde + check) / `is-current` (arancio + alone) / `is-upcoming` (gray-100); `current` 1-based con clamp; step `done` cliccabili se hanno `url`.
+- `velora_new_progress_bar`: contatore "X di Y" + barra; `total<=0` graceful (mostra contatore senza barra), clamp `current<=total`.
+
+#### Showcase
+- 3 nuove sezioni nello showcase (`#navigation`, `#overlays`, `#progress`) con pattern "snippet + render live".
+- Sidebar TOC aggiornata con voci Navigation/Overlays/Progress.
+- L'header dello showcase ora dimostra tutti i 7 tipi item v0.1+v0.2 in azione.
+
+### Modificato
+
+- `_normalize_header_items` validation tightened: item `link`/`user-menu` senza `label` o `url` ora vengono scartati silenziosamente (prima era documentato in AGENTS.md ma non enforced — ora codice e doc sono allineati).
+- AGENTS.md: aggiunto documentation completa dei 5 nuovi item type dell'header e dei nuovi tag/library.
+
+### Corretto
+
+- Bug pre-esistente di v0.1.0 nello showcase: il template non aveva `{% block header %}` di override, e la view passava `showcase_header_items` invece di `velora_header_items`. L'header dello showcase non mostrava nessun item (solo brand + sidebar toggle). Aggiunto override esplicito.
+
+### Test
+
+- 49 test pytest aggiunti (155 totali, da 106 di v0.1):
+  - `tests/test_layout.py` +19 test sui 5 nuovi item type del header.
+  - `tests/test_navigation.py` (nuovo, 23 test) su breadcrumb / submenu / progress_bar / condensed_breadcrumb / new_progress_bar.
+  - `tests/test_overlays.py` (nuovo, 6 test) su tooltip.
+  - `tests/test_links_v02.py` (nuovo, 20 test) sui 6 nuovi link tag.
+- Test playwright aggiornati con 3 nuove sezioni (navigation/overlays/progress) per un totale di 10 snapshot. Baseline esistenti rigenerate per riflettere il nuovo header.
+
+### Note tecniche
+
+- Tutti i pannelli dropdown (header-menu, dropdown, dialog) sono auto-inizializzati via `data-velora-component="..."`: nessun JS imperativo da scrivere lato consumer. Il `MutationObserver` esistente garantisce funzionamento anche per contenuti aggiunti dinamicamente (es. fragment dialog remoto).
+- I componenti `header-menu` e `dropdown` restano file separati pur condividendo il pattern open/close/outside-click/ESC: la geometria, i bersagli e l'ergonomia d'uso sono abbastanza diversi da preferire due moduli specializzati. Quando sara` chiaro il caso d'uso comune (probabilmente in v0.3 con tooltip + dropdown + dialog) estrarremo una primitiva "popup controller".
+
 ## [0.1.0] — 2026-04-28
 
 Prima release stabile del **core**: layout admin, form essenziali, tabella + paginazione, link, feedback, showcase con visual regression. Infrastruttura Docker dev + prod completa.

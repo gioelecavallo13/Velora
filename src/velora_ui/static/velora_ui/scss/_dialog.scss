@@ -1,0 +1,134 @@
+// Velora UI - dialog modale (10.6)
+//
+// Markup atteso (puo` essere inline nel template, o generato da dialog.js
+// nel caso "remote"):
+//
+//   <div class="velora-dialog velora-dialog--md" role="dialog" aria-modal="true" aria-hidden="true">
+//     <div class="velora-dialog__backdrop" data-dialog-close></div>
+//     <div class="velora-dialog__panel" role="document">
+//       <header class="velora-dialog__header">
+//         <h2 class="velora-dialog__title">Titolo</h2>
+//         <button class="velora-dialog__close" data-dialog-close>&times;</button>
+//       </header>
+//       <div class="velora-dialog__body">...</div>
+//       <footer class="velora-dialog__footer">...</footer>
+//     </div>
+//   </div>
+
+.velora-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: var(--velora-z-dialog);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--velora-space-4);
+
+  &.is-open {
+    display: flex;
+  }
+}
+
+.velora-dialog__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(29, 35, 40, 0.55);
+  cursor: pointer;
+}
+
+.velora-dialog__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-height: calc(100vh - var(--velora-space-8));
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--velora-radius-md);
+  box-shadow: var(--velora-shadow-md), 0 12px 32px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+}
+
+.velora-dialog--sm .velora-dialog__panel { max-width: 360px; }
+.velora-dialog--md .velora-dialog__panel { max-width: 560px; }
+.velora-dialog--lg .velora-dialog__panel { max-width: 800px; }
+
+.velora-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--velora-space-3) var(--velora-space-4);
+  border-bottom: 1px solid var(--velora-border-color);
+  gap: var(--velora-space-3);
+}
+
+.velora-dialog__title {
+  margin: 0;
+  font-size: var(--velora-fs-lg);
+  font-weight: var(--velora-fw-medium);
+  color: var(--velora-gray-900);
+}
+
+.velora-dialog__close {
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--velora-gray-500);
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--velora-c-red);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: 2px;
+  }
+}
+
+.velora-dialog__close--floating {
+  position: absolute;
+  top: var(--velora-space-2);
+  right: var(--velora-space-2);
+  z-index: 2;
+}
+
+.velora-dialog__body {
+  padding: var(--velora-space-4);
+  overflow-y: auto;
+  flex: 1;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+}
+
+.velora-dialog__footer {
+  padding: var(--velora-space-3) var(--velora-space-4);
+  border-top: 1px solid var(--velora-border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--velora-space-2);
+}
+
+.velora-dialog__loading {
+  margin: 0;
+  color: var(--velora-gray-500);
+  font-style: italic;
+}
+
+.velora-dialog__error {
+  margin: 0;
+  color: var(--velora-c-red);
+}
+
+// Quando un dialog e` aperto blocchiamo lo scroll del body e mascheriamo
+// gli elementi outside per evitare focus leakage.
+.velora-app--dialog-open {
+  overflow: hidden;
+}

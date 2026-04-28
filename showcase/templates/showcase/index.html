@@ -1,5 +1,5 @@
 {% extends "velora_ui/base.html" %}
-{% load velora_layout velora_forms velora_data velora_links velora_feedback %}
+{% load velora_layout velora_forms velora_data velora_links velora_feedback velora_navigation velora_overlays %}
 
 {% comment %}
   Showcase v0.1 — living styleguide di Velora UI.
@@ -92,6 +92,14 @@
 </style>
 {% endblock %}
 
+{% block header %}
+    {# Override esplicito: passiamo gli item dello showcase al tag, perche` la
+       view popola `showcase_header_items` (non `velora_header_items` che e` il
+       nome usato dal default in base.html). In un'app reale puoi tenere il
+       nome `velora_header_items` e affidarti al default del block. #}
+    {% velora_header items=showcase_header_items %}
+{% endblock %}
+
 {% block sidebar %}
     {# La sidebar dello showcase agisce come TOC: link alle sezioni della pagina. #}
     {% include "velora_ui/components/sidebar/_sidebar.html" with velora_sidebar_items=showcase_sidebar_items %}
@@ -127,20 +135,71 @@
 {# ---------------------------------------------------------------- #}
 <section class="showcase-section" id="layout">
     <div class="showcase-section__hero">
-        <h2 class="showcase-section__title">Layout core (M2)</h2>
+        <h2 class="showcase-section__title">Layout core (M2 + v0.2)</h2>
         <p class="showcase-section__intro">
             <code>velora_ui/base.html</code> + tag <code>velora_header</code>
             e <code>velora_title_bar</code>. La sidebar dello showcase, l'header
             in alto e la title bar di questa pagina sono il render live di
-            questi componenti.
+            questi componenti. L'header in alto contiene un esempio di tutti i
+            tipi item supportati: link, single-menu, multi-menu, logo,
+            apps-menu, notifications, user-menu.
         </p>
     </div>
 
-    <h3 class="showcase-section__subtitle">Header items</h3>
+    <h3 class="showcase-section__subtitle">Header v0.1: link + user-menu</h3>
     <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "link", "label": "Dashboard", "url": "/", "active": True},
     {"type": "link", "label": "Documentazione", "url": "/docs/"},
     {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
+] %}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Header v0.2: single-menu (dropdown semplice)</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "single-menu", "label": "Account",
+     "items": [
+         {"label": "Profilo",     "url": "/profile/"},
+         {"label": "Impostazioni", "url": "/settings/"},
+         {"label": "Esci",         "url": "/logout/"},
+     ]},
+] %}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Header v0.2: multi-menu (mega-menu a colonne)</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "multi-menu", "label": "Risorse",
+     "sections": [
+         {"label": "Sviluppo",
+          "items": [{"label": "Form", "url": "/form/"},
+                    {"label": "Tabelle", "url": "/tab/"}]},
+         {"label": "Community",
+          "items": [{"label": "Repo", "url": "https://github.com/..."}]},
+     ]},
+] %}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Header v0.2: apps-menu (griglia di app launcher)</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "apps-menu", "label": "App",
+     "apps": [
+         {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
+         {"label": "Drive",      "url": "/drive/", "color": "#34a853"},
+         {"label": "Mail",       "url": "/mail/", "color": "#ea4335"},
+     ]},
+] %}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Header v0.2: notifications (campanella + lista)</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "notifications", "label": "Notifiche", "unread_count": 3,
+     "items": [
+         {"title": "Nuovo cliente", "body": "Mario Rossi si e` registrato.",
+          "url": "/n/1/", "timestamp": "2 minuti fa", "unread": True},
+         {"title": "Backup completato", "url": "/n/2/", "timestamp": "1 ora fa"},
+     ],
+     "footer_label": "Vedi tutte", "footer_url": "/notifications/"},
+] %}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Header v0.2: logo (marchio aggiuntivo inline)</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "logo", "image_url": "/static/tenant.svg",
+     "label": "AcmeCorp", "url": "/acme/"},
 ] %}{% endverbatim %}</code></pre>
 
     <h3 class="showcase-section__subtitle">Title bar con azioni</h3>
@@ -156,6 +215,14 @@
     <p>Cliccando l'icona &#9776; nell'header in alto si commuta la classe
         <code>velora-app--sidebar-collapsed</code> sul body; lo stato e`
         persistito in <code>localStorage</code>.</p>
+
+    <h3 class="showcase-section__subtitle">Interazione dei dropdown header</h3>
+    <p>I tipi <code>single-menu</code>, <code>multi-menu</code>, <code>apps-menu</code>
+        e <code>notifications</code> sono auto-inizializzati dal componente JS
+        <code>header-menu</code>: click sul trigger toggle il pannello, click
+        fuori chiude, ESC chiude, apertura mutuamente esclusiva (un solo
+        pannello aperto alla volta). Si usano in produzione attaccando un
+        contesto reale al tag, qui sopra mostrano solo la firma copia-incollabile.</p>
 </section>
 
 {# ---------------------------------------------------------------- #}
@@ -402,6 +469,7 @@ Velora.toast.error("Errore", { persistent: true });</code></pre>
     </div>
 
     <h3 class="showcase-section__subtitle">Toast da Django messages (server-side)</h3>
+    {# Toast section unchanged below; new sections added after #feedback. #}
     <div class="showcase-demo showcase-demo--stacked">
         <div class="showcase-demo__live">
             <p style="margin:0 0 var(--velora-space-2);font-size:var(--velora-fs-xs);color:var(--velora-gray-400);">
@@ -424,6 +492,210 @@ def save_view(request):
 
 # templates/base.html (gia` incluso in velora_ui/base.html)
 {% verbatim %}{% velora_toast_messages %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- #}
+{# Navigation v0.2 — breadcrumb, submenu, drop_down link/button     #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="navigation">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Navigation (v0.2)</h2>
+        <p class="showcase-section__intro">
+            <code>velora_breadcrumb</code>, <code>velora_submenu</code> e i due
+            drop-down inline (<code>velora_drop_down_link</code> /
+            <code>velora_drop_down_button</code>) per navigazione contestuale
+            dentro le pagine.
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Breadcrumb</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_breadcrumb items=showcase_breadcrumb_items %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_breadcrumb items=[
+    {"label": "Home",     "url": "/"},
+    {"label": "Clienti",  "url": "/clients/"},
+    {"label": "Mario Rossi"},
+] %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Submenu (con titolo)</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_submenu items=showcase_submenu_items title="Impostazioni" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_submenu items=[
+    {"label": "Generale", "url": "...", "active": True},
+    {"label": "Tema",     "url": "..."},
+    {"label": "Sicurezza","url": "..."},
+] title="Impostazioni" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Drop-down link &amp; button</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            <div style="display:flex;gap:var(--velora-space-3);align-items:center;">
+                {% velora_drop_down_link label="Altre azioni" items=showcase_dropdown_items %}
+                {% velora_drop_down_button label="Salva e..." items=showcase_dropdown_items variant="primary" %}
+            </div>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_drop_down_link   label="Altre azioni" items=actions %}
+{% velora_drop_down_button label="Salva e..."   items=actions variant="primary" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Settings link, toggle link, copy link</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <p>{% velora_settings_link url="#" label="Impostazioni" %}</p>
+            <p>
+                {% velora_toggle_link target="#showcase-toggle-target" label_show="Mostra dettagli" label_hide="Nascondi dettagli" %}
+            </p>
+            <div id="showcase-toggle-target" class="is-toggled-hidden" style="padding: var(--velora-space-3); background: var(--velora-gray-50); border-radius: var(--velora-radius-sm); margin-top: var(--velora-space-2);">
+                <strong>Dettagli nascosti</strong>: questo blocco appare/scompare al click del link sopra.
+            </div>
+            <p>
+                {% velora_copy_link value="velora-ui@0.2.0" label="Copia versione" label_copied="Copiato!" %}
+            </p>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_settings_link url="/settings/" %}
+
+{% velora_toggle_link target="#dettagli"
+    label_show="Mostra dettagli"
+    label_hide="Nascondi dettagli" %}
+<div id="dettagli" class="is-toggled-hidden">...</div>
+
+{% velora_copy_link value="velora-ui@0.2.0"
+    label="Copia versione"
+    label_copied="Copiato!" %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- #}
+{# Overlays v0.2 — tooltip, dialog                                  #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="overlays">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Overlays (v0.2)</h2>
+        <p class="showcase-section__intro">
+            Tooltip e dialog modale. Il tag <code>velora_tooltip</code> emette
+            solo gli attributi data-* da iniettare in elementi esistenti
+            (button, link, span). Il tag
+            <code>velora_open_dialog_action_link</code> apre un dialog gia` nel
+            DOM (modalita` inline) o scaricato via fetch (modalita` remote).
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Tooltip</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            <button type="button" class="velora-btn velora-btn--secondary"
+                    {% velora_tooltip "Tooltip in alto (default)" %}>
+                Hover top
+            </button>
+            <button type="button" class="velora-btn velora-btn--secondary"
+                    {% velora_tooltip "Tooltip sotto" placement="bottom" %}>
+                Hover bottom
+            </button>
+            <button type="button" class="velora-btn velora-btn--secondary"
+                    {% velora_tooltip "A destra del bottone" placement="right" %}>
+                Hover right
+            </button>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}<button {% velora_tooltip "Modifica cliente" %}>Modifica</button>
+<button {% velora_tooltip "Vedi log" placement="bottom" delay=300 %}>Log</button>{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Dialog inline</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_open_dialog_action_link label="Apri dialog inline" target="#showcase-dialog-inline" %}
+            <div id="showcase-dialog-inline" class="velora-dialog velora-dialog--md" aria-hidden="true">
+                <div class="velora-dialog__backdrop" data-dialog-close></div>
+                <div class="velora-dialog__panel" role="document">
+                    <header class="velora-dialog__header">
+                        <h2 class="velora-dialog__title">Esempio dialog inline</h2>
+                        <button type="button" class="velora-dialog__close" data-dialog-close aria-label="Chiudi">&times;</button>
+                    </header>
+                    <div class="velora-dialog__body">
+                        <p>Il contenuto di questo dialog e` gia` nel DOM, nascosto da CSS. Click sul backdrop, sulla X o ESC per chiudere.</p>
+                        <p>
+                            {% velora_btn_link url="#" label="Conferma" variant="primary" %}
+                            {% velora_btn_link url="#" label="Annulla" variant="secondary" extra_class="" %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_open_dialog_action_link
+    label="Modifica" target="#dialog-edit" %}
+
+<div id="dialog-edit" class="velora-dialog velora-dialog--md" aria-hidden="true">
+    <div class="velora-dialog__backdrop" data-dialog-close></div>
+    <div class="velora-dialog__panel" role="document">
+        <header class="velora-dialog__header">
+            <h2 class="velora-dialog__title">Titolo</h2>
+            <button class="velora-dialog__close" data-dialog-close>&times;</button>
+        </header>
+        <div class="velora-dialog__body">...</div>
+    </div>
+</div>{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- #}
+{# Progress v0.2 — bar classico, wizard steps, "X di Y"             #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="progress">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Progress (v0.2)</h2>
+        <p class="showcase-section__intro">
+            Tre componenti di progresso: barra classica con percentuale,
+            breadcrumb di fasi numerate (wizard), barra "X di Y" per upload
+            o sondaggi.
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Progress bar classica</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_progress_bar value=70 max=100 label="Caricamento" %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_progress_bar value=45 max=100 label="Storage usato" variant="warning" %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_progress_bar value=92 max=100 label="Sincronizzazione" variant="success" %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_progress_bar value=15 max=100 label="Crediti residui" variant="danger" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_progress_bar value=70 max=100 label="Caricamento" %}
+{% velora_progress_bar value=45 label="Storage" variant="warning" %}
+{% velora_progress_bar value=92 label="Sync"    variant="success" %}
+{% velora_progress_bar value=15 label="Crediti" variant="danger" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Wizard steps</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_condensed_progress_breadcrumb steps=showcase_wizard_steps current=2 %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_condensed_progress_breadcrumb steps=[
+    "Anagrafica", "Indirizzo", "Pagamento", "Conferma",
+] current=2 %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Progress "X di Y"</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_new_progress_bar current=3 total=10 label="Upload file" %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_new_progress_bar current=7 total=7 label="Domande risposte" variant="success" %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_new_progress_bar current=0 total=0 label="Indeterminato" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_new_progress_bar current=3 total=10 label="Upload" %}
+{% velora_new_progress_bar current=7 total=7  label="Domande" variant="success" %}
+{% velora_new_progress_bar current=0 total=0  label="Indet."  %}  {# senza barra #}{% endverbatim %}</code></pre>
     </div>
 </section>
 {% endblock %}

@@ -1,0 +1,203 @@
+// Velora UI - progress bar variants (v0.2)
+//
+// Tre componenti distinti che condividono la palette dei "variant":
+//   1. .velora-progress         classico (10.10): label + percent + barra
+//   2. .velora-progress-steps   wizard a fasi (10.11): pallini numerati
+//   3. .velora-progress-xy      "X di Y" (10.12): contatore + barra
+
+// ============================================================
+//   1. Classic progress bar
+// ============================================================
+
+.velora-progress {
+  --velora-progress-track: var(--velora-gray-100);
+  --velora-progress-fill: var(--velora-c-menu-gray);
+
+  display: block;
+
+  &--success { --velora-progress-fill: var(--velora-c-green); }
+  &--warning { --velora-progress-fill: var(--velora-c-orange); }
+  &--danger  { --velora-progress-fill: var(--velora-c-red); }
+  &--info    { --velora-progress-fill: var(--velora-c-menu-gray); }
+  &--default { --velora-progress-fill: var(--velora-c-menu-gray); }
+}
+
+.velora-progress__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--velora-space-1);
+  font-size: var(--velora-fs-sm);
+}
+
+.velora-progress__label {
+  color: var(--velora-c-text);
+}
+
+.velora-progress__percent {
+  color: var(--velora-gray-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.velora-progress__track {
+  height: 8px;
+  background-color: var(--velora-progress-track);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.velora-progress__fill {
+  height: 100%;
+  background-color: var(--velora-progress-fill);
+  transition: width 0.25s ease-out;
+}
+
+// ============================================================
+//   2. Wizard steps (condensed progress breadcrumb)
+// ============================================================
+
+.velora-progress-steps__list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.velora-progress-steps__item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.velora-progress-steps__link {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  text-decoration: none;
+  color: var(--velora-gray-500);
+  padding: var(--velora-space-1) 0;
+}
+
+a.velora-progress-steps__link:hover {
+  color: var(--velora-c-orange);
+}
+
+.velora-progress-steps__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: var(--velora-gray-100);
+  color: var(--velora-gray-500);
+  font-size: var(--velora-fs-xs);
+  font-weight: var(--velora-fw-medium);
+  flex-shrink: 0;
+}
+
+.velora-progress-steps__label {
+  font-size: var(--velora-fs-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.velora-progress-steps__connector {
+  flex: 1;
+  height: 1px;
+  background-color: var(--velora-gray-200);
+  margin: 0 var(--velora-space-3);
+  min-width: 16px;
+}
+
+// Stati
+.velora-progress-steps__item.is-done {
+  .velora-progress-steps__dot {
+    background-color: var(--velora-c-green);
+    color: #fff;
+  }
+  .velora-progress-steps__label {
+    color: var(--velora-gray-700);
+  }
+  ~ .velora-progress-steps__item .velora-progress-steps__connector {
+    // niente: la riga e` servita all'item successivo
+  }
+}
+
+.velora-progress-steps__item.is-current {
+  .velora-progress-steps__dot {
+    background-color: var(--velora-c-orange);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(245, 160, 0, 0.18);
+  }
+  .velora-progress-steps__label {
+    color: var(--velora-gray-900);
+    font-weight: var(--velora-fw-medium);
+  }
+}
+
+.velora-progress-steps__item.is-upcoming {
+  .velora-progress-steps__dot {
+    background-color: var(--velora-gray-100);
+    color: var(--velora-gray-500);
+  }
+}
+
+// ============================================================
+//   3. "X di Y" progress bar
+// ============================================================
+
+.velora-progress-xy {
+  --velora-progress-xy-fill: var(--velora-c-menu-gray);
+  display: block;
+
+  &--success { --velora-progress-xy-fill: var(--velora-c-green); }
+  &--warning { --velora-progress-xy-fill: var(--velora-c-orange); }
+  &--danger  { --velora-progress-xy-fill: var(--velora-c-red); }
+  &--info    { --velora-progress-xy-fill: var(--velora-c-menu-gray); }
+  &--default { --velora-progress-xy-fill: var(--velora-c-menu-gray); }
+}
+
+.velora-progress-xy__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--velora-space-1);
+  font-size: var(--velora-fs-sm);
+}
+
+.velora-progress-xy__label {
+  color: var(--velora-c-text);
+}
+
+.velora-progress-xy__counter {
+  color: var(--velora-gray-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.velora-progress-xy__counter-current {
+  color: var(--velora-gray-900);
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-progress-xy__counter-sep {
+  margin: 0 4px;
+  color: var(--velora-gray-400);
+}
+
+.velora-progress-xy__track {
+  height: 8px;
+  background-color: var(--velora-gray-100);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.velora-progress-xy__fill {
+  height: 100%;
+  background-color: var(--velora-progress-xy-fill);
+  transition: width 0.25s ease-out;
+}

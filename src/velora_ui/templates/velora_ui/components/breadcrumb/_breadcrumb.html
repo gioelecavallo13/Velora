@@ -1,0 +1,31 @@
+{% comment %}
+  Breadcrumb (v0.2). L'ultimo item e` reso come <span aria-current="page">,
+  gli altri come <a>. Il separatore di default e` "›" ma puo` essere
+  override-ato (es. "/", "•").
+
+  Aspettative di contesto:
+    items     : list[dict] -> normalizzati da velora_navigation.py
+    separator : str        -> separatore visivo fra item
+{% endcomment %}
+<nav class="velora-breadcrumb {{ extra_class }}" aria-label="Percorso navigazione">
+    {% if items %}
+    <ol class="velora-breadcrumb__list">
+        {% for item in items %}
+        <li class="velora-breadcrumb__item{% if item.is_current %} is-current{% endif %}">
+            {% if item.is_current or not item.url %}
+            <span class="velora-breadcrumb__current"{% if item.is_current %} aria-current="page"{% endif %}>
+                {% if item.icon %}<span class="velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
+                {{ item.label }}
+            </span>
+            {% else %}
+            <a class="velora-breadcrumb__link" href="{{ item.url }}">
+                {% if item.icon %}<span class="velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
+                {{ item.label }}
+            </a>
+            {% endif %}
+            {% if not forloop.last %}<span class="velora-breadcrumb__separator" aria-hidden="true">{{ separator }}</span>{% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+    {% endif %}
+</nav>

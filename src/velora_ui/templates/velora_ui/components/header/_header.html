@@ -1,16 +1,25 @@
 {% comment %}
-  Partial dell'header globale.
+  Partial dell'header globale (v0.2).
 
   Aspettativa di contesto (set dal tag velora_header):
-    app_name      : str  -> nome dell'app, mostrato accanto al logo
-    app_icon_url  : str? -> URL del logo opzionale
+    app_name      : str  -> nome dell'app, mostrato accanto al logo brand
+    app_icon_url  : str? -> URL del logo brand opzionale
     items         : list -> elenco normalizzato di item (vedi velora_layout.py)
     request       : HttpRequest? -> usato per evidenziare item attivo
 
-  In v0.1 supportiamo due tipi di item:
-    - "link"      -> voce di navigazione semplice
-    - "user-menu" -> voce dell'utente, sempre allineata a destra (in v0.2
-                     diventera` un dropdown reale)
+  Tipi item supportati:
+    - "link"          (v0.1) voce di navigazione semplice
+    - "user-menu"     (v0.1) voce dell'utente, allineata a destra
+    - "single-menu"   (v0.2) trigger + dropdown panel con lista di link
+    - "multi-menu"    (v0.2) trigger + mega-menu a colonne
+    - "apps-menu"     (v0.2) trigger + griglia di app launcher
+    - "notifications" (v0.2) trigger campanella con contatore + lista notifiche
+    - "logo"          (v0.2) marchio aggiuntivo (es. tenant) inline nei nav
+
+  Posizionamento:
+    - link, single-menu, multi-menu, apps-menu, logo  -> allineati a sinistra
+      (dentro <nav>)
+    - user-menu, notifications -> allineati a destra (dentro .__user)
 {% endcomment %}
 <div class="velora-header">
     <a href="/" class="velora-header__brand">
@@ -29,22 +38,170 @@
     </button>
 
     <nav class="velora-header__nav" aria-label="Menu principale">
-        {% for item in items %}{% if item.type == "link" %}
+        {% for item in items %}
+        {% if item.type == "link" %}
         <a
             href="{{ item.url }}"
             class="velora-header__item velora-header__item--link {{ item.extra_class }}{% if item.active %} is-active{% endif %}">
             {{ item.label }}
         </a>
-        {% endif %}{% endfor %}
+        {% elif item.type == "logo" %}
+        <a
+            href="{{ item.url }}"
+            class="velora-header__item velora-header__item--logo {{ item.extra_class }}">
+            {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.alt }}" class="velora-header__logo-img">
+            {% endif %}
+            {% if item.label %}<span class="velora-header__logo-label">{{ item.label }}</span>{% endif %}
+        </a>
+        {% elif item.type == "single-menu" %}
+        <div
+            class="velora-header__item velora-header__item--menu velora-header__item--single-menu {{ item.extra_class }}"
+            data-velora-component="header-menu"
+            data-velora-menu-align="{{ item.align }}">
+            <button
+                type="button"
+                class="velora-header__menu-trigger"
+                aria-haspopup="true"
+                aria-expanded="false">
+                {% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
+                <span class="velora-header__menu-label">{{ item.label }}</span>
+                <span class="velora-header__menu-caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--single" role="menu">
+                <ul class="velora-header__menu-list">
+                    {% for sub in item.items %}
+                    <li role="none">
+                        <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">
+                            {% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}
+                            <span>{{ sub.label }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% elif item.type == "multi-menu" %}
+        <div
+            class="velora-header__item velora-header__item--menu velora-header__item--multi-menu {{ item.extra_class }}"
+            data-velora-component="header-menu"
+            data-velora-menu-align="{{ item.align }}">
+            <button
+                type="button"
+                class="velora-header__menu-trigger"
+                aria-haspopup="true"
+                aria-expanded="false">
+                {% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
+                <span class="velora-header__menu-label">{{ item.label }}</span>
+                <span class="velora-header__menu-caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--multi" role="menu">
+                <div class="velora-header__multi-grid">
+                    {% for section in item.sections %}
+                    <div class="velora-header__multi-col">
+                        {% if section.label %}<div class="velora-header__multi-col-title">{{ section.label }}</div>{% endif %}
+                        <ul class="velora-header__menu-list">
+                            {% for sub in section.items %}
+                            <li role="none">
+                                <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">
+                                    {% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}
+                                    <span>{{ sub.label }}</span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% elif item.type == "apps-menu" %}
+        <div
+            class="velora-header__item velora-header__item--menu velora-header__item--apps-menu {{ item.extra_class }}"
+            data-velora-component="header-menu"
+            data-velora-menu-align="{{ item.align|default:'left' }}">
+            <button
+                type="button"
+                class="velora-header__menu-trigger velora-header__menu-trigger--icon"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="{{ item.label }}">
+                <span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#x25A6;</span>
+            </button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--apps" role="menu">
+                <div class="velora-header__apps-grid">
+                    {% for app in item.apps %}
+                    <a role="menuitem" href="{{ app.url }}" class="velora-header__app-tile">
+                        <span class="velora-header__app-icon velora-icon velora-icon--{{ app.icon }}"
+                              aria-hidden="true"
+                              {% if app.color %}style="--velora-app-tile-color: {{ app.color }};"{% endif %}>
+                            {{ app.label|slice:":1" }}
+                        </span>
+                        <span class="velora-header__app-label">{{ app.label }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
     </nav>
 
     <div class="velora-header__user">
-        {% for item in items %}{% if item.type == "user-menu" %}
+        {% for item in items %}
+        {% if item.type == "notifications" %}
+        <div
+            class="velora-header__item velora-header__item--menu velora-header__item--notifications {{ item.extra_class }}"
+            data-velora-component="header-menu"
+            data-velora-menu-align="right">
+            <button
+                type="button"
+                class="velora-header__menu-trigger velora-header__menu-trigger--icon"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="{{ item.label }}{% if item.unread_count %} ({{ item.unread_count }} non lette){% endif %}">
+                <span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#9788;</span>
+                {% if item.unread_count %}
+                <span class="velora-header__notif-badge" aria-hidden="true">{{ item.unread_count }}</span>
+                {% endif %}
+            </button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--notifications" role="menu">
+                <div class="velora-header__notif-header">{{ item.label }}</div>
+                {% if item.items %}
+                <ul class="velora-header__notif-list">
+                    {% for n in item.items %}
+                    <li role="none" class="velora-header__notif-item{% if n.unread %} is-unread{% endif %}">
+                        {% if n.url %}
+                        <a role="menuitem" href="{{ n.url }}" class="velora-header__notif-link">
+                            <div class="velora-header__notif-title">{{ n.title }}</div>
+                            {% if n.body %}<div class="velora-header__notif-body">{{ n.body }}</div>{% endif %}
+                            {% if n.timestamp %}<div class="velora-header__notif-time">{{ n.timestamp }}</div>{% endif %}
+                        </a>
+                        {% else %}
+                        <div class="velora-header__notif-link">
+                            <div class="velora-header__notif-title">{{ n.title }}</div>
+                            {% if n.body %}<div class="velora-header__notif-body">{{ n.body }}</div>{% endif %}
+                            {% if n.timestamp %}<div class="velora-header__notif-time">{{ n.timestamp }}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="velora-header__notif-empty">{{ item.empty_label }}</div>
+                {% endif %}
+                {% if item.footer_url and item.footer_label %}
+                <a class="velora-header__notif-footer" href="{{ item.footer_url }}">{{ item.footer_label }}</a>
+                {% endif %}
+            </div>
+        </div>
+        {% elif item.type == "user-menu" %}
         <a
             href="{{ item.url }}"
             class="velora-header__item velora-header__item--user {{ item.extra_class }}">
             {{ item.label }}
         </a>
-        {% endif %}{% endfor %}
+        {% endif %}
+        {% endfor %}
     </div>
 </div>

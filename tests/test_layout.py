@@ -121,6 +121,388 @@ def test_velora_header_marks_active_link_item():
     assert html.count("is-active") == 1
 
 
+# -- velora_header v0.2: single-menu --------------------------------------
+
+
+def test_velora_header_renders_single_menu():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "single-menu",
+                    "label": "Account",
+                    "items": [
+                        {"label": "Profilo", "url": "/profile/"},
+                        {"label": "Esci", "url": "/logout/"},
+                    ],
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--single-menu" in html
+    assert 'data-velora-component="header-menu"' in html
+    assert 'aria-haspopup="true"' in html
+    assert 'aria-expanded="false"' in html
+    assert ">Account<" in html
+    assert 'href="/profile/"' in html
+    assert 'href="/logout/"' in html
+    assert 'role="menu"' in html
+    assert html.count('role="menuitem"') == 2
+
+
+def test_velora_header_single_menu_align_right():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "single-menu",
+                    "label": "Settings",
+                    "align": "right",
+                    "items": [{"label": "Tema", "url": "/t"}],
+                }
+            ],
+        },
+    )
+    assert 'data-velora-menu-align="right"' in html
+
+
+def test_velora_header_single_menu_align_invalid_falls_back_to_left():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "single-menu",
+                    "label": "X",
+                    "align": "diagonale",
+                    "items": [{"label": "A", "url": "/a"}],
+                }
+            ],
+        },
+    )
+    assert 'data-velora-menu-align="left"' in html
+
+
+def test_velora_header_single_menu_skipped_if_no_items():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {"type": "single-menu", "label": "Vuoto", "items": []},
+                {"type": "link", "label": "Sentinella", "url": "/s"},
+            ],
+        },
+    )
+    assert "Vuoto" not in html
+    assert "Sentinella" in html
+
+
+def test_velora_header_single_menu_filters_malformed_subitems():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "single-menu",
+                    "label": "Account",
+                    "items": [
+                        {"label": "Buono", "url": "/ok"},
+                        "non-dict",
+                        {"label": "Senza url"},
+                        {"url": "/senza-label"},
+                    ],
+                }
+            ],
+        },
+    )
+    assert "Buono" in html
+    assert "Senza url" not in html
+    assert "/senza-label" not in html
+
+
+# -- velora_header v0.2: multi-menu ---------------------------------------
+
+
+def test_velora_header_renders_multi_menu_with_columns():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "multi-menu",
+                    "label": "Risorse",
+                    "sections": [
+                        {
+                            "label": "Documentazione",
+                            "items": [
+                                {"label": "Quickstart", "url": "/d/q"},
+                                {"label": "Guide", "url": "/d/g"},
+                            ],
+                        },
+                        {
+                            "label": "Supporto",
+                            "items": [{"label": "Contatti", "url": "/c"}],
+                        },
+                    ],
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--multi-menu" in html
+    assert "velora-header__menu-panel--multi" in html
+    assert html.count("velora-header__multi-col") >= 2
+    assert "Documentazione" in html
+    assert "Supporto" in html
+    assert 'href="/d/q"' in html
+    assert 'href="/c"' in html
+
+
+def test_velora_header_multi_menu_drops_empty_sections():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "multi-menu",
+                    "label": "Risorse",
+                    "sections": [
+                        {"label": "Vuota", "items": []},
+                        {"label": "Piena", "items": [{"label": "Ok", "url": "/ok"}]},
+                    ],
+                }
+            ],
+        },
+    )
+    assert "Vuota" not in html
+    assert "Piena" in html
+
+
+def test_velora_header_multi_menu_skipped_if_no_valid_sections():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {"type": "multi-menu", "label": "Vuoto", "sections": []},
+                {"type": "link", "label": "Sentinella", "url": "/s"},
+            ],
+        },
+    )
+    assert "Vuoto" not in html
+    assert "Sentinella" in html
+
+
+# -- velora_header v0.2: apps-menu ----------------------------------------
+
+
+def test_velora_header_renders_apps_menu():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "apps-menu",
+                    "label": "App",
+                    "apps": [
+                        {"label": "Calendario", "url": "/cal", "color": "#4285f4"},
+                        {"label": "Drive", "url": "/drive"},
+                    ],
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--apps-menu" in html
+    assert "velora-header__apps-grid" in html
+    assert html.count("velora-header__app-tile") == 2
+    assert "Calendario" in html
+    assert 'href="/cal"' in html
+    assert "--velora-app-tile-color: #4285f4" in html
+
+
+def test_velora_header_apps_menu_skipped_if_no_apps():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {"type": "apps-menu", "label": "App", "apps": []},
+                {"type": "link", "label": "Sentinella", "url": "/s"},
+            ],
+        },
+    )
+    assert "velora-header__item--apps-menu" not in html
+    assert "Sentinella" in html
+
+
+def test_velora_header_apps_menu_filters_malformed_apps():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "apps-menu",
+                    "label": "App",
+                    "apps": [
+                        {"label": "Ok", "url": "/o"},
+                        {"label": "Senza url"},
+                        "stringa",
+                    ],
+                }
+            ],
+        },
+    )
+    assert "Ok" in html
+    assert "Senza url" not in html
+
+
+# -- velora_header v0.2: notifications ------------------------------------
+
+
+def test_velora_header_renders_notifications_with_unread_badge():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "notifications",
+                    "label": "Notifiche",
+                    "unread_count": 3,
+                    "items": [
+                        {
+                            "title": "Nuovo cliente",
+                            "body": "Mario Rossi si e` registrato.",
+                            "url": "/n/1",
+                            "timestamp": "2 minuti fa",
+                            "unread": True,
+                        },
+                        {"title": "Backup completato", "url": "/n/2"},
+                    ],
+                    "footer_label": "Vedi tutte",
+                    "footer_url": "/notifications/",
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--notifications" in html
+    assert "velora-header__notif-badge" in html
+    assert ">3<" in html
+    assert "Nuovo cliente" in html
+    assert "Backup completato" in html
+    assert "is-unread" in html
+    assert html.count("is-unread") == 1
+    assert "Vedi tutte" in html
+    assert 'href="/notifications/"' in html
+
+
+def test_velora_header_notifications_hides_badge_when_count_zero():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "notifications",
+                    "label": "Notifiche",
+                    "unread_count": 0,
+                    "items": [{"title": "Letta", "url": "/n/1"}],
+                }
+            ],
+        },
+    )
+    assert "velora-header__notif-badge" not in html
+
+
+def test_velora_header_notifications_shows_empty_label():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "notifications",
+                    "label": "Notifiche",
+                    "items": [],
+                    "empty_label": "Tutto in pari",
+                }
+            ],
+        },
+    )
+    assert "velora-header__notif-empty" in html
+    assert "Tutto in pari" in html
+
+
+def test_velora_header_notifications_unread_count_invalid_falls_back_to_zero():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "notifications",
+                    "label": "Notifiche",
+                    "unread_count": "tre",
+                    "items": [{"title": "x", "url": "/x"}],
+                }
+            ],
+        },
+    )
+    assert "velora-header__notif-badge" not in html
+
+
+# -- velora_header v0.2: logo ---------------------------------------------
+
+
+def test_velora_header_renders_logo_with_image_and_label():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "logo",
+                    "image_url": "/static/tenant.svg",
+                    "label": "AcmeCorp",
+                    "alt": "Acme",
+                    "url": "/acme/",
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--logo" in html
+    assert 'src="/static/tenant.svg"' in html
+    assert 'alt="Acme"' in html
+    assert "AcmeCorp" in html
+    assert 'href="/acme/"' in html
+
+
+def test_velora_header_logo_defaults_url_to_root():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {"items": [{"type": "logo", "label": "Brand"}]},
+    )
+    assert 'href="/"' in html
+    assert "Brand" in html
+
+
+def test_velora_header_logo_label_only_renders_without_image():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {"items": [{"type": "logo", "label": "TextOnly"}]},
+    )
+    assert "TextOnly" in html
+    assert "velora-header__logo-img" not in html
+
+
+def test_velora_header_logo_skipped_when_empty():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {"type": "logo"},
+                {"type": "link", "label": "Sentinella", "url": "/s"},
+            ],
+        },
+    )
+    assert "velora-header__item--logo" not in html
+    assert "Sentinella" in html
+
+
 # -- velora_title_bar -----------------------------------------------------
 
 

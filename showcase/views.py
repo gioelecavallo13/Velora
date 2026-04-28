@@ -26,9 +26,95 @@ def index(request: HttpRequest) -> HttpResponse:
     diventera` un catalogo vivente con sotto-pagine dedicate.
     """
 
+    # Header demo dei tipi item v0.1 + v0.2.
+    # Nello showcase carichiamo l'header con uno di ogni tipo per dimostrare
+    # i nuovi pannelli (single-menu, multi-menu, apps-menu, notifications) e
+    # il logo aggiuntivo. Su pagine reali un header tipico ne usa meno.
     header_items = [
         {"type": "link", "label": "Showcase", "url": "/", "active": True},
-        {"type": "link", "label": "Documentazione", "url": "#"},
+        {
+            "type": "single-menu",
+            "label": "Documentazione",
+            "items": [
+                {"label": "Quickstart", "url": "#overview"},
+                {"label": "Componenti", "url": "#layout"},
+                {"label": "API JS", "url": "#feedback"},
+            ],
+        },
+        {
+            "type": "multi-menu",
+            "label": "Risorse",
+            "sections": [
+                {
+                    "label": "Sviluppo",
+                    "items": [
+                        {"label": "Form", "url": "#form"},
+                        {"label": "Tabelle", "url": "#tables"},
+                        {"label": "Link", "url": "#links"},
+                    ],
+                },
+                {
+                    "label": "Community",
+                    "items": [
+                        {"label": "Repository", "url": "https://github.com/gioelecavallo13/Velora"},
+                        {"label": "Changelog", "url": "#"},
+                    ],
+                },
+            ],
+        },
+        {
+            "type": "logo",
+            "image_url": "",
+            "label": "Demo Tenant",
+            "url": "#overview",
+        },
+        {
+            "type": "apps-menu",
+            "label": "App",
+            "apps": [
+                {"label": "Calendario", "url": "#", "color": "#4285f4"},
+                {"label": "Drive", "url": "#", "color": "#34a853"},
+                {"label": "Mail", "url": "#", "color": "#ea4335"},
+                {"label": "Note", "url": "#", "color": "#fbbc05"},
+                {"label": "Foto", "url": "#", "color": "#c1282e"},
+                {"label": "Contatti", "url": "#", "color": "#7AB55C"},
+            ],
+        },
+        {
+            "type": "notifications",
+            "label": "Notifiche",
+            "unread_count": 3,
+            "items": [
+                {
+                    "title": "Nuovo cliente registrato",
+                    "body": "Mario Rossi ha completato l'onboarding.",
+                    "url": "#",
+                    "timestamp": "2 minuti fa",
+                    "unread": True,
+                },
+                {
+                    "title": "Backup completato",
+                    "body": "Snapshot serale eseguito senza errori.",
+                    "url": "#",
+                    "timestamp": "1 ora fa",
+                    "unread": True,
+                },
+                {
+                    "title": "Aggiornamento disponibile",
+                    "url": "#",
+                    "timestamp": "Ieri",
+                    "unread": True,
+                },
+                {
+                    "title": "Pagamento ricevuto",
+                    "body": "Fattura #2024-018 saldata.",
+                    "url": "#",
+                    "timestamp": "2 giorni fa",
+                },
+            ],
+            "footer_label": "Vedi tutte",
+            "footer_url": "#",
+        },
         {"type": "user-menu", "label": "Sviluppatore", "url": "#"},
     ]
 
@@ -42,6 +128,10 @@ def index(request: HttpRequest) -> HttpResponse:
         {"label": "Tabelle", "url": "#tables", "icon": "T"},
         {"label": "Link", "url": "#links", "icon": "→"},
         {"label": "Feedback", "url": "#feedback", "icon": "!"},
+        # v0.2 — Fase 10
+        {"label": "Navigation", "url": "#navigation", "icon": "N"},
+        {"label": "Overlays", "url": "#overlays", "icon": "O"},
+        {"label": "Progress", "url": "#progress", "icon": "%"},
     ]
 
     title_actions = [
@@ -76,6 +166,39 @@ def index(request: HttpRequest) -> HttpResponse:
     ]
     table_page = {"number": 2, "num_pages": 12}
 
+    # ---- v0.2 - Fase 10 ------------------------------------------------
+
+    # Breadcrumb di esempio: Home > Sezione > Pagina corrente
+    breadcrumb_items = [
+        {"label": "Showcase", "url": "/"},
+        {"label": "Componenti v0.2", "url": "#layout"},
+        {"label": "Pagina corrente"},
+    ]
+
+    # Submenu di esempio: link con stato active
+    submenu_items = [
+        {"label": "Generale", "url": "#overview", "active": True},
+        {"label": "Tema", "url": "#layout"},
+        {"label": "Sicurezza", "url": "#feedback"},
+        {"label": "Notifiche", "url": "#feedback"},
+        {"label": "Esporta dati", "url": "#tables"},
+    ]
+
+    # Drop-down items per gli esempi inline
+    dropdown_items = [
+        {"label": "Modifica", "url": "#"},
+        {"label": "Duplica", "url": "#"},
+        {"label": "Archivia", "url": "#"},
+    ]
+
+    # Step del wizard di esempio (currente = 2)
+    wizard_steps = [
+        "Anagrafica",
+        "Indirizzo",
+        "Pagamento",
+        "Conferma",
+    ]
+
     # Demo del pattern django messages -> velora_toast_messages.
     # Aggiungere ?toast=success|error|warning|info alla URL emette un
     # messaggio del livello corrispondente; il template base.html lo
@@ -98,5 +221,9 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_table_headers": table_headers,
             "showcase_table_rows": table_rows,
             "showcase_table_page": table_page,
+            "showcase_breadcrumb_items": breadcrumb_items,
+            "showcase_submenu_items": submenu_items,
+            "showcase_dropdown_items": dropdown_items,
+            "showcase_wizard_steps": wizard_steps,
         },
     )

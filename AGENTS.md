@@ -21,8 +21,10 @@ Convenzioni:
 - [`velora_layout` — header e title bar](#velora_layout)
 - [`velora_forms` — form_row, search_box, fields_separator](#velora_forms)
 - [`velora_data` — table, pagination](#velora_data)
-- [`velora_links` — action/nav/delete/btn link](#velora_links)
+- [`velora_links` — action/nav/delete/btn + v0.2: settings/toggle/copy/dropdown/dialog](#velora_links)
 - [`velora_feedback` — alert, label, toast_messages](#velora_feedback)
+- [`velora_navigation` — breadcrumb, submenu, progress (v0.2)](#velora_navigation)
+- [`velora_overlays` — tooltip (v0.2)](#velora_overlays)
 - [Settings di pacchetto](#settings-di-pacchetto)
 - [JS API pubblica `window.Velora`](#js-api-pubblica)
 
@@ -58,23 +60,145 @@ Renderizza l'header globale (brand + nav + user-menu).
 |---|---|---|---|
 | `items` | `list[dict]` | `context["velora_header_items"]` se presente, altrimenti `[]` | vedi schema item sotto |
 
-**Schema item:**
+**Tipi item supportati:** `link`, `user-menu` (v0.1) + `single-menu`, `multi-menu`, `apps-menu`, `notifications`, `logo` (v0.2).
+
+Tipi sconosciuti → item scartato silenziosamente.
+
+**Schema item — `link`** (v0.1):
 
 ```python
 {
-    "type": "link" | "user-menu",   # required, fallback "link"
-    "label": str,                   # required (item senza label viene scartato)
-    "url": str,                     # required (item senza url viene scartato)
+    "type": "link",
+    "label": str,                   # required
+    "url": str,                     # required
     "active": bool,                 # default False -> applica .is-active
-    "extra_class": str,             # default "" -> appeso al class dell'<a>
+    "extra_class": str,             # default ""
 }
 ```
 
-**Comportamento:**
+**Schema item — `user-menu`** (v0.1):
 
-- Tipi diversi da `link`/`user-menu` → item scartato silenziosamente (in v0.2 si aggiungono `single-menu`, `multi-menu`, `apps-menu`, `notifications`).
-- `user-menu` produce lo stesso `<a>` di `link` ma e` allineato a destra; il dropdown vero arriva in v0.2.
-- App name e icona: il context processor `velora_ui.context_processors.header_defaults` inietta `velora_header_app_name` e `velora_header_app_icon_url` letti dai settings `VELORA_HEADER_APP_NAME` / `VELORA_HEADER_APP_ICON_URL` (default: `"Velora UI"` e `None`).
+```python
+{
+    "type": "user-menu",
+    "label": str,                   # required
+    "url": str,                     # required
+    "extra_class": str,             # default ""
+}
+```
+
+Stessa firma di `link`, ma allineato a destra dell'header. Il dropdown reale arriva via `single-menu` con `align="right"`.
+
+**Schema item — `single-menu`** (v0.2):
+
+```python
+{
+    "type": "single-menu",
+    "label": str,                   # required (testo del trigger)
+    "icon": str,                    # default "" (id icona, hook CSS per v0.4)
+    "items": [                      # required, lista di link
+        {"label": str, "url": str, "icon": str, "extra_class": str},
+        ...
+    ],
+    "align": "left" | "right",      # default "left" (allineamento del pannello)
+    "extra_class": str,             # default ""
+}
+```
+
+Item con `items=[]` o `label=""` scartato. Sub-item senza `label` o `url` scartati.
+
+**Schema item — `multi-menu`** (v0.2, mega-menu a colonne):
+
+```python
+{
+    "type": "multi-menu",
+    "label": str,                   # required
+    "icon": str,                    # default ""
+    "sections": [                   # required, lista di colonne
+        {
+            "label": str,           # default "" (titolo colonna; opzionale)
+            "items": [              # required per colonna
+                {"label": str, "url": str, "icon": str, "extra_class": str},
+                ...
+            ],
+        },
+        ...
+    ],
+    "align": "left" | "right",      # default "left"
+    "extra_class": str,             # default ""
+}
+```
+
+Colonne senza `items` validi vengono scartate.
+
+**Schema item — `apps-menu`** (v0.2, griglia di app launcher):
+
+```python
+{
+    "type": "apps-menu",
+    "label": str,                   # default "App" (label screen-reader del trigger)
+    "icon": str,                    # default "apps"
+    "apps": [                       # required, lista
+        {
+            "label": str,           # required
+            "url": str,              # required
+            "icon": str,             # default ""
+            "color": str,            # default "" (CSS color per la tile, es. "#4285f4")
+        },
+        ...
+    ],
+    "extra_class": str,             # default ""
+}
+```
+
+Item con `apps=[]` scartato. App senza `label` o `url` scartate.
+
+**Schema item — `notifications`** (v0.2, campanella + dropdown):
+
+```python
+{
+    "type": "notifications",
+    "label": str,                   # default "Notifiche"
+    "icon": str,                    # default "bell"
+    "unread_count": int,            # default 0; se >0 mostra badge rosso
+    "items": [                      # default []
+        {
+            "title": str,           # required (notifica senza title scartata)
+            "body": str,             # default ""
+            "url": str,              # default "" (se vuoto la notifica non e` link)
+            "timestamp": str,        # default ""  (es. "2 minuti fa")
+            "unread": bool,          # default False -> applica .is-unread
+        },
+        ...
+    ],
+    "empty_label": str,             # default "Nessuna notifica"
+    "footer_label": str,            # default "" (se non vuoto + footer_url -> link in fondo)
+    "footer_url": str,              # default ""
+    "extra_class": str,             # default ""
+}
+```
+
+Sempre allineato a destra dell'header (forzato a `align="right"`).
+
+**Schema item — `logo`** (v0.2, marchio aggiuntivo inline):
+
+```python
+{
+    "type": "logo",
+    "image_url": str,               # default ""
+    "label": str,                   # default ""
+    "alt": str,                     # default = label
+    "url": str,                     # default "/"
+    "extra_class": str,             # default ""
+}
+```
+
+Almeno uno fra `image_url` e `label` deve essere presente, altrimenti l'item viene scartato. Usato per affiancare al brand principale (`app_name` + `app_icon_url`) un secondo marchio (es. tenant).
+
+**Comportamento generale:**
+
+- App name e icona del brand principale: il context processor `velora_ui.context_processors.header_defaults` inietta `velora_header_app_name` e `velora_header_app_icon_url` letti dai settings `VELORA_HEADER_APP_NAME` / `VELORA_HEADER_APP_ICON_URL` (default: `"Velora UI"` e `None`).
+- I tipi con pannello (`single-menu`, `multi-menu`, `apps-menu`, `notifications`) sono auto-inizializzati dal componente JS `header-menu`: click sul trigger toggle, click fuori chiude, ESC chiude, apertura mutuamente esclusiva.
 
 ### `velora_title_bar`
 
@@ -323,6 +447,94 @@ Renderizza un `<a>` con `data-velora-component="confirm"`. Il componente JS `con
 
 CSS: `velora-btn velora-btn--<variant>`.
 
+### `velora_settings_link` (v0.2) — verde
+
+```django
+{% velora_settings_link url="/cfg/" label="Impostazioni" %}
+```
+
+Stessa firma comune di `action_link/nav_link`. Default `label="Impostazioni"`. CSS: `velora-link velora-link-settings`.
+
+### `velora_toggle_link` (v0.2) — mostra/nasconde
+
+```django
+{% velora_toggle_link target="#dettagli" label_show="Mostra" label_hide="Nascondi" initial_state="hidden" %}
+<div id="dettagli" class="is-toggled-hidden">...</div>
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `target` | `str` | `""` | required (selettore CSS); se vuoto il tag non emette nulla |
+| `label_show` | `str` | `"Mostra"` | label quando il target e` nascosto |
+| `label_hide` | `str` | `"Nascondi"` | label quando il target e` visibile |
+| `initial_state` | `"hidden" \| "shown"` | `"hidden"` | sconosciuto → fallback hidden |
+
+JS `toggle.js` applica `is-toggled-hidden` (CSS `display: none !important`) sul target, sincronizza il testo del link e `aria-expanded`.
+
+### `velora_copy_link` (v0.2) — copy-to-clipboard
+
+```django
+{% velora_copy_link value="velora-ui@0.2.0" label="Copia versione" %}
+{% velora_copy_link target="#input-share" label="Copia link" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `value` | `str` | `""` | testo statico (priorita` su target) |
+| `target` | `str` | `""` | selettore CSS verso `<input>`/`<textarea>`/`<*>` |
+| `label` | `str` | `"Copia"` | label normale |
+| `label_copied` | `str` | `"Copiato"` | label temporanea post-copia (1.5s) |
+
+Almeno uno fra `value` e `target` deve essere presente, altrimenti il tag non emette nulla. Usa `navigator.clipboard.writeText` con fallback `execCommand('copy')` per HTTP locali. Mostra toast Velora di esito (`success`/`error`).
+
+### `velora_drop_down_link` (v0.2)
+
+```django
+{% velora_drop_down_link label="Altre azioni" items=[
+    {"label": "Modifica", "url": "/edit/"},
+    {"label": "Elimina",  "url": "/del/", "extra_class": "is-danger"},
+] align="right" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `label` | `str` | `""` | testo del trigger |
+| `items` | `list[dict]` | `None` | required, sub-link `{label, url, icon?, extra_class?}` |
+| `align` | `"left" \| "right"` | `"left"` | allineamento del pannello rispetto al trigger |
+| `title` | `str` | `""` | tooltip native sul trigger |
+| `extra_class` | `str` | `""` | classi extra sul wrapper |
+
+Item senza `label` o `url` scartati. Lista vuota → tag emette stringa vuota. CSS trigger: `velora-link velora-link-dropdown`.
+
+### `velora_drop_down_button` (v0.2)
+
+```django
+{% velora_drop_down_button label="Salva e..." items=actions variant="primary" %}
+```
+
+Stessa firma di `velora_drop_down_link` + `variant="primary"|"secondary"` (default `secondary`, fallback `secondary` su sconosciuto). CSS trigger: `velora-btn velora-btn--<variant>`.
+
+### `velora_open_dialog_action_link` (v0.2)
+
+```django
+{# inline: dialog gia` nel DOM #}
+{% velora_open_dialog_action_link label="Modifica" target="#dialog-edit" %}
+
+{# remote: scarica fragment via AJAX #}
+{% velora_open_dialog_action_link label="Anteprima" url="/preview/42/" size="lg" dialog_title="Anteprima" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `label` | `str` | `""` | testo del link |
+| `target` | `str` | `""` | selettore CSS al dialog inline |
+| `url` | `str` | `""` | URL del fragment HTML |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | sconosciuto → fallback md |
+| `dialog_title` | `str` | `""` | titolo dialog (solo modalita` remote) |
+| `extra_class` | `str` | `""` | classi extra |
+
+Almeno uno fra `target` e `url` deve essere presente, altrimenti il tag non emette nulla. Modalita` inline ha priorita` se entrambi presenti. Il fragment remoto e` recuperato con `X-Requested-With: XMLHttpRequest`.
+
 ---
 
 ## `velora_feedback`
@@ -380,6 +592,117 @@ Il componente JS `toast.js` legge questi script al `DOMContentLoaded` e li trasf
 `extra_tags` di Django arrivano nel payload come `tags`: sono usabili dalla view per attivare opzioni custom (es. `messages.info(req, "...", extra_tags="persistent")` per disattivare l'auto-dismiss).
 
 Lo `storage.used = True` viene impostato a fine lettura (Django pulisce i messaggi al request successivo).
+
+---
+
+## `velora_navigation`
+
+Library v0.2 con breadcrumb, submenu e i tre progress bar.
+
+### `velora_breadcrumb`
+
+```django
+{% load velora_navigation %}
+{% velora_breadcrumb items=[
+    {"label": "Home",    "url": "/"},
+    {"label": "Clienti", "url": "/clients/"},
+    {"label": "Mario Rossi"},
+] %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `items` | `list[dict]` | `None` | items con `label` (required), `url` (opzionale: l'ultimo non ha link), `icon` (opzionale) |
+| `separator` | `str` | `"›"` | separatore visivo |
+| `extra_class` | `str` | `""` | |
+
+Item senza `label` scartato. L'ultimo item ha `aria-current="page"` automaticamente.
+
+### `velora_submenu`
+
+```django
+{% velora_submenu items=[
+    {"label": "Generale", "url": "...", "active": True},
+    {"label": "Tema",     "url": "..."},
+] title="Impostazioni" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `items` | `list[dict]` | `None` | `{label, url, icon?, active?, extra_class?}` |
+| `title` | `str` | `""` | titolo opzionale |
+| `extra_class` | `str` | `""` | |
+
+Item senza `label` o `url` scartato. Lista vuota → tag non emette markup.
+
+### `velora_progress_bar` (10.10 — classico)
+
+```django
+{% velora_progress_bar value=70 max=100 label="Caricamento" variant="success" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `value` | `int \| float \| str` | `0` | castato safe |
+| `max` | `int \| float \| str` | `100` | castato safe; se `<=0` la barra mostra 0% |
+| `label` | `str` | `""` | etichetta sopra la barra |
+| `variant` | `"default" \| "success" \| "warning" \| "danger" \| "info"` | `"default"` | sconosciuto → fallback default |
+| `show_percent` | `bool` | `True` | mostra/nasconde % a destra del label |
+| `extra_class` | `str` | `""` | |
+
+`value` clampato in `[0, max]`. Render: `<div role="progressbar" aria-valuenow=...>` + barra `width: <pct>%`.
+
+### `velora_condensed_progress_breadcrumb` (10.11 — wizard fasi)
+
+```django
+{% velora_condensed_progress_breadcrumb steps=[
+    "Anagrafica", "Indirizzo", "Pagamento", "Conferma",
+] current=2 %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `steps` | `list[str \| dict]` | `None` | stringhe (label) o dict `{label, url?}` |
+| `current` | `int \| str` | `1` | 1-based; clamp a `[1, len(steps)]` |
+| `extra_class` | `str` | `""` | |
+
+Stati render: `is-done` (precedenti, verde + check), `is-current` (arancio + alone, `aria-current="step"`), `is-upcoming` (gray-100). Step `done` con `url` diventano link cliccabili.
+
+### `velora_new_progress_bar` (10.12 — "X di Y")
+
+```django
+{% velora_new_progress_bar current=3 total=10 label="Upload file" %}
+{% velora_new_progress_bar current=0 total=0 label="Indeterminato" %}  {# senza barra #}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `current` | `int \| str` | `0` | clamp `[0, total]` se `total>0` |
+| `total` | `int \| str` | `0` | se `<=0` mostra contatore senza barra |
+| `label` | `str` | `""` | |
+| `variant` | stesso di `velora_progress_bar` | `"default"` | |
+| `extra_class` | `str` | `""` | |
+
+---
+
+## `velora_overlays`
+
+Library v0.2 per tooltip e helper di overlay (dialog viene da `velora_links` come trigger; il dialog vero in HTML usa le classi `.velora-dialog__*`).
+
+### `velora_tooltip`
+
+```django
+{% load velora_overlays %}
+<button {% velora_tooltip "Modifica cliente" placement="bottom" %}>X</button>
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `text` | `str` | `""` | required; se vuoto il tag emette stringa vuota |
+| `placement` | `"top" \| "bottom" \| "left" \| "right"` | `"top"` | sconosciuto → top |
+| `delay` | `int` | `200` | ms; valori `<0` clampati a 0 |
+
+Il tag emette **solo** la stringa di attributi `data-velora-component="tooltip" data-tooltip-text="..." data-tooltip-placement="..." data-tooltip-delay="..."`: niente wrapper, da iniettare in elementi esistenti. Il componente JS `tooltip.js` mostra/nasconde un balloon globale singolo riusato fra tutti i trigger.
 
 ---
 

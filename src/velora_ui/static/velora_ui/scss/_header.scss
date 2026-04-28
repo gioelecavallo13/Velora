@@ -1,8 +1,14 @@
-// Velora UI - header globale (M2)
+// Velora UI - header globale (M2 + estensioni v0.2)
 //
 // L'header e` una barra orizzontale fissa in alto, su fondo scuro
 // (var(--velora-c-menu-bg)). Layout: brand a sx, toggle sidebar, nav, user
 // menu allineato a destra (margin-left:auto).
+//
+// In v0.2 sono stati aggiunti i tipi item:
+//   - single-menu, multi-menu, apps-menu, notifications  -> trigger + panel
+//   - logo                                               -> marchio aggiuntivo
+// I pannelli sono nascosti di default e mostrati quando il wrapper riceve la
+// classe `.is-open` (gestita dal componente JS `header-menu`).
 
 .velora-header {
   display: flex;
@@ -97,4 +103,340 @@
 .velora-header__item--user {
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: var(--velora-fw-medium);
+}
+
+// ============================================================
+//   v0.2 - Logo item (marchio aggiuntivo inline nell'header)
+// ============================================================
+
+.velora-header__item--logo {
+  gap: var(--velora-space-2);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  padding-left: var(--velora-space-3);
+}
+
+.velora-header__logo-img {
+  height: 20px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.velora-header__logo-label {
+  font-weight: var(--velora-fw-medium);
+  white-space: nowrap;
+}
+
+// ============================================================
+//   v0.2 - Wrapper per item con dropdown panel
+// ============================================================
+
+.velora-header__item--menu {
+  position: relative;
+  padding: 0;
+  border-bottom: 0;
+
+  &:hover {
+    background-color: transparent;
+  }
+
+  // Quando aperto: il trigger si evidenzia
+  &.is-open .velora-header__menu-trigger {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.velora-header__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  height: var(--velora-header-height);
+  padding: 0 var(--velora-space-3);
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font: inherit;
+  font-size: var(--velora-fs-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: -2px;
+  }
+}
+
+.velora-header__menu-trigger--icon {
+  position: relative;
+  padding: 0 var(--velora-space-3);
+}
+
+.velora-header__menu-icon {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  font-size: var(--velora-fs-md);
+  line-height: 1;
+}
+
+.velora-header__menu-caret {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+// Pannello base (single/multi/apps/notifications condividono il guscio)
+.velora-header__menu-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: #fff;
+  color: var(--velora-c-text);
+  border: 1px solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  box-shadow: var(--velora-shadow-md);
+  z-index: var(--velora-z-dropdown);
+  padding: var(--velora-space-2) 0;
+  display: none;
+}
+
+.velora-header__item--menu.is-open .velora-header__menu-panel {
+  display: block;
+}
+
+// Allineamento del pannello rispetto al trigger
+.velora-header__item--menu[data-velora-menu-align="right"] .velora-header__menu-panel {
+  left: auto;
+  right: 0;
+}
+
+.velora-header__menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.velora-header__menu-link {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  padding: var(--velora-space-2) var(--velora-space-4);
+  color: var(--velora-c-text);
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-header__menu-link-icon {
+  width: 16px;
+  text-align: center;
+  color: var(--velora-gray-400);
+}
+
+// ============================================================
+//   v0.2 - Multi-menu (mega-menu a colonne)
+// ============================================================
+
+.velora-header__menu-panel--multi {
+  min-width: 480px;
+  padding: var(--velora-space-3);
+}
+
+.velora-header__multi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--velora-space-4);
+}
+
+.velora-header__multi-col-title {
+  font-size: var(--velora-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--velora-gray-400);
+  font-weight: var(--velora-fw-medium);
+  padding: 0 var(--velora-space-3);
+  margin-bottom: var(--velora-space-1);
+}
+
+// ============================================================
+//   v0.2 - Apps menu (griglia di app launcher)
+// ============================================================
+
+.velora-header__menu-panel--apps {
+  min-width: 280px;
+  padding: var(--velora-space-3);
+}
+
+.velora-header__apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--velora-space-2);
+}
+
+.velora-header__app-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--velora-space-1);
+  padding: var(--velora-space-2);
+  border-radius: var(--velora-radius-sm);
+  text-decoration: none;
+  color: var(--velora-c-text);
+  font-size: var(--velora-fs-xs);
+  text-align: center;
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-header__app-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--velora-radius-sm);
+  background: var(--velora-app-tile-color, var(--velora-gray-100));
+  color: #fff;
+  font-weight: var(--velora-fw-medium);
+  text-transform: uppercase;
+  font-size: var(--velora-fs-base);
+}
+
+.velora-header__app-label {
+  line-height: var(--velora-lh-tight);
+}
+
+// ============================================================
+//   v0.2 - Notifications (campanella + dropdown)
+// ============================================================
+
+.velora-header__notif-badge {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--velora-c-red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--velora-fw-medium);
+  line-height: 16px;
+  text-align: center;
+}
+
+.velora-header__menu-panel--notifications {
+  min-width: 320px;
+  padding: 0;
+}
+
+.velora-header__notif-header {
+  padding: var(--velora-space-3) var(--velora-space-4);
+  font-weight: var(--velora-fw-medium);
+  border-bottom: 1px solid var(--velora-border-color);
+  font-size: var(--velora-fs-sm);
+}
+
+.velora-header__notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.velora-header__notif-item {
+  border-bottom: 1px solid var(--velora-border-color);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &.is-unread .velora-header__notif-title {
+    font-weight: var(--velora-fw-medium);
+  }
+
+  &.is-unread .velora-header__notif-link {
+    background-color: rgba(245, 160, 0, 0.04);
+  }
+}
+
+.velora-header__notif-link {
+  display: block;
+  padding: var(--velora-space-3) var(--velora-space-4);
+  text-decoration: none;
+  color: var(--velora-c-text);
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+  }
+}
+
+.velora-header__notif-title {
+  font-size: var(--velora-fs-sm);
+  margin-bottom: 2px;
+}
+
+.velora-header__notif-body {
+  font-size: var(--velora-fs-xs);
+  color: var(--velora-gray-500);
+  line-height: var(--velora-lh-tight);
+}
+
+.velora-header__notif-time {
+  font-size: var(--velora-fs-xs);
+  color: var(--velora-gray-400);
+  margin-top: 4px;
+}
+
+.velora-header__notif-empty {
+  padding: var(--velora-space-5) var(--velora-space-4);
+  text-align: center;
+  color: var(--velora-gray-400);
+  font-size: var(--velora-fs-sm);
+}
+
+.velora-header__notif-footer {
+  display: block;
+  padding: var(--velora-space-3) var(--velora-space-4);
+  text-align: center;
+  border-top: 1px solid var(--velora-border-color);
+  text-decoration: none;
+  color: var(--velora-c-orange);
+  font-size: var(--velora-fs-sm);
+  font-weight: var(--velora-fw-medium);
+
+  &:hover {
+    background-color: var(--velora-gray-50);
+  }
+}
+
+// ============================================================
+//   v0.2 - Mobile: i pannelli larghi vanno gestiti come full-width
+// ============================================================
+
+@media (max-width: 720px) {
+  .velora-header__menu-panel--multi,
+  .velora-header__menu-panel--apps,
+  .velora-header__menu-panel--notifications {
+    position: fixed;
+    left: var(--velora-space-2);
+    right: var(--velora-space-2);
+    min-width: 0;
+    max-width: none;
+  }
 }

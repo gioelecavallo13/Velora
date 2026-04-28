@@ -34,6 +34,10 @@ SECTIONS = [
     ("tables", "#tables", "Tabelle e paginazione"),
     ("links", "#links", "Link essenziali"),
     ("feedback", "#feedback", "Feedback"),
+    # v0.2 — Fase 10
+    ("navigation", "#navigation", "Navigation v0.2"),
+    ("overlays", "#overlays", "Overlays v0.2"),
+    ("progress", "#progress", "Progress v0.2"),
 ]
 
 

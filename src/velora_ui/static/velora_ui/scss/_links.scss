@@ -59,3 +59,74 @@
     text-decoration: underline;
   }
 }
+
+// =================================================================
+//   v0.2 (Fase 10): settings, toggle, copy, dropdown
+// =================================================================
+
+.velora-link-settings {
+  color: var(--velora-c-green);
+
+  &:hover {
+    color: #5a8c46;
+    text-decoration: underline;
+  }
+}
+
+.velora-link-toggle {
+  color: var(--velora-c-menu-gray);
+
+  &:hover {
+    color: var(--velora-c-orange);
+    text-decoration: underline;
+  }
+
+  &.is-active {
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-link-copy {
+  color: var(--velora-c-menu-gray);
+
+  &:hover {
+    color: var(--velora-c-orange);
+    text-decoration: underline;
+  }
+
+  &.is-copied {
+    color: var(--velora-c-green);
+  }
+}
+
+// Trigger inline del dropdown link (la classe specifica e` `velora-link-dropdown`,
+// si applica al `<button>` dentro al wrapper `.velora-dropdown`).
+.velora-link-dropdown {
+  background: transparent;
+  border: 0;
+  font: inherit;
+  color: var(--velora-c-menu-gray);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--velora-space-1);
+
+  &:hover {
+    color: var(--velora-c-orange);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: 2px;
+  }
+}
+
+// =================================================================
+//   v0.2 (Fase 10): blocco hidden gestito da toggle.js
+// =================================================================
+
+.is-toggled-hidden {
+  display: none !important;
+}

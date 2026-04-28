@@ -1,0 +1,27 @@
+// Velora UI - tooltip (10.3)
+// Singolo balloon globale (creato lazy da tooltip.js) riposizionato per
+// ogni trigger. Il modulo SCSS imposta solo lo stile.
+
+.velora-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--velora-z-tooltip);
+  max-width: 240px;
+  padding: var(--velora-space-1) var(--velora-space-2);
+  background: var(--velora-c-menu-dark);
+  color: #fff;
+  font-size: var(--velora-fs-xs);
+  line-height: var(--velora-lh-tight);
+  border-radius: var(--velora-radius-sm);
+  box-shadow: var(--velora-shadow-md);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+
+  &.is-open {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

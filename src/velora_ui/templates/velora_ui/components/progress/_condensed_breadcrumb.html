@@ -1,0 +1,29 @@
+{% comment %}
+  Condensed progress breadcrumb (10.11): wizard a fasi numerate.
+  Ogni step ha pallino + label; lo step corrente e gli step "done" hanno
+  styling differenziato (`is-done`, `is-current`).
+{% endcomment %}
+{% if steps %}
+<nav class="velora-progress-steps {{ extra_class }}" aria-label="Avanzamento">
+    <ol class="velora-progress-steps__list">
+        {% for step in steps %}
+        <li class="velora-progress-steps__item is-{{ step.status }}">
+            {% if step.url and not step.is_current %}
+            <a class="velora-progress-steps__link" href="{{ step.url }}">
+                <span class="velora-progress-steps__dot" aria-hidden="true">{% if step.is_done %}&#10003;{% else %}{{ step.index }}{% endif %}</span>
+                <span class="velora-progress-steps__label">{{ step.label }}</span>
+            </a>
+            {% else %}
+            <div class="velora-progress-steps__link"{% if step.is_current %} aria-current="step"{% endif %}>
+                <span class="velora-progress-steps__dot" aria-hidden="true">{% if step.is_done %}&#10003;{% else %}{{ step.index }}{% endif %}</span>
+                <span class="velora-progress-steps__label">{{ step.label }}</span>
+            </div>
+            {% endif %}
+            {% if not forloop.last %}
+            <span class="velora-progress-steps__connector" aria-hidden="true"></span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}
