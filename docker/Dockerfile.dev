@@ -1,0 +1,40 @@
+# Dockerfile per ambiente di SVILUPPO.
+# - Source code montato come volume da docker-compose.dev.yml (hot reload, runserver con autoreload).
+# - Pacchetto `velora_ui` installato in modalita` editable.
+# - Base slim per tempi di build contenuti.
+# La produzione usa invece docker/Dockerfile.prod (multi-stage, assets compilati build-time).
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copia i file richiesti da hatchling per validare i metadata del progetto.
+# pyproject.toml dichiara `readme = "README.md"`, quindi il file deve essere
+# presente al momento di `pip install -e .` altrimenti la metadata fallisce.
+COPY pyproject.toml README.md LICENSE ./
+
+# Installazione delle dipendenze in modalita` editable.
+# Lo stub `__init__.py` permette ad hatchling di trovare il package; il codice
+# vero e proprio viene poi montato come volume in dev (vedi docker-compose.dev.yml).
+RUN mkdir -p src/velora_ui \
+    && touch src/velora_ui/__init__.py \
+    && pip install --upgrade pip \
+    && pip install -e ".[dev]"
+
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
