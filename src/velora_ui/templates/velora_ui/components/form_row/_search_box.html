@@ -1,0 +1,24 @@
+{% comment %}
+  Search box: form HTML standard con input type=search e bottone submit.
+  Per default usa method=GET cosi` il termine di ricerca finisce in URL e la
+  query e` condivisibile/bookmark-abile. Se action e` vuoto, il submit va
+  alla URL corrente (comportamento HTML standard).
+{% endcomment %}
+<form
+    class="velora-search-box {{ extra_class }}"
+    role="search"
+    {% if action %}action="{{ action }}"{% endif %}
+    method="{{ method }}">
+    {% if label %}<label for="velora-search-{{ name }}" class="velora-search-box__label">{{ label }}</label>{% endif %}
+    <input
+        type="search"
+        name="{{ name }}"
+        id="velora-search-{{ name }}"
+        class="velora-search-box__input"
+        value="{{ value|default_if_none:'' }}"
+        placeholder="{{ placeholder }}"
+        autocomplete="off">
+    <button type="submit" class="velora-search-box__submit velora-btn velora-btn--secondary">
+        {{ submit_label }}
+    </button>
+</form>

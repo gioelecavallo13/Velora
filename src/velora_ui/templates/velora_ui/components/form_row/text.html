@@ -1,0 +1,20 @@
+{% comment %}
+  Form row: input testo (type fra text|email|number|password|url|tel|search).
+{% endcomment %}
+<div class="velora-form-row velora-form-row--text{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <input
+        type="{{ input_type }}"
+        name="{{ name }}"
+        id="{{ id }}"
+        class="velora-form-row__control velora-form-row__input"
+        value="{{ value|default_if_none:'' }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+        {% if minlength %}minlength="{{ minlength }}"{% endif %}
+        {% if pattern %}pattern="{{ pattern }}"{% endif %}>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

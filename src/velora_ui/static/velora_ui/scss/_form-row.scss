@@ -1,0 +1,290 @@
+// Velora UI - form rows (M3)
+//
+// Stili dei 7 tipi base di form_row + search box + fields separator.
+// Tutti i campi seguono lo stesso ritmo verticale e densita` informativa
+// alta tipica del posizionamento "admin panel".
+
+.velora-form-row {
+  display: block;
+  margin-bottom: var(--velora-space-4);
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+}
+
+.velora-form-row__label {
+  display: block;
+  margin-bottom: var(--velora-space-1);
+  font-weight: var(--velora-fw-medium);
+  color: var(--velora-gray-700);
+}
+
+.velora-form-row__label--inline {
+  display: inline;
+  margin-bottom: 0;
+  margin-left: var(--velora-space-2);
+  font-weight: var(--velora-fw-normal);
+  color: var(--velora-c-text);
+}
+
+.velora-form-row__label--group {
+  display: block;
+  margin-bottom: var(--velora-space-2);
+}
+
+.velora-form-row__required {
+  color: var(--velora-c-red);
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-form-row__inline-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin-right: var(--velora-space-4);
+}
+
+.velora-form-row__control {
+  font-family: inherit;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+
+  &:disabled {
+    background-color: var(--velora-gray-50);
+    color: var(--velora-gray-400);
+    cursor: not-allowed;
+  }
+}
+
+.velora-form-row__input,
+.velora-form-row__textarea,
+.velora-form-row__select {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  background-color: #fff;
+  border: var(--velora-border-width) solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  line-height: var(--velora-lh-base);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--velora-c-orange);
+    box-shadow: 0 0 0 3px rgba(245, 160, 0, 0.15);
+  }
+}
+
+.velora-form-row__textarea {
+  resize: vertical;
+  min-height: calc(var(--velora-fs-sm) * var(--velora-lh-base) + 16px);
+}
+
+.velora-form-row__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 30px;
+  color: var(--velora-c-text);
+}
+
+.velora-form-row__checkbox,
+.velora-form-row__radio {
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--velora-c-orange);
+}
+
+.velora-form-row__radio-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--velora-space-2) var(--velora-space-4);
+}
+
+// Stato errore: bordo rosso e label errore visibile
+.velora-form-row--error {
+  .velora-form-row__input,
+  .velora-form-row__textarea,
+  .velora-form-row__select {
+    border-color: var(--velora-c-red);
+  }
+
+  .velora-form-row__input:focus,
+  .velora-form-row__textarea:focus,
+  .velora-form-row__select:focus {
+    box-shadow: 0 0 0 3px rgba(193, 40, 46, 0.15);
+  }
+}
+
+.velora-form-row__error {
+  margin: var(--velora-space-1) 0 0;
+  font-size: var(--velora-fs-xs);
+  color: var(--velora-c-red);
+}
+
+.velora-form-row__help {
+  margin: var(--velora-space-1) 0 0;
+  font-size: var(--velora-fs-xs);
+  color: var(--velora-gray-400);
+}
+
+// On/off switch: la <input> reale e` nascosta visivamente ma rimane focusable
+.velora-form-row__onoff {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.velora-form-row__onoff-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.velora-form-row__onoff-track {
+  position: absolute;
+  inset: 0;
+  background-color: var(--velora-gray-200);
+  border-radius: 999px;
+  transition: background-color 0.18s ease;
+  pointer-events: none;
+}
+
+.velora-form-row__onoff-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: var(--velora-shadow-sm);
+  transition: transform 0.18s ease;
+}
+
+.velora-form-row__onoff-input:checked + .velora-form-row__onoff-track {
+  background-color: var(--velora-c-orange);
+
+  > .velora-form-row__onoff-thumb {
+    transform: translateX(16px);
+  }
+}
+
+.velora-form-row__onoff-input:focus-visible + .velora-form-row__onoff-track {
+  box-shadow: 0 0 0 3px rgba(245, 160, 0, 0.25);
+}
+
+.velora-form-row__file {
+  display: block;
+  width: 100%;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+
+  &::file-selector-button {
+    margin-right: var(--velora-space-3);
+    padding: 6px 14px;
+    border: var(--velora-border-width) solid var(--velora-border-color);
+    background-color: #fff;
+    border-radius: var(--velora-radius-sm);
+    font-size: var(--velora-fs-sm);
+    color: var(--velora-gray-700);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--velora-gray-50);
+    }
+  }
+}
+
+// Search box (5.9)
+.velora-search-box {
+  display: flex;
+  align-items: stretch;
+  gap: var(--velora-space-2);
+  max-width: 360px;
+}
+
+.velora-search-box__label {
+  align-self: center;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-gray-700);
+}
+
+.velora-search-box__input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-c-text);
+  background-color: #fff;
+  border: var(--velora-border-width) solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--velora-c-orange);
+    box-shadow: 0 0 0 3px rgba(245, 160, 0, 0.15);
+  }
+}
+
+.velora-search-box__submit {
+  flex-shrink: 0;
+}
+
+// Fields separator (5.10)
+.velora-fields-separator {
+  display: flex;
+  align-items: center;
+  margin: var(--velora-space-4) 0;
+  color: var(--velora-gray-400);
+  font-size: var(--velora-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--velora-border-color);
+  }
+
+  &::before {
+    margin-right: var(--velora-space-3);
+  }
+
+  &::after {
+    margin-left: var(--velora-space-3);
+  }
+}
+
+.velora-fields-separator--plain {
+  &::before {
+    margin-right: 0;
+  }
+
+  &::after {
+    margin-left: 0;
+  }
+}
+
+.velora-fields-separator__label {
+  flex-shrink: 0;
+}

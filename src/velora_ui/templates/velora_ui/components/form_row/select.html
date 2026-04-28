@@ -1,0 +1,23 @@
+{% comment %}
+  Form row: select singolo.
+  Multiple e` rinviato a v0.2 (vedi piano "Cosa NON entra in v0.1").
+{% endcomment %}
+<div class="velora-form-row velora-form-row--select{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <select
+        name="{{ name }}"
+        id="{{ id }}"
+        class="velora-form-row__control velora-form-row__select"
+        {% if required %}required{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if autofocus %}autofocus{% endif %}>
+        {% if empty_label %}<option value="">{{ empty_label }}</option>{% endif %}
+        {% for choice in choices %}
+        <option
+            value="{{ choice.value }}"
+            {% if choice.value|stringformat:"s" == value_str %}selected{% endif %}
+            {% if choice.disabled %}disabled{% endif %}>{{ choice.label }}</option>
+        {% endfor %}
+    </select>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

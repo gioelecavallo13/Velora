@@ -1,0 +1,16 @@
+{% comment %}
+  Form row: textarea multilinea.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--textarea{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <textarea
+        name="{{ name }}"
+        id="{{ id }}"
+        class="velora-form-row__control velora-form-row__textarea"
+        rows="{{ rows }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if autofocus %}autofocus{% endif %}>{{ value|default_if_none:"" }}</textarea>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

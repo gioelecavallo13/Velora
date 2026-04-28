@@ -1,5 +1,5 @@
 {% extends "velora_ui/base.html" %}
-{% load velora_layout %}
+{% load velora_layout velora_forms %}
 
 {% comment %}
   Showcase placeholder M2. Eredita il layout `velora_ui/base.html` (header,
@@ -8,7 +8,7 @@
   dal catalogo vivente completo.
 {% endcomment %}
 
-{% block title %}Velora UI - Showcase M2{% endblock %}
+{% block title %}Velora UI - Showcase M3{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -38,6 +38,34 @@
     }
     .showcase-list { line-height: 1.8; }
     .showcase-list li { list-style: disc; margin-left: var(--velora-space-5); }
+
+    .showcase-section {
+        max-width: 720px;
+        margin: var(--velora-space-6) auto;
+        background: #fff;
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-md);
+        padding: var(--velora-space-6) var(--velora-space-8);
+        box-shadow: var(--velora-shadow-sm);
+    }
+    .showcase-section__title {
+        margin: 0 0 var(--velora-space-2);
+        font-size: var(--velora-fs-md);
+        color: var(--velora-gray-900);
+    }
+    .showcase-section__intro {
+        margin: 0 0 var(--velora-space-4);
+        color: var(--velora-gray-400);
+        font-size: var(--velora-fs-sm);
+    }
+    .showcase-grid--two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 var(--velora-space-6);
+    }
+    @media (max-width: 600px) {
+        .showcase-grid--two-col { grid-template-columns: 1fr; }
+    }
 </style>
 {% endblock %}
 
@@ -68,8 +96,40 @@
         <li>Il context processor <code>velora_ui.context_processors.header_defaults</code> espone <code>velora_header_app_name</code> nei template.</li>
     </ul>
 
-    <p class="velora-text-muted">Prossimo passo: M3 Form core (Fase 5 del piano).</p>
+    <p class="velora-text-muted">Prossimo passo: M4 Tabelle e link (Fase 6 del piano).</p>
 </div>
+
+<section class="showcase-section" id="form">
+    <h2 class="showcase-section__title">Form core (M3)</h2>
+    <p class="showcase-section__intro">Sette tipi base di <code>{% verbatim %}{% velora_form_row %}{% endverbatim %}</code>, search box e separatore.</p>
+
+    <form onsubmit="event.preventDefault(); console.log('[showcase] form submit demo');">
+        <div class="showcase-grid--two-col">
+            {% velora_form_row type="text" name="full_name" label="Nome completo" placeholder="Mario Rossi" required=True %}
+            {% velora_form_row type="text" name="email" label="Email" input_type="email" value="mario@example.com" help_text="Email aziendale" %}
+        </div>
+
+        {% velora_form_row type="textarea" name="bio" label="Bio" rows=3 placeholder="Descrizione breve..." %}
+
+        <div class="showcase-grid--two-col">
+            {% velora_form_row type="select" name="role" label="Ruolo" choices=showcase_role_choices empty_label="-- seleziona --" %}
+            {% velora_form_row type="file" name="avatar" label="Avatar" accept="image/*" help_text="JPEG o PNG, max 2MB" %}
+        </div>
+
+        {% velora_form_row type="radio" name="plan" label="Piano" choices=showcase_plan_choices value="pro" %}
+
+        <div class="showcase-grid--two-col">
+            {% velora_form_row type="checkbox" name="terms" label="Accetto i termini" required=True %}
+            {% velora_form_row type="onoff" name="notifications" label="Notifiche email" value=True %}
+        </div>
+
+        {% velora_form_row type="text" name="invalid_demo" label="Campo con errore" value="x" error="Valore non valido per questa demo" %}
+
+        {% velora_fields_separator label="oppure cerca" %}
+
+        {% velora_search_box name="q" placeholder="Cerca componenti..." submit_label="Cerca" %}
+    </form>
+</section>
 {% endblock %}
 
 {% block extra_js %}

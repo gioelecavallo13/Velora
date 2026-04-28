@@ -36,6 +36,18 @@ def index(request: HttpRequest) -> HttpResponse:
         {"label": "Nuovo elemento", "url": "#", "variant": "primary"},
     ]
 
+    role_choices = [
+        ("admin", "Amministratore"),
+        ("editor", "Editor"),
+        ("viewer", "Sola lettura"),
+    ]
+
+    plan_choices = [
+        {"value": "free", "label": "Free"},
+        {"value": "pro", "label": "Pro"},
+        {"value": "enterprise", "label": "Enterprise", "disabled": True},
+    ]
+
     return render(
         request,
         "showcase/index.html",
@@ -44,5 +56,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_header_items": header_items,
             "showcase_sidebar_items": sidebar_items,
             "showcase_title_actions": title_actions,
+            "showcase_role_choices": role_choices,
+            "showcase_plan_choices": plan_choices,
         },
     )

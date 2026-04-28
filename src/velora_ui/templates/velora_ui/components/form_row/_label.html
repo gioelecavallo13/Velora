@@ -1,0 +1,9 @@
+{% comment %}
+  Partial label condivisa fra tutti i tipi di form_row.
+  Aspetta: id, label, required.
+{% endcomment %}
+{% if label %}
+<label for="{{ id }}" class="velora-form-row__label">
+    {{ label }}{% if required %} <span class="velora-form-row__required" aria-hidden="true">*</span>{% endif %}
+</label>
+{% endif %}

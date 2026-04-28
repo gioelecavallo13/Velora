@@ -1,0 +1,28 @@
+{% comment %}
+  Form row: gruppo di radio buttons.
+  Tutte le radio condividono lo stesso `name` (per costruzione del gruppo);
+  ognuna ha id `<id>__<value>` per evitare collisioni con altre form sulla
+  stessa pagina.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--radio{% if error %} velora-form-row--error{% endif %} {{ extra_class }}"
+     role="radiogroup"
+     {% if label %}aria-label="{{ label }}"{% endif %}>
+    {% if label %}<span class="velora-form-row__label velora-form-row__label--group" id="{{ id }}__group-label">{{ label }}{% if required %} <span class="velora-form-row__required" aria-hidden="true">*</span>{% endif %}</span>{% endif %}
+    <div class="velora-form-row__radio-list">
+        {% for choice in choices %}
+        <label class="velora-form-row__inline-label" for="{{ id }}__{{ forloop.counter0 }}">
+            <input
+                type="radio"
+                name="{{ name }}"
+                id="{{ id }}__{{ forloop.counter0 }}"
+                class="velora-form-row__control velora-form-row__radio"
+                value="{{ choice.value }}"
+                {% if choice.value|stringformat:"s" == value_str %}checked{% endif %}
+                {% if required %}required{% endif %}
+                {% if choice.disabled or disabled %}disabled{% endif %}>
+            <span class="velora-form-row__label velora-form-row__label--inline">{{ choice.label }}</span>
+        </label>
+        {% endfor %}
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

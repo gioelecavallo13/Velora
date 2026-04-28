@@ -1,0 +1,10 @@
+{% comment %}
+  Partial per help text + messaggio errore.
+  Aspetta: help_text, error.
+{% endcomment %}
+{% if error %}
+<p class="velora-form-row__error" role="alert">{{ error }}</p>
+{% endif %}
+{% if help_text %}
+<p class="velora-form-row__help">{{ help_text }}</p>
+{% endif %}

@@ -1,0 +1,28 @@
+{% comment %}
+  Form row: switch on/off.
+  Usa un input checkbox sotto al cofano (markup HTML standard) ma stilizzato
+  come toggle. La classe `velora-form-row__onoff` e` il bersaglio del CSS che
+  trasforma la checkbox in switch (vedi _form-row.scss).
+  In post si manda `value_on` se on, niente se off (comportamento checkbox
+  HTML standard).
+{% endcomment %}
+<div class="velora-form-row velora-form-row--onoff{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    <label class="velora-form-row__inline-label" for="{{ id }}">
+        <span class="velora-form-row__onoff">
+            <input
+                type="checkbox"
+                name="{{ name }}"
+                id="{{ id }}"
+                class="velora-form-row__control velora-form-row__onoff-input"
+                value="{{ value_on }}"
+                {% if checked %}checked{% endif %}
+                {% if required %}required{% endif %}
+                {% if disabled %}disabled{% endif %}>
+            <span class="velora-form-row__onoff-track" aria-hidden="true">
+                <span class="velora-form-row__onoff-thumb"></span>
+            </span>
+        </span>
+        {% if label %}<span class="velora-form-row__label velora-form-row__label--inline">{{ label }}{% if required %} <span class="velora-form-row__required" aria-hidden="true">*</span>{% endif %}</span>{% endif %}
+    </label>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

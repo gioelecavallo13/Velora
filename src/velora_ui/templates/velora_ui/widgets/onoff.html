@@ -1,0 +1,17 @@
+{% comment %}
+  Template del widget OnOffWidget (Django form rendering nativo).
+  Riproduce il markup di components/form_row/onoff.html ma riceve `widget`
+  come unico namespace (firma standard dei widget Django).
+{% endcomment %}
+<span class="velora-form-row__onoff">
+    <input type="checkbox"
+           name="{{ widget.name }}"
+           value="{{ widget.value_on }}"
+           {% if widget.attrs.id %}id="{{ widget.attrs.id }}"{% endif %}
+           class="velora-form-row__control velora-form-row__onoff-input{% if widget.attrs.class %} {{ widget.attrs.class }}{% endif %}"
+           {% if widget.value %}checked{% endif %}
+           {% for name, val in widget.attrs.items %}{% if val and name != 'id' and name != 'class' %} {{ name }}="{{ val }}"{% endif %}{% endfor %}>
+    <span class="velora-form-row__onoff-track" aria-hidden="true">
+        <span class="velora-form-row__onoff-thumb"></span>
+    </span>
+</span>
