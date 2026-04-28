@@ -35,6 +35,13 @@ dependencies = [
 dev = [
     "pytest>=8",
     "pytest-django>=4.8",
+    # NB: la versione di playwright deve coincidere con quella dell'immagine
+    # docker `mcr.microsoft.com/playwright/python:vX.Y.Z-jammy` usata dal
+    # servizio `playwright-tests` (docker-compose.dev.yml). I browser sono
+    # bundle-ati nell'immagine; un mismatch fa fallire il test con
+    # "Executable doesn't exist". Tenere allineate.
+    "pytest-playwright>=0.5,<0.6",
+    "playwright==1.50.0",
     "ruff>=0.5",
     "black>=24.4",
     "mypy>=1.10",
@@ -77,3 +84,7 @@ target-version = ["py311"]
 DJANGO_SETTINGS_MODULE = "velora_project.settings"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
+# I test in tests/visual/ richiedono Playwright + browser e girano in un
+# container dedicato (vedi servizio `playwright-tests` di docker-compose).
+# Esclusi dalla suite di default per evitare ImportError sul container web.
+norecursedirs = ["tests/visual"]

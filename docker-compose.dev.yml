@@ -46,6 +46,34 @@ services:
       - ./docker/nginx/dev.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
 
+  # Servizio one-shot per i test di visual regression (M6).
+  # Eseguire con:
+  #   docker compose -f docker-compose.dev.yml run --rm playwright-tests
+  # oppure per aggiornare le baseline:
+  #   docker compose -f docker-compose.dev.yml run --rm playwright-tests \
+  #     pytest tests/visual --update-snapshots
+  playwright-tests:
+    image: mcr.microsoft.com/playwright/python:v1.50.0-jammy
+    container_name: velora-playwright-tests
+    profiles: ["test"]
+    working_dir: /app
+    depends_on:
+      - web
+    volumes:
+      - .:/app
+      - velora-playwright-cache:/root/.cache/pip
+    environment:
+      VELORA_VISUAL_URL: http://web:8000
+    # `--ignore-requires-python`: l'immagine Microsoft/Playwright python:v1.50.0
+    # ha Python 3.10, mentre velora-ui dichiara `requires-python>=3.11`. Il
+    # codice e` compatibile con 3.10, qui interessa solo poter installare il
+    # pacchetto in editable per testare; il vincolo resta in pyproject.toml
+    # per la pubblicazione futura. Quando passeremo a un'immagine playwright
+    # con Python 3.11+ rimuoveremo il flag.
+    command: >
+      bash -lc "pip install --quiet --ignore-requires-python -e .[dev] && pytest tests/visual -v"
+
 volumes:
   velora-pip-cache:
   velora-node-modules:
+  velora-playwright-cache:

@@ -2,62 +2,85 @@
 {% load velora_layout velora_forms velora_data velora_links velora_feedback %}
 
 {% comment %}
-  Showcase placeholder M2. Eredita il layout `velora_ui/base.html` (header,
-  sidebar, content) e popola gli item header / sidebar e la title bar con
-  dati statici di esempio. In M6 (Fase 8) questo template sara` sostituito
-  dal catalogo vivente completo.
+  Showcase v0.1 — living styleguide di Velora UI.
+
+  La pagina e` strutturata in sezioni una per categoria (Layout, Form, Tabelle,
+  Link, Feedback), navigabili dalla sidebar (TOC) che funge da indice cliccabile.
+  Per ogni componente proponiamo "snippet + render" affiancati: il render live
+  dimostra l'aspetto reale e il blocco di codice (in <pre>) mostra come usare
+  il template tag dal proprio template. La duplicazione del codice e` voluta:
+  evitare un mini-tag custom solo per lo showcase mantiene la leggibilita`
+  della pagina e non aggiunge superficie API al pacchetto.
+
+  Per allargare l'inventario in futuro: aggiungere la voce nella sidebar (in
+  views.py -> SHOWCASE_SECTIONS) e una <section class="showcase-section">
+  con id corrispondente.
 {% endcomment %}
 
-{% block title %}Velora UI - Showcase M5{% endblock %}
+{% block title %}Velora UI - Showcase v{{ velora_version }}{% endblock %}
 
 {% block extra_head %}
 <style>
-    /* Stili specifici della pagina showcase, non parte del design system. */
-    .showcase-card {
-        max-width: 720px;
-        margin: var(--velora-space-6) auto;
-        background: #fff;
-        border: 1px solid var(--velora-border-color);
-        border-radius: var(--velora-radius-md);
-        padding: var(--velora-space-6) var(--velora-space-8);
-        box-shadow: var(--velora-shadow-sm);
-    }
-    .showcase-badge {
-        display: inline-block;
-        background: var(--velora-c-orange);
-        color: #fff;
-        padding: 2px 8px;
-        border-radius: var(--velora-radius-sm);
-        font-size: var(--velora-fs-xs);
-        margin-left: var(--velora-space-2);
-        vertical-align: middle;
-    }
-    .showcase-subtitle {
-        color: var(--velora-gray-400);
-        margin: 0 0 var(--velora-space-4);
-    }
-    .showcase-list { line-height: 1.8; }
-    .showcase-list li { list-style: disc; margin-left: var(--velora-space-5); }
+    /* Stili specifici della pagina showcase, NON parte del design system. */
 
     .showcase-section {
-        max-width: 720px;
-        margin: var(--velora-space-6) auto;
+        max-width: 980px;
+        margin: 0 auto var(--velora-space-8);
+        padding: var(--velora-space-6);
         background: #fff;
         border: 1px solid var(--velora-border-color);
         border-radius: var(--velora-radius-md);
-        padding: var(--velora-space-6) var(--velora-space-8);
         box-shadow: var(--velora-shadow-sm);
+        scroll-margin-top: calc(var(--velora-header-height) + var(--velora-space-3));
     }
-    .showcase-section__title {
-        margin: 0 0 var(--velora-space-2);
-        font-size: var(--velora-fs-md);
-        color: var(--velora-gray-900);
-    }
-    .showcase-section__intro {
-        margin: 0 0 var(--velora-space-4);
+    .showcase-section__hero { padding-bottom: var(--velora-space-3); border-bottom: 1px solid var(--velora-border-color); margin-bottom: var(--velora-space-5); }
+    .showcase-section__title { margin: 0 0 var(--velora-space-1); font-size: var(--velora-fs-lg); color: var(--velora-gray-900); }
+    .showcase-section__intro { margin: 0; color: var(--velora-gray-400); font-size: var(--velora-fs-sm); }
+    .showcase-section__subtitle {
+        margin: var(--velora-space-5) 0 var(--velora-space-2);
+        font-size: var(--velora-fs-xs);
+        text-transform: uppercase;
+        letter-spacing: .05em;
         color: var(--velora-gray-400);
-        font-size: var(--velora-fs-sm);
+        font-weight: var(--velora-fw-medium);
     }
+
+    .showcase-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        margin: var(--velora-space-3) 0;
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-sm);
+        background: #fff;
+        overflow: hidden;
+    }
+    .showcase-demo--stacked { grid-template-columns: 1fr; }
+    @media (max-width: 720px) {
+        .showcase-demo { grid-template-columns: 1fr; }
+    }
+    .showcase-demo__live {
+        padding: var(--velora-space-4);
+        background: var(--velora-gray-50);
+        border-right: 1px solid var(--velora-border-color);
+        min-width: 0;
+    }
+    @media (max-width: 720px) {
+        .showcase-demo__live { border-right: 0; border-bottom: 1px solid var(--velora-border-color); }
+    }
+    .showcase-demo__code {
+        margin: 0;
+        padding: var(--velora-space-4);
+        background: #1D2328;
+        color: #f5f5f5;
+        font-size: 12px;
+        line-height: 1.55;
+        overflow-x: auto;
+        white-space: pre;
+        font-family: var(--velora-font-mono);
+    }
+    .showcase-demo__code code { color: inherit; background: transparent; padding: 0; }
+
     .showcase-grid--two-col {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -69,130 +92,339 @@
 </style>
 {% endblock %}
 
-{% block header %}
-{% velora_header items=showcase_header_items %}
-{% endblock %}
-
 {% block sidebar %}
+    {# La sidebar dello showcase agisce come TOC: link alle sezioni della pagina. #}
     {% include "velora_ui/components/sidebar/_sidebar.html" with velora_sidebar_items=showcase_sidebar_items %}
 {% endblock %}
 
 {% block title_bar %}
-{% velora_title_bar title="Showcase M2" actions=showcase_title_actions %}
+{% velora_title_bar title="Velora UI - Living Styleguide" actions=showcase_title_actions %}
 {% endblock %}
 
 {% block content %}
-<div class="showcase-card">
-    <h1>Velora UI <span class="showcase-badge">v{{ velora_version }}</span></h1>
-    <p class="showcase-subtitle">M2 Layout core attivo: header, sidebar collassabile e title bar.</p>
+{# ---------------------------------------------------------------- #}
+{# Hero / overview                                                  #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="overview">
+    <div class="showcase-section__hero">
+        <h1 class="showcase-section__title">
+            Velora UI
+            {% velora_label variant="warning" text="v"|add:velora_version %}
+        </h1>
+        <p class="showcase-section__intro">
+            Framework Django per pannelli admin: template tag riusabili, design
+            system SCSS, JavaScript vanilla a moduli ES. Questa pagina mostra
+            tutti i componenti della release v0.1 con snippet copia-incollabili.
+        </p>
+    </div>
+    <p>Naviga le sezioni dalla sidebar a sinistra. Aggiungere
+        <code>?no_sidebar=1</code> alla URL nasconde la sidebar (utile per modali
+        / iframe).</p>
+</section>
 
-    <p>Questa pagina conferma che:</p>
-    <ul class="showcase-list">
-        <li>Il template <code>velora_ui/base.html</code> e` ereditabile dalle pagine del progetto host.</li>
-        <li>Il tag <code>{% verbatim %}{% velora_header %}{% endverbatim %}</code> renderizza item di tipo <code>link</code> e <code>user-menu</code>.</li>
-        <li>La sidebar e` collassabile cliccando l'icona &#9776; nell'header (stato persistito in localStorage).</li>
-        <li>Il tag <code>{% verbatim %}{% velora_title_bar %}{% endverbatim %}</code> renderizza titolo + azioni con varianti <code>primary</code>/<code>secondary</code>.</li>
-        <li>Aggiungere <code>?no_sidebar=1</code> alla URL nasconde la sidebar (utile per modali / iframe).</li>
-        <li>Il context processor <code>velora_ui.context_processors.header_defaults</code> espone <code>velora_header_app_name</code> nei template.</li>
-    </ul>
+{# ---------------------------------------------------------------- #}
+{# Layout core (M2)                                                 #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="layout">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Layout core (M2)</h2>
+        <p class="showcase-section__intro">
+            <code>velora_ui/base.html</code> + tag <code>velora_header</code>
+            e <code>velora_title_bar</code>. La sidebar dello showcase, l'header
+            in alto e la title bar di questa pagina sono il render live di
+            questi componenti.
+        </p>
+    </div>
 
-    <p class="velora-text-muted">Prossimo passo: M6 Showcase v0.1 (Fase 8 del piano).</p>
-</div>
+    <h3 class="showcase-section__subtitle">Header items</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "link", "label": "Dashboard", "url": "/", "active": True},
+    {"type": "link", "label": "Documentazione", "url": "/docs/"},
+    {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
+] %}{% endverbatim %}</code></pre>
 
+    <h3 class="showcase-section__subtitle">Title bar con azioni</h3>
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_title_bar
+    title="Dashboard"
+    actions=[
+        {"label": "Annulla", "url": "/cancel/", "variant": "secondary"},
+        {"label": "Salva", "url": "/save/", "variant": "primary"},
+    ]
+%}{% endverbatim %}</code></pre>
+
+    <h3 class="showcase-section__subtitle">Sidebar collassabile</h3>
+    <p>Cliccando l'icona &#9776; nell'header in alto si commuta la classe
+        <code>velora-app--sidebar-collapsed</code> sul body; lo stato e`
+        persistito in <code>localStorage</code>.</p>
+</section>
+
+{# ---------------------------------------------------------------- #}
+{# Form core (M3)                                                   #}
+{# ---------------------------------------------------------------- #}
 <section class="showcase-section" id="form">
-    <h2 class="showcase-section__title">Form core (M3)</h2>
-    <p class="showcase-section__intro">Sette tipi base di <code>{% verbatim %}{% velora_form_row %}{% endverbatim %}</code>, search box e separatore.</p>
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Form core (M3)</h2>
+        <p class="showcase-section__intro">
+            7 tipi base di <code>velora_form_row</code> + search box +
+            separator. Tipi avanzati (datepicker, multiselect, autocomplete,
+            redactor, image preview) rimandati a v0.2 / v0.3.
+        </p>
+    </div>
 
-    <form onsubmit="event.preventDefault(); console.log('[showcase] form submit demo');">
-        <div class="showcase-grid--two-col">
-            {% velora_form_row type="text" name="full_name" label="Nome completo" placeholder="Mario Rossi" required=True %}
-            {% velora_form_row type="text" name="email" label="Email" input_type="email" value="mario@example.com" help_text="Email aziendale" %}
+    <h3 class="showcase-section__subtitle">Text + email</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="text" name="email_demo" label="Email" input_type="email" placeholder="mario@example.com" required=True help_text="Email aziendale" %}
         </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="text"
+    name="email"
+    label="Email"
+    input_type="email"
+    placeholder="mario@example.com"
+    required=True
+    help_text="Email aziendale"
+%}{% endverbatim %}</code></pre>
+    </div>
 
-        {% velora_form_row type="textarea" name="bio" label="Bio" rows=3 placeholder="Descrizione breve..." %}
-
-        <div class="showcase-grid--two-col">
-            {% velora_form_row type="select" name="role" label="Ruolo" choices=showcase_role_choices empty_label="-- seleziona --" %}
-            {% velora_form_row type="file" name="avatar" label="Avatar" accept="image/*" help_text="JPEG o PNG, max 2MB" %}
+    <h3 class="showcase-section__subtitle">Textarea</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="textarea" name="bio_demo" label="Bio" rows=3 placeholder="Descrizione breve..." %}
         </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="textarea"
+    name="bio"
+    label="Bio"
+    rows=3
+    placeholder="Descrizione breve..."
+%}{% endverbatim %}</code></pre>
+    </div>
 
-        {% velora_form_row type="radio" name="plan" label="Piano" choices=showcase_plan_choices value="pro" %}
-
-        <div class="showcase-grid--two-col">
-            {% velora_form_row type="checkbox" name="terms" label="Accetto i termini" required=True %}
-            {% velora_form_row type="onoff" name="notifications" label="Notifiche email" value=True %}
+    <h3 class="showcase-section__subtitle">Select</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="select" name="role_demo" label="Ruolo" choices=showcase_role_choices empty_label="-- seleziona --" %}
         </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="select"
+    name="role"
+    label="Ruolo"
+    choices=role_choices
+    empty_label="-- seleziona --"
+%}{% endverbatim %}</code></pre>
+    </div>
 
-        {% velora_form_row type="text" name="invalid_demo" label="Campo con errore" value="x" error="Valore non valido per questa demo" %}
+    <h3 class="showcase-section__subtitle">Checkbox + onoff</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="checkbox" name="terms_demo" label="Accetto i termini" %}
+            {% velora_form_row type="onoff" name="notifications_demo" label="Notifiche email" value=True %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row type="checkbox" name="terms" label="Accetto i termini" %}
+{% velora_form_row type="onoff" name="notifications" label="Notifiche email" value=True %}{% endverbatim %}</code></pre>
+    </div>
 
-        {% velora_fields_separator label="oppure cerca" %}
+    <h3 class="showcase-section__subtitle">Radio</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="radio" name="plan_demo" label="Piano" choices=showcase_plan_choices value="pro" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="radio"
+    name="plan"
+    label="Piano"
+    choices=plan_choices
+    value="pro"
+%}{% endverbatim %}</code></pre>
+    </div>
 
-        {% velora_search_box name="q" placeholder="Cerca componenti..." submit_label="Cerca" %}
-    </form>
+    <h3 class="showcase-section__subtitle">File</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="file" name="avatar_demo" label="Avatar" accept="image/*" help_text="JPEG o PNG, max 2MB" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="file"
+    name="avatar"
+    label="Avatar"
+    accept="image/*"
+    help_text="JPEG o PNG, max 2MB"
+%}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Stato di errore</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_form_row type="text" name="invalid_demo" label="Campo con errore" value="x" error="Valore non valido per questa demo" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row
+    type="text"
+    name="invalid"
+    label="Campo con errore"
+    value="x"
+    error="Valore non valido per questa demo"
+%}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Search box + separator</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_search_box name="q_demo" placeholder="Cerca componenti..." submit_label="Cerca" %}
+            {% velora_fields_separator label="oppure" %}
+            {% velora_search_box name="q_demo_2" placeholder="Altra search..." %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_search_box name="q" placeholder="Cerca componenti..." %}
+{% velora_fields_separator label="oppure" %}
+{% velora_search_box name="q2" placeholder="Altra search..." %}{% endverbatim %}</code></pre>
+    </div>
 </section>
 
+{# ---------------------------------------------------------------- #}
+{# Tabelle (M4)                                                     #}
+{# ---------------------------------------------------------------- #}
 <section class="showcase-section" id="tables">
-    <h2 class="showcase-section__title">Tabelle e link (M4)</h2>
-    <p class="showcase-section__intro">
-        <code>{% verbatim %}{% velora_table %}{% endverbatim %}</code>,
-        <code>{% verbatim %}{% velora_pagination %}{% endverbatim %}</code> e i 4 link essenziali
-        (action / nav / delete / btn_link).
-    </p>
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Tabelle (M4)</h2>
+        <p class="showcase-section__intro">
+            <code>velora_table</code> e <code>velora_pagination</code>. Le
+            tabelle interattive (form-in-cell AJAX, select_all_table_rows)
+            arrivano in v0.3.
+        </p>
+    </div>
 
-    {% velora_table headers=showcase_table_headers rows=showcase_table_rows %}
-
-    {% velora_pagination page=showcase_table_page base_url="/?status=open" %}
-
-    <p class="velora-mt-4">
-        {% velora_action_link url="#" label="Modifica" %}
-        {% velora_nav_link url="#" label="Dettagli" %}
-        {% velora_delete_link url="#" confirm_message="Eliminare definitivamente?" %}
-    </p>
-    <p class="velora-mt-2">
-        {% velora_btn_link url="#" label="Annulla" variant="secondary" %}
-        {% velora_btn_link url="#" label="Salva" variant="primary" %}
-    </p>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_table headers=showcase_table_headers rows=showcase_table_rows %}
+            {% velora_pagination page=showcase_table_page base_url="/?status=open" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_table headers=table_headers rows=table_rows %}
+{% velora_pagination page=table_page base_url="/?status=open" %}{% endverbatim %}</code></pre>
+    </div>
 </section>
 
+{# ---------------------------------------------------------------- #}
+{# Link (M4)                                                        #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section" id="links">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Link essenziali (M4)</h2>
+        <p class="showcase-section__intro">
+            4 tipologie di link per popolare le colonne azioni e le call-to-action:
+            <code>action</code> (arancio), <code>nav</code> (blu),
+            <code>delete</code> (rosso, con conferma JS), <code>btn_link</code>
+            (bottone-link generico).
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Link testuali</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_action_link url="#" label="Modifica" %}
+            {% velora_nav_link url="#" label="Dettagli" %}
+            {% velora_delete_link url="#" confirm_message="Eliminare definitivamente?" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_action_link url=item.edit_url label="Modifica" %}
+{% velora_nav_link url=item.detail_url label="Dettagli" %}
+{% velora_delete_link url=item.delete_url confirm_message="Eliminare?" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">Bottoni-link</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_btn_link url="#" label="Annulla" variant="secondary" %}
+            {% velora_btn_link url="#" label="Salva" variant="primary" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_btn_link url=cancel_url label="Annulla" variant="secondary" %}
+{% velora_btn_link url=save_url   label="Salva"   variant="primary"   %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- #}
+{# Feedback (M5)                                                    #}
+{# ---------------------------------------------------------------- #}
 <section class="showcase-section" id="feedback">
-    <h2 class="showcase-section__title">Feedback (M5)</h2>
-    <p class="showcase-section__intro">
-        Alert inline, badge e toast fluttuanti. I toast hanno API
-        imperativa <code>Velora.toast.success(msg)</code> ed e` integrato
-        anche col framework <code>django.contrib.messages</code>.
-    </p>
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">Feedback (M5)</h2>
+        <p class="showcase-section__intro">
+            Alert inline, badge e toast fluttuanti. I toast hanno API
+            imperativa <code>Velora.toast.success(msg)</code> e sono integrati
+            col framework <code>django.contrib.messages</code>: aggiungere
+            <code>messages.success(request, "...")</code> in una view fa
+            apparire automaticamente il toast.
+        </p>
+    </div>
 
-    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Alert</h3>
-    {% velora_alert variant="success" title="Operazione completata" message="Il salvataggio e` riuscito senza errori." dismissible=True %}
-    {% velora_alert variant="error" message="Connessione al server fallita. Riprova fra qualche istante." dismissible=True %}
-    {% velora_alert variant="warning" message="La password scadra` fra 3 giorni." %}
-    {% velora_alert variant="info" message="Versione di anteprima: alcune feature potrebbero variare prima della release v0.1." %}
+    <h3 class="showcase-section__subtitle">Alert</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            {% velora_alert variant="success" title="Operazione completata" message="Salvataggio riuscito senza errori." dismissible=True %}
+            {% velora_alert variant="error" message="Connessione al server fallita." dismissible=True %}
+            {% velora_alert variant="warning" message="La password scadra` fra 3 giorni." %}
+            {% velora_alert variant="info" message="Versione di anteprima: alcune feature potrebbero variare prima della release v0.1." %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_alert variant="success" title="OK" message="..." dismissible=True %}
+{% velora_alert variant="error"   message="..." dismissible=True %}
+{% velora_alert variant="warning" message="..." %}
+{% velora_alert variant="info"    message="..." %}{% endverbatim %}</code></pre>
+    </div>
 
-    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Label / badge</h3>
-    <p>
-        {% velora_label variant="success" text="Attivo" %}
-        {% velora_label variant="error" text="Errore" %}
-        {% velora_label variant="warning" text="In attesa" %}
-        {% velora_label variant="info" text="Info" %}
-        {% velora_label variant="neutral" text="Bozza" %}
-    </p>
+    <h3 class="showcase-section__subtitle">Label / badge</h3>
+    <div class="showcase-demo">
+        <div class="showcase-demo__live">
+            {% velora_label variant="success" text="Attivo" %}
+            {% velora_label variant="error" text="Errore" %}
+            {% velora_label variant="warning" text="In attesa" %}
+            {% velora_label variant="info" text="Info" %}
+            {% velora_label variant="neutral" text="Bozza" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_label variant="success" text="Attivo" %}
+{% velora_label variant="error"   text="Errore" %}
+{% velora_label variant="warning" text="In attesa" %}
+{% velora_label variant="info"    text="Info" %}
+{% velora_label variant="neutral" text="Bozza" %}{% endverbatim %}</code></pre>
+    </div>
 
-    <h3 class="showcase-section__title" style="font-size:var(--velora-fs-sm);text-transform:uppercase;letter-spacing:.05em;color:var(--velora-gray-400);margin-top:var(--velora-space-5);">Toast</h3>
-    <p>
-        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.success('Salvataggio riuscito')">success()</button>
-        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore inatteso')">error()</button>
-        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.warning('Attenzione, dati incompleti')">warning()</button>
-        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.info('Velora UI carica')">info()</button>
-        <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore persistente: NON si chiude da solo', { persistent: true })">persistent()</button>
-    </p>
+    <h3 class="showcase-section__subtitle">Toast (API JS)</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.success('Salvataggio riuscito')">success()</button>
+            <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore inatteso')">error()</button>
+            <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.warning('Attenzione, dati incompleti')">warning()</button>
+            <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.info('Velora UI carica')">info()</button>
+            <button type="button" class="velora-btn velora-btn--secondary" onclick="Velora.toast.error('Errore persistente: NON si chiude da solo', { persistent: true })">persistent()</button>
+        </div>
+        <pre class="showcase-demo__code"><code>Velora.toast.success("Salvataggio riuscito");
+Velora.toast.error("Errore inatteso");
+Velora.toast.warning("Dati incompleti");
+Velora.toast.info("Velora UI carica");
+Velora.toast.error("Errore", { persistent: true });</code></pre>
+    </div>
 
-    <p class="velora-mt-3" style="font-size:var(--velora-fs-xs);color:var(--velora-gray-400);">
-        Trigger lato server (django.contrib.messages):
-        <a href="?toast=success">?toast=success</a> &middot;
-        <a href="?toast=error">?toast=error</a> &middot;
-        <a href="?toast=warning">?toast=warning</a> &middot;
-        <a href="?toast=info">?toast=info</a>
-    </p>
+    <h3 class="showcase-section__subtitle">Toast da Django messages (server-side)</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <p style="margin:0 0 var(--velora-space-2);font-size:var(--velora-fs-xs);color:var(--velora-gray-400);">
+                Apri uno dei link sottostanti in una nuova scheda; il toast
+                appare al caricamento, perche` la view aggiunge il messaggio
+                via <code>django.contrib.messages</code>.
+            </p>
+            <a href="?toast=success" target="_blank">?toast=success</a> &middot;
+            <a href="?toast=error" target="_blank">?toast=error</a> &middot;
+            <a href="?toast=warning" target="_blank">?toast=warning</a> &middot;
+            <a href="?toast=info" target="_blank">?toast=info</a>
+        </div>
+        <pre class="showcase-demo__code"><code># views.py
+from django.contrib import messages
+
+def save_view(request):
+    ...
+    messages.success(request, "Salvataggio completato")
+    return redirect("dashboard")
+
+# templates/base.html (gia` incluso in velora_ui/base.html)
+{% verbatim %}{% velora_toast_messages %}{% endverbatim %}</code></pre>
+    </div>
 </section>
 {% endblock %}
 

@@ -32,12 +32,16 @@ def index(request: HttpRequest) -> HttpResponse:
         {"type": "user-menu", "label": "Sviluppatore", "url": "#"},
     ]
 
+    # Sidebar dello showcase = indice cliccabile delle sezioni della pagina.
+    # Aggiungere una sezione qui ed in showcase/index.html mantiene la TOC
+    # in sync con il contenuto.
     sidebar_items = [
-        {"label": "Layout", "url": "#layout", "icon": "L", "active": True},
+        {"label": "Overview", "url": "#overview", "icon": "·"},
+        {"label": "Layout", "url": "#layout", "icon": "L"},
         {"label": "Form", "url": "#form", "icon": "F"},
         {"label": "Tabelle", "url": "#tables", "icon": "T"},
+        {"label": "Link", "url": "#links", "icon": "→"},
         {"label": "Feedback", "url": "#feedback", "icon": "!"},
-        {"label": "Settings", "url": "#settings", "icon": "S"},
     ]
 
     title_actions = [
