@@ -2,8 +2,6 @@
 
 Documento operativo dell'infrastruttura del progetto. Copre l'ambiente di sviluppo locale (Docker + virtual host `velora.local`) e quello di produzione (Docker + gunicorn + nginx + postgres).
 
-La sezione produzione e` un placeholder strutturale fino al completamento della Fase 9 (M7 Release v0.1.0); le istruzioni complete arriveranno con quella milestone.
-
 ---
 
 ## 1. Prerequisiti
@@ -231,9 +229,119 @@ docker compose -f docker-compose.dev.yml up
 
 ---
 
-## 5. Ambiente di produzione (placeholder, completato in Fase 9)
+## 5. Ambiente di produzione
 
-Configurazione completa in `docker-compose.prod.yml` con servizi `web` (gunicorn), `nginx` (reverse proxy + serving static), `db` (postgres). Variabili in `.env.prod` (separate da `.env` di sviluppo). Documento aggiornato a fine M7 con istruzioni complete di deploy.
+Lo stack di produzione vive in `docker-compose.prod.yml` ed e` separato per intero da quello di sviluppo: file diverso, Dockerfile diverso (`docker/Dockerfile.prod` multi-stage), `.env.prod` distinto, immagini buildate con tag dedicato.
+
+### 5.1 Architettura
+
+| Servizio | Immagine | Ruolo |
+|---|---|---|
+| `db` | `postgres:16-alpine` | database, volume nominato `pgdata`, healthcheck `pg_isready` |
+| `web` | build da `docker/Dockerfile.prod` (multi-stage: `node:20-alpine` per asset → `python:3.11-slim` runtime non-root) | Django + gunicorn |
+| `nginx` | `nginx:alpine` | reverse proxy, serving `/static/` e `/media/` da volumi condivisi, gzip, header sicurezza, TLS-ready |
+
+I volumi nominati `pgdata`, `staticfiles`, `media` persistono fra `down` e `up`. Per cancellarli serve `docker compose down -v`.
+
+### 5.2 Setup iniziale
+
+```bash
+# 1. Generare il file .env.prod a partire dal template
+cp .env.prod.example .env.prod
+
+# 2. Generare una SECRET_KEY robusta (mai riusare quella di dev!)
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+# copiare il risultato in DJANGO_SECRET_KEY del .env.prod
+
+# 3. Impostare le credenziali postgres (POSTGRES_PASSWORD obbligatorio)
+#    e adattare DATABASE_URL di conseguenza.
+
+# 4. Aggiornare DJANGO_ALLOWED_HOSTS con il dominio reale
+#    (es. velora.example.com). Senza un valore valido Django risponde 400.
+```
+
+Verifica che `.env.prod` sia ignorato da git: `git check-ignore .env.prod` deve stamparne il path.
+
+### 5.3 Build e avvio
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Cosa succede in ordine:
+
+1. `db` parte e diventa healthy quando `pg_isready` risponde.
+2. `web` viene buildato (stage 1: build asset SCSS/JS con `dart-sass`+`esbuild`; stage 2: install pacchetto e collectstatic). Aspetta `db` healthy.
+3. L'entrypoint dentro `web` esegue: `python manage.py migrate --noinput`, `python manage.py collectstatic --noinput`, poi `gunicorn` con `${GUNICORN_WORKERS}` workers, timeout `${GUNICORN_TIMEOUT}s`, riavvio graceful ogni `${GUNICORN_MAX_REQUESTS}` richieste (vedi `docker/entrypoint.sh`).
+4. `nginx` si lega alla porta `${NGINX_HTTP_PORT:-80}` dell'host, fa proxy a `web:8000` per `/`, serve direttamente `/static/` e `/media/` dai volumi.
+
+### 5.4 Smoke test post-deploy
+
+```bash
+# stato dei container e healthcheck
+docker compose -f docker-compose.prod.yml ps
+
+# log di gunicorn (deve vedere "Booting worker")
+docker compose -f docker-compose.prod.yml logs web --tail 50
+
+# raggiungibilita` HTTP via nginx (sostituire la porta se hai cambiato NGINX_HTTP_PORT)
+curl -I http://localhost/
+# deve rispondere "HTTP/1.1 200 OK" o "302 Found" verso la home
+
+# verifica che gli asset statici vengano serviti da nginx (non da gunicorn)
+curl -I http://localhost/static/velora_ui/css/dist/velora.css
+# deve rispondere 200 con header "Cache-Control: public, must-revalidate"
+```
+
+### 5.5 Backup e ripristino database
+
+```bash
+# Backup full (custom format, compresso)
+docker compose -f docker-compose.prod.yml exec -T db \
+    pg_dump -U "${POSTGRES_USER:-velora}" -d "${POSTGRES_DB:-velora}" -Fc \
+    > "backups/velora_$(date +%Y%m%d_%H%M).dump"
+
+# Ripristino in un db vuoto (azzerare prima):
+docker compose -f docker-compose.prod.yml exec -T db \
+    pg_restore -U "${POSTGRES_USER:-velora}" -d "${POSTGRES_DB:-velora}" --clean --if-exists \
+    < backups/velora_20260428_1800.dump
+```
+
+Pianificare un cron host per snapshot regolari su disco esterno o storage cloud.
+
+### 5.6 Rotazione dei log
+
+Per default i log di `gunicorn` vanno su stdout/stderr e vengono catturati dal log driver di Docker. Su una macchina singola:
+
+```bash
+# vedere i log di tutti i servizi
+docker compose -f docker-compose.prod.yml logs -f --tail 200
+
+# limitare la dimensione dei file di log (json-file driver):
+# in /etc/docker/daemon.json
+# {"log-driver": "json-file", "log-opts": {"max-size": "50m", "max-file": "5"}}
+# poi: sudo systemctl restart docker
+```
+
+In ambienti gestiti (k8s, Nomad, etc.) si delega a un sidecar (loki, fluentbit, ...).
+
+### 5.7 Aggiornamento (deploy di una nuova versione)
+
+```bash
+git pull origin main
+docker compose -f docker-compose.prod.yml up -d --build web nginx
+```
+
+Il pattern `up -d --build <servizio>` ricostruisce solo i container necessari mantenendo `db` con i suoi dati. Il primo accesso post-deploy applica `migrate` e `collectstatic` automaticamente (vedi entrypoint).
+
+### 5.8 Attivazione TLS (LetsEncrypt)
+
+Quando il dominio e` pubblico e i record DNS sono propagati:
+
+1. Decommentare il blocco `server { listen 443 ssl ... }` in `docker/nginx/prod.conf` e il `redirect 80 → 443`.
+2. Decommentare `- "${NGINX_HTTPS_PORT:-443}:443"` e il volume `/etc/letsencrypt:/etc/letsencrypt:ro` in `docker-compose.prod.yml`.
+3. Decommentare `add_header Strict-Transport-Security ...` in `prod.conf` (DOPO che HTTPS funziona end-to-end, altrimenti i browser pinnano un certificato invalido).
+4. Ottenere il certificato (esempio con `certbot --nginx` o `certbot certonly --webroot`); seguire la documentazione del provider.
 
 ---
 
@@ -241,8 +349,8 @@ Configurazione completa in `docker-compose.prod.yml` con servizi `web` (gunicorn
 
 | Aspetto | Dev | Prod |
 |---|---|---|
-| Compose file | `docker-compose.dev.yml` | `docker-compose.prod.yml` (Fase 9) |
-| Dockerfile | `docker/Dockerfile.dev` | `docker/Dockerfile.prod` (Fase 9) |
+| Compose file | `docker-compose.dev.yml` | `docker-compose.prod.yml` |
+| Dockerfile | `docker/Dockerfile.dev` (single-stage) | `docker/Dockerfile.prod` (multi-stage, utente non-root) |
 | Server | `runserver` con autoreload | `gunicorn` |
 | Database | SQLite file in volume | Postgres 16 in container |
 | Source mount | si` (hot reload) | no (build immutabile) |

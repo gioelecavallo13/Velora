@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "velora-ui"
-version = "0.0.1"
+version = "0.1.0"
 description = "Framework grafico Django per pannelli admin: template tag riusabili, design system SCSS, JS vanilla a moduli ES."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["django", "ui", "framework", "admin", "template-tags"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Framework :: Django",
     "Framework :: Django :: 5.0",
     "Intended Audience :: Developers",
@@ -79,6 +79,26 @@ select = ["E", "F", "W", "I", "B", "UP", "DJ"]
 [tool.black]
 line-length = 100
 target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/velora_ui"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+# Senza `django-stubs` (rinviato a v0.2 per non aggiungere una dipendenza
+# heavy alla v0.1) Django espone `Any` su:
+#   - le superclassi (AppConfig, CheckboxInput, ...) -> error code `misc`
+#     "Class cannot subclass ... has type Any"
+#   - i decoratori `register.simple_tag` / `inclusion_tag` -> `untyped-decorator`
+#   - i moduli senza `py.typed` -> `import-untyped`
+#   - i metodi che ritornano implicitamente `Any` -> `no-any-return`
+# Disabilitiamo questi error code a livello globale: il typing rigoroso
+# resta attivo su tutto il codice nostro, accettiamo l'opacita` solo sui
+# confini con Django. Quando aggiungeremo django-stubs ridurremo questa
+# lista (issue tracciata nel piano alla sezione "v0.2 quality gates").
+disable_error_code = ["untyped-decorator", "misc", "import-untyped", "no-any-return"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "velora_project.settings"

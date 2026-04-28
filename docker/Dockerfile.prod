@@ -1,0 +1,103 @@
+# Dockerfile multi-stage per PRODUZIONE.
+#
+# Stage 1 (assets): compila CSS (dart-sass) e JS (esbuild) una volta sola con
+# Node 20-alpine. Output finale in /app/src/velora_ui/static/velora_ui/{css,js}/dist/.
+#
+# Stage 2 (runtime): immagine python:3.11-slim minimale, copia gli asset
+# compilati dallo stage `assets`, installa il pacchetto velora-ui + extras
+# `prod` (gunicorn + psycopg), runa con utente non-root.
+#
+# Build:
+#   docker build -f docker/Dockerfile.prod -t velora-ui-web-prod .
+#
+# Run (esempio standalone, normalmente orchestrato da docker-compose.prod.yml):
+#   docker run --rm -p 8000:8000 \
+#       -e DJANGO_SECRET_KEY=... \
+#       -e DJANGO_ALLOWED_HOSTS=example.com \
+#       -e DATABASE_URL=postgres://user:pass@db:5432/velora \
+#       -e DJANGO_ENV=prod \
+#       velora-ui-web-prod
+
+# ---------------------------------------------------------------------------
+# Stage 1: build asset
+# ---------------------------------------------------------------------------
+FROM node:20-alpine AS assets
+
+WORKDIR /app
+
+# Copiamo solo cio` che serve a npm install + build per massimizzare la cache.
+COPY package.json package-lock.json* ./
+RUN npm ci --silent || npm install --silent
+
+# Sorgenti SCSS/JS necessari al build degli asset.
+COPY src/velora_ui/static ./src/velora_ui/static
+COPY tools ./tools
+
+# One-shot build (non watch). Output finisce in
+# src/velora_ui/static/velora_ui/{css,js}/dist/
+RUN sh tools/build_css.sh build \
+    && sh tools/build_js.sh build
+
+# ---------------------------------------------------------------------------
+# Stage 2: runtime
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    DJANGO_ENV=prod
+
+# Pacchetti di sistema runtime: solo quelli realmente necessari.
+# - libpq5: client postgres usato da psycopg
+# - curl: usato dagli healthcheck di compose / smoke test
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Utente non-root dedicato (USER ID/GID 1001 evita collisioni con utenti host).
+RUN groupadd --system --gid 1001 velora \
+    && useradd --system --uid 1001 --gid velora --create-home --shell /bin/bash velora
+
+WORKDIR /app
+
+# Metadata del pacchetto richiesti da hatchling per la validation in pip install.
+COPY --chown=velora:velora pyproject.toml README.md LICENSE ./
+
+# Codice sorgente del pacchetto (incluso il package velora_ui completo).
+COPY --chown=velora:velora src ./src
+
+# Asset compilati dallo stage 1: build_css.sh produce
+# `static/velora_ui/css/velora.css` (+ .map) e build_js.sh produce
+# `static/velora_ui/js/velora.js` (+ .map). Copio i singoli file per non
+# trascinare anche i sorgenti SCSS/JS dello stage assets.
+COPY --from=assets --chown=velora:velora \
+    /app/src/velora_ui/static/velora_ui/css/velora.css \
+    /app/src/velora_ui/static/velora_ui/css/velora.css.map \
+    ./src/velora_ui/static/velora_ui/css/
+COPY --from=assets --chown=velora:velora \
+    /app/src/velora_ui/static/velora_ui/js/velora.js \
+    /app/src/velora_ui/static/velora_ui/js/velora.js.map \
+    ./src/velora_ui/static/velora_ui/js/
+
+# Codice del progetto host Django + script di entrypoint.
+COPY --chown=velora:velora velora_project ./velora_project
+COPY --chown=velora:velora showcase ./showcase
+COPY --chown=velora:velora manage.py ./manage.py
+COPY --chown=velora:velora docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Install editable per consistenza dev/prod (la pipeline e` la stessa).
+RUN pip install --upgrade pip \
+    && pip install -e ".[prod]" \
+    && chmod +x /usr/local/bin/entrypoint.sh \
+    && mkdir -p /app/staticfiles /app/media /app/data \
+    && chown -R velora:velora /app
+
+USER velora
+
+EXPOSE 8000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

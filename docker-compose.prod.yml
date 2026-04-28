@@ -1,0 +1,84 @@
+# Stack di PRODUZIONE Velora UI.
+#
+# Architettura:
+#  db    : Postgres 16-alpine, dati in volume nominato `pgdata`, healthcheck
+#  web   : Django+gunicorn da Dockerfile.prod (multi-stage), depends_on db healthy,
+#          monta volumi `staticfiles` (rw) e `media` (rw)
+#  nginx : reverse proxy + serving statici/media, ports 80:80 e placeholder 443:443
+#
+# Avvio:
+#   cp .env.prod.example .env.prod   # adattare le variabili (vedi commenti dentro)
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Fermata:
+#   docker compose -f docker-compose.prod.yml down            # mantiene i volumi
+#   docker compose -f docker-compose.prod.yml down -v         # CANCELLA i dati
+#
+# Backup database (esempio):
+#   docker compose -f docker-compose.prod.yml exec -T db \
+#       pg_dump -U "${POSTGRES_USER:-velora}" "${POSTGRES_DB:-velora}" \
+#       > backup_$(date +%Y%m%d_%H%M).sql
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: velora-db-prod
+    env_file:
+      - .env.prod
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-velora}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD richiesto in .env.prod}"
+      POSTGRES_DB: "${POSTGRES_DB:-velora}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-velora} -d ${POSTGRES_DB:-velora}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+    image: velora-ui-web-prod:latest
+    pull_policy: build
+    container_name: velora-web-prod
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    environment:
+      DJANGO_ENV: prod
+    volumes:
+      - staticfiles:/app/staticfiles
+      - media:/app/media
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: velora-nginx-prod
+    depends_on:
+      - web
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      # Decommentare quando si attiva TLS (vedi docker/nginx/prod.conf):
+      # - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      # Mount in sola lettura: nginx serve gli asset, non li produce.
+      - staticfiles:/var/www/velora/static:ro
+      - media:/var/www/velora/media:ro
+      # Per TLS, montare i certificati (esempio Let's Encrypt):
+      # - /etc/letsencrypt:/etc/letsencrypt:ro
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  staticfiles:
+  media:
