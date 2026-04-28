@@ -1,0 +1,110 @@
+// Velora UI - utilities essenziali
+// Solo le utility veramente usate nei componenti core di v0.1.
+// Non e` un sistema utility-first completo (no Tailwind clone): preferiamo
+// classi semantiche di componente in M2..M5 e usiamo queste utility solo
+// come collante per layout e spacing puntuali.
+
+// Display
+.velora-d-block        { display: block; }
+.velora-d-inline       { display: inline; }
+.velora-d-inline-block { display: inline-block; }
+.velora-d-flex         { display: flex; }
+.velora-d-inline-flex  { display: inline-flex; }
+.velora-d-grid         { display: grid; }
+.velora-d-none         { display: none; }
+
+// Flex
+.velora-flex-row     { flex-direction: row; }
+.velora-flex-column  { flex-direction: column; }
+.velora-flex-wrap    { flex-wrap: wrap; }
+.velora-flex-nowrap  { flex-wrap: nowrap; }
+.velora-flex-1       { flex: 1 1 0%; }
+
+// Justify
+.velora-justify-start    { justify-content: flex-start; }
+.velora-justify-center   { justify-content: center; }
+.velora-justify-end      { justify-content: flex-end; }
+.velora-justify-between  { justify-content: space-between; }
+.velora-justify-around   { justify-content: space-around; }
+
+// Align
+.velora-align-start   { align-items: flex-start; }
+.velora-align-center  { align-items: center; }
+.velora-align-end     { align-items: flex-end; }
+.velora-align-stretch { align-items: stretch; }
+
+// Gap (scala 1..6 + 8)
+@each $i in (1, 2, 3, 4, 5, 6, 8) {
+  .velora-gap-#{$i} { gap: var(--velora-space-#{$i}); }
+}
+
+// Spacing - margin
+@each $i in (0, 1, 2, 3, 4, 5, 6, 8) {
+  .velora-m-#{$i}  { margin: var(--velora-space-#{$i}); }
+  .velora-mt-#{$i} { margin-top: var(--velora-space-#{$i}); }
+  .velora-mr-#{$i} { margin-right: var(--velora-space-#{$i}); }
+  .velora-mb-#{$i} { margin-bottom: var(--velora-space-#{$i}); }
+  .velora-ml-#{$i} { margin-left: var(--velora-space-#{$i}); }
+  .velora-mx-#{$i} {
+    margin-left: var(--velora-space-#{$i});
+    margin-right: var(--velora-space-#{$i});
+  }
+  .velora-my-#{$i} {
+    margin-top: var(--velora-space-#{$i});
+    margin-bottom: var(--velora-space-#{$i});
+  }
+}
+
+// Spacing - padding
+@each $i in (0, 1, 2, 3, 4, 5, 6, 8) {
+  .velora-p-#{$i}  { padding: var(--velora-space-#{$i}); }
+  .velora-pt-#{$i} { padding-top: var(--velora-space-#{$i}); }
+  .velora-pr-#{$i} { padding-right: var(--velora-space-#{$i}); }
+  .velora-pb-#{$i} { padding-bottom: var(--velora-space-#{$i}); }
+  .velora-pl-#{$i} { padding-left: var(--velora-space-#{$i}); }
+  .velora-px-#{$i} {
+    padding-left: var(--velora-space-#{$i});
+    padding-right: var(--velora-space-#{$i});
+  }
+  .velora-py-#{$i} {
+    padding-top: var(--velora-space-#{$i});
+    padding-bottom: var(--velora-space-#{$i});
+  }
+}
+
+// Margin auto (per centrare)
+.velora-mx-auto { margin-left: auto; margin-right: auto; }
+.velora-ml-auto { margin-left: auto; }
+.velora-mr-auto { margin-right: auto; }
+
+// Allineamento testo
+.velora-text-left   { text-align: left; }
+.velora-text-center { text-align: center; }
+.velora-text-right  { text-align: right; }
+
+// Colori semantici testo
+.velora-text-muted   { color: var(--velora-gray-400); }
+.velora-text-success { color: var(--velora-c-success); }
+.velora-text-error   { color: var(--velora-c-error); }
+.velora-text-warning { color: var(--velora-c-warning); }
+.velora-text-info    { color: var(--velora-c-info); }
+
+// Visibility
+.velora-invisible { visibility: hidden; }
+.velora-visible   { visibility: visible; }
+
+.velora-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// Width / height comuni
+.velora-w-full { width: 100%; }
+.velora-h-full { height: 100%; }

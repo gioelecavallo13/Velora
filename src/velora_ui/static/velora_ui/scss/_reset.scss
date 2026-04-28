@@ -1,0 +1,75 @@
+// Velora UI - reset minimale
+// Azzera le incoerenze cross-browser piu` impattanti senza imporre opinioni
+// pesanti (no Tailwind preflight, no Bootstrap reboot completo). L'obiettivo
+// e` partire da una base prevedibile per gli admin panel target di v0.1.
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  line-height: var(--velora-lh-base);
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  border: 0;
+  border-top: var(--velora-border-width) solid var(--velora-border-color);
+  margin: var(--velora-space-4) 0;
+}
+
+[hidden] {
+  display: none !important;
+}

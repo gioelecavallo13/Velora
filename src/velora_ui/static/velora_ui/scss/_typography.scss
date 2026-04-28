@@ -1,0 +1,86 @@
+// Velora UI - tipografia base
+// Applica i token tipografici a body, heading e elementi di testo standard.
+// Niente bold di default (decisione di design Fase 1: admin densi senza
+// enfasi visiva accidentale).
+
+body {
+  font-family: var(--velora-font-base);
+  font-size: var(--velora-fs-base);
+  font-weight: var(--velora-fw-normal);
+  line-height: var(--velora-lh-base);
+  color: var(--velora-c-text);
+  background: var(--velora-gray-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: var(--velora-fw-normal);
+  line-height: var(--velora-lh-tight);
+  color: var(--velora-c-text);
+}
+
+h1 { font-size: var(--velora-fs-xxl); }
+h2 { font-size: var(--velora-fs-xl); }
+h3 { font-size: var(--velora-fs-lg); }
+h4 { font-size: var(--velora-fs-md); }
+h5 { font-size: var(--velora-fs-base); }
+h6 { font-size: var(--velora-fs-sm); }
+
+p {
+  margin: 0 0 var(--velora-space-3);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+small {
+  font-size: var(--velora-fs-sm);
+  color: var(--velora-gray-500);
+}
+
+strong,
+b {
+  font-weight: var(--velora-fw-medium);
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--velora-font-mono);
+  font-size: var(--velora-fs-sm);
+  background: var(--velora-gray-100);
+  padding: 2px 6px;
+  border-radius: var(--velora-radius-sm);
+}
+
+pre {
+  font-family: var(--velora-font-mono);
+  font-size: var(--velora-fs-sm);
+  background: var(--velora-gray-100);
+  padding: var(--velora-space-3) var(--velora-space-4);
+  border-radius: var(--velora-radius-md);
+  overflow: auto;
+  margin: 0 0 var(--velora-space-3);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+}
+
+a {
+  color: var(--velora-c-orange);
+  transition: color 0.12s ease-in-out;
+}
+
+a:hover {
+  color: var(--velora-c-orange-dark);
+}

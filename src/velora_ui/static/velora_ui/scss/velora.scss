@@ -1,0 +1,19 @@
+// Velora UI - entry SCSS principale
+//
+// Importa nell'ordine corretto i partial del design system v0.1:
+//   1. tokens     -> CSS custom properties (palette, font, spacing, ecc.)
+//   2. reset      -> azzeramento default browser
+//   3. typography -> regole base body / heading / link
+//   4. utilities  -> classi helper (display, flex, spacing, allineamenti)
+//
+// I partial successivi (componenti M2 layout, M3 form, M4 tabelle, M5
+// feedback) verranno aggiunti come @use in coda nelle milestone successive.
+//
+// Build:
+//   sh tools/build_css.sh         (one-shot)
+//   sh tools/build_css.sh watch   (watch mode, usato dal container `assets`)
+
+@use "tokens";
+@use "reset";
+@use "typography";
+@use "utilities";

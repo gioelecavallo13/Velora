@@ -1,0 +1,98 @@
+// Velora UI - design tokens
+// Dichiarati come CSS custom properties (var(--velora-*)) cosi` da essere
+// accessibili sia da SCSS che da JavaScript a runtime, e da poter supportare
+// in futuro tema dark con un secondo blocco :root[data-theme="dark"].
+//
+// Riferimento al posizionamento prodotto (Fase 1): admin panel, densita`
+// informativa alta, palette sobria, font compatto 14px base, niente bold
+// di default. I valori sono estratti dallo showcase teamARTIST originale.
+
+:root {
+  // Famiglie tipografiche
+  --velora-font-base: -apple-system, BlinkMacSystemFont, "San Francisco",
+    Roboto, "Segoe UI", "Helvetica Neue", sans-serif;
+  --velora-font-light: "Proxima Nova Light", var(--velora-font-base);
+  --velora-font-regular: "Proxima Nova Regular", var(--velora-font-base);
+  --velora-font-mono: ui-monospace, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  // Scala tipografica
+  --velora-fs-xs: 12px;
+  --velora-fs-sm: 13px;
+  --velora-fs-base: 14px;
+  --velora-fs-md: 18px;
+  --velora-fs-lg: 20px;
+  --velora-fs-xl: 22px;
+  --velora-fs-xxl: 24px;
+
+  // Line height
+  --velora-lh-tight: 1.25;
+  --velora-lh-base: 1.5;
+  --velora-lh-loose: 1.75;
+
+  // Pesi
+  --velora-fw-normal: 400;
+  --velora-fw-medium: 500;
+
+  // Colori brand
+  --velora-c-text: #4b4b4b;
+  --velora-c-menu-gray: #4F5D72;
+  --velora-c-orange: #F5A000;
+  --velora-c-orange-dark: #E58D00;
+  --velora-c-red: #c1282e;
+  --velora-c-green: #7AB55C;
+  --velora-c-menu-bg: #333A3F;
+  --velora-c-menu-dark: #1D2328;
+
+  // Scala grigi (50 chiarissimo - 900 quasi nero)
+  --velora-gray-50: #FAFBFC;
+  --velora-gray-100: #EBEEF0;
+  --velora-gray-200: #D3DBE2;
+  --velora-gray-400: #868686;
+  --velora-gray-500: #666666;
+  --velora-gray-700: #333333;
+  --velora-gray-900: #262626;
+
+  // Colori semantici (alias dei brand color, per leggibilita`)
+  --velora-c-success: var(--velora-c-green);
+  --velora-c-error: var(--velora-c-red);
+  --velora-c-warning: var(--velora-c-orange);
+  --velora-c-info: var(--velora-c-menu-gray);
+
+  // Spaziature (scala 4px)
+  --velora-space-0: 0;
+  --velora-space-1: 4px;
+  --velora-space-2: 8px;
+  --velora-space-3: 12px;
+  --velora-space-4: 16px;
+  --velora-space-5: 20px;
+  --velora-space-6: 24px;
+  --velora-space-8: 32px;
+  --velora-space-10: 40px;
+
+  // Border radius
+  --velora-radius-sm: 3px;
+  --velora-radius-md: 6px;
+  --velora-radius-lg: 8px;
+
+  // Border
+  --velora-border-color: var(--velora-gray-100);
+  --velora-border-width: 1px;
+
+  // Ombre (leggere, da admin tool)
+  --velora-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --velora-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  // Z-index scale
+  --velora-z-header: 100;
+  --velora-z-sidebar: 90;
+  --velora-z-dropdown: 200;
+  --velora-z-tooltip: 500;
+  --velora-z-dialog: 1000;
+  --velora-z-toast: 1100;
+
+  // Layout
+  --velora-header-height: 48px;
+  --velora-sidebar-width: 220px;
+  --velora-sidebar-width-collapsed: 56px;
+}

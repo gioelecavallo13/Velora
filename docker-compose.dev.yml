@@ -29,12 +29,10 @@ services:
     volumes:
       - .:/app
       - velora-node-modules:/app/node_modules
-    command: >
-      sh -c "
-        echo '[velora-assets] container pronto. La pipeline reale (dart-sass + esbuild --watch)
-        verra` configurata in M1 (Fase 3). Per ora resto attivo come placeholder.';
-        tail -f /dev/null
-      "
+    # La logica multi-step (install + build one-shot + watch in parallelo) sta
+    # in tools/start_assets.sh: piazzarla qui dentro un folded scalar YAML
+    # rompe la semantica di `&` rispetto a `&&`. Vedi commenti nello script.
+    command: sh tools/start_assets.sh
     restart: unless-stopped
 
   nginx:
