@@ -26,6 +26,15 @@ ALLOWED_HOSTS = env.list(
     default=["velora.local", "localhost", "127.0.0.1"],
 )
 
+# Origini HTTPS attendibili per CSRF (reverse proxy / Traefik). Lista separata da virgola;
+# es.: https://velora.example.com,https://www.velora.example.com
+CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
+
+_django_env = env("DJANGO_ENV", default="dev")
+if _django_env == "prod":
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    USE_X_FORWARDED_HOST = True
+
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
@@ -90,6 +99,8 @@ LOCALE_PATHS = [
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "src" / "velora_ui" / "static"]
+# Gli asset del pacchetto stanno in velora_ui/static/ (AppDirectoriesFinder).
+# Non aggiungere lo stesso tree in STATICFILES_DIRS: collectstatic duplicherebbe ogni file
+# (avvisi «Found another file with the destination path…» in produzione).
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

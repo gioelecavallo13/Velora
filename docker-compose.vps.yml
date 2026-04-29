@@ -1,0 +1,28 @@
+# Override per VPS dietro Traefik (rete Docker condivisa, niente publish 80/443 sul host).
+# Variable substitution richiede VELORA_PUBLIC_HOST (FQDN pubblico come in DNS/Traefik).
+# Crea sulla VPS `/opt/velora/.env` con una sola riga prima del primo compose up, es.:
+#   VELORA_PUBLIC_HOST=velora.tuo-dominio.com
+#
+# Uso prod + overlay Traefik (stesso file --env-file .env.prod su VPS per Django e interpolazione Compose):
+#     docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.vps.yml up -d --build
+services:
+  nginx:
+    ports: []
+    expose:
+      - "80"
+    networks:
+      - default
+      - traefik_edge
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=rete_per_instradamento
+      - "traefik.http.routers.velora.rule=Host(`${VELORA_PUBLIC_HOST}`)"
+      - traefik.http.routers.velora.entrypoints=websecure
+      - traefik.http.routers.velora.tls=true
+      - traefik.http.routers.velora.tls.certresolver=letsencrypt
+      - traefik.http.services.velora.loadbalancer.server.port=80
+
+networks:
+  traefik_edge:
+    name: rete_per_instradamento
+    external: true

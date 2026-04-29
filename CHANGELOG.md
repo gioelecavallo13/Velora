@@ -6,6 +6,15 @@ Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il vers
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-04-29
+
+### Infrastruttura
+
+- Produzione VPS dietro Traefik: `docker-compose.vps.yml` (rete esterna `rete_per_instradamento`), nginx senza porte host di default (`expose: 80`).
+- **`docker/nginx/prod.conf`**: upstream **`velora-web-prod:8000`** per evitare collisioni DNS sul nome **`web`** su reti Docker condivise; `map` **`X-Forwarded-Proto`** per HTTPS dietro Traefik.
+- **`docker-compose.prod.yml`**: Postgres solo da `.env.prod` per evitare interpolazione `${…:?}` obbligatoria; `CSRF_TRUSTED_ORIGINS` / proxy SSL in `settings.py` per prod; `STATICFILES_DIRS` duplicato rimosso.
+- Script deploy (`scripts/deploy-vps.sh`, esempi env) e `docker-compose.host-nginx-port.yml` opzionale.
+
 ## [0.5.0] — 2026-04-29
 
 ### Web (artifact GitHub Releases)
