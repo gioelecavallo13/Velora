@@ -1,0 +1,37 @@
+{% comment %}
+  Form row: datepicker (custom, zero deps).
+  L'input nativo type=date e` poco controllabile (look&feel browser specifico,
+  formato locale-dipendente, disabilita range dinamico complesso). Usiamo un
+  input testo + componente JS `datepicker` che apre un calendario popup.
+  Fallback senza JS: l'utente puo` scrivere a mano nel formato `format`.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--datepicker{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-datepicker"
+         data-velora-component="datepicker"
+         data-format="{{ format }}"
+         {% if min %}data-min="{{ min }}"{% endif %}
+         {% if max %}data-max="{{ max }}"{% endif %}
+         data-first-day="{{ first_day }}">
+        <input
+            type="text"
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-form-row__control velora-form-row__input velora-datepicker__input"
+            value="{{ value|default_if_none:'' }}"
+            autocomplete="off"
+            inputmode="numeric"
+            placeholder="{{ placeholder|default:format }}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>
+        <button type="button"
+                class="velora-datepicker__trigger"
+                aria-label="Apri calendario"
+                {% if disabled %}disabled{% endif %}
+                tabindex="-1">
+            <span aria-hidden="true">📅</span>
+        </button>
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

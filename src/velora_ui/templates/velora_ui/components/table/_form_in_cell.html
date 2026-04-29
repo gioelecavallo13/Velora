@@ -1,0 +1,47 @@
+{% comment %}
+  Form-in-cell: input AJAX inline.
+  Aspetta:
+    fic           : dict {type, name, value, url, method, csrf, auto_submit, choices?, row_id}
+    display_value : valore visualizzato (fallback testo statico)
+{% endcomment %}
+<span class="velora-cell-form"
+      data-velora-component="table-cell"
+      data-fic-type="{{ fic.type }}"
+      data-fic-name="{{ fic.name }}"
+      data-fic-url="{{ fic.url }}"
+      data-fic-method="{{ fic.method }}"
+      data-fic-csrf="{% if fic.csrf %}1{% else %}0{% endif %}"
+      data-fic-auto-submit="{% if fic.auto_submit %}1{% else %}0{% endif %}"
+      {% if fic.row_id %}data-fic-row-id="{{ fic.row_id }}"{% endif %}>
+    {% if fic.type == "text" or fic.type == "number" %}
+        <input
+            type="{% if fic.type == 'number' %}number{% else %}text{% endif %}"
+            class="velora-cell-form__input"
+            name="{{ fic.name }}"
+            value="{{ fic.value|default_if_none:'' }}">
+    {% elif fic.type == "select" %}
+        <select class="velora-cell-form__select" name="{{ fic.name }}">
+            {% for choice in fic.choices %}
+            <option value="{{ choice.value }}"
+                {% if choice.value|stringformat:"s" == fic.value|stringformat:"s" %}selected{% endif %}>{{ choice.label }}</option>
+            {% endfor %}
+        </select>
+    {% elif fic.type == "checkbox" %}
+        <input
+            type="checkbox"
+            class="velora-cell-form__checkbox"
+            name="{{ fic.name }}"
+            value="1"
+            {% if fic.value %}checked{% endif %}>
+    {% elif fic.type == "onoff" %}
+        <button type="button"
+                class="velora-cell-form__onoff{% if fic.value %} is-on{% endif %}"
+                role="switch"
+                aria-checked="{% if fic.value %}true{% else %}false{% endif %}">
+            <span class="velora-cell-form__onoff-track">
+                <span class="velora-cell-form__onoff-thumb"></span>
+            </span>
+        </button>
+    {% endif %}
+    <span class="velora-cell-form__status" aria-live="polite"></span>
+</span>

@@ -16,7 +16,7 @@
  * l'infrastruttura runtime e importa i componenti registrati di default.
  */
 
-const VELORA_VERSION = "0.2.0";
+const VELORA_VERSION = "0.3.0";
 const ATTR = "data-velora-component";
 const INIT_FLAG = "__veloraInitialized";
 
@@ -127,6 +127,15 @@ import dropdown from "./components/dropdown.js";
 import dialog from "./components/dialog.js";
 import toggleLink from "./components/toggle.js";
 import copyLink from "./components/copy.js";
+import datepicker from "./components/datepicker.js";
+import multiselect from "./components/multiselect.js";
+import autocomplete from "./components/autocomplete.js";
+import imagePreview from "./components/image_preview.js";
+import rating from "./components/rating.js";
+import timerField from "./components/timer.js";
+import redactor from "./components/redactor.js";
+import tableCell from "./components/table_cell.js";
+import selectAllTable from "./components/select_all_table.js";
 
 register(sidebarToggle);
 register(confirmComponent);
@@ -136,6 +145,15 @@ register(dropdown);
 register(dialog);
 register(toggleLink);
 register(copyLink);
+register(datepicker);
+register(multiselect);
+register(autocomplete);
+register(imagePreview);
+register(rating);
+register(timerField);
+register(redactor);
+register(tableCell);
+register(selectAllTable);
 
 // `toast` non e` un componente DOM (non si attacca via data-velora-component):
 // e` un manager singleton con API imperativa (Velora.toast.success(...)).

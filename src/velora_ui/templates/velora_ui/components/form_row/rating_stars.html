@@ -1,0 +1,33 @@
+{% comment %}
+  Form row: rating_stars.
+  Radio button nativi nascosti (uno per stella) impilati. Il submit invia
+  semplicemente il `value` del radio selezionato (es. 1..5). Lo stile a
+  stelle e` puro CSS (~ pattern :checked + general sibling combinator).
+  Componente JS opzionale per: hover preview + aria-label dinamico.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--rating{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-rating"
+         data-velora-component="rating"
+         {% if disabled %}data-disabled="true"{% endif %}
+         role="radiogroup"
+         aria-label="{{ label|default:'Valutazione' }}">
+        {% for star in stars %}
+        <label class="velora-rating__star{% if star.selected %} is-selected{% endif %}"
+               data-value="{{ star.value }}">
+            <input
+                type="radio"
+                name="{{ name }}"
+                id="{{ id }}_{{ star.value }}"
+                class="velora-rating__input"
+                value="{{ star.value }}"
+                {% if star.selected %}checked{% endif %}
+                {% if required and forloop.first %}required{% endif %}
+                {% if disabled %}disabled{% endif %}>
+            <span class="velora-rating__icon" aria-hidden="true">★</span>
+            <span class="velora-rating__sr">{{ star.value }} {% if star.value == 1 %}stella{% else %}stelle{% endif %}</span>
+        </label>
+        {% endfor %}
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

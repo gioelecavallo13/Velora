@@ -132,6 +132,10 @@ def index(request: HttpRequest) -> HttpResponse:
         {"label": "Navigation", "url": "#navigation", "icon": "N"},
         {"label": "Overlays", "url": "#overlays", "icon": "O"},
         {"label": "Progress", "url": "#progress", "icon": "%"},
+        # v0.3 — Fase 11
+        {"label": "Form avanzati", "url": "#form-advanced", "icon": "★"},
+        {"label": "Tabelle interattive", "url": "#tables-advanced", "icon": "≡"},
+        {"label": "Checkbox", "url": "#checkbox", "icon": "☑"},
     ]
 
     title_actions = [
@@ -199,6 +203,156 @@ def index(request: HttpRequest) -> HttpResponse:
         "Conferma",
     ]
 
+    # ---- v0.3 - Fase 11 ------------------------------------------------
+
+    # Locale autocomplete: lista statica di esempio
+    autocomplete_options = [
+        {"value": "rm", "label": "Roma"},
+        {"value": "mi", "label": "Milano"},
+        {"value": "to", "label": "Torino"},
+        {"value": "na", "label": "Napoli"},
+        {"value": "fi", "label": "Firenze"},
+        {"value": "bo", "label": "Bologna"},
+        {"value": "ve", "label": "Venezia"},
+        {"value": "ge", "label": "Genova"},
+        {"value": "ba", "label": "Bari"},
+        {"value": "pa", "label": "Palermo"},
+    ]
+
+    multiselect_options = [
+        {"value": "frontend", "label": "Frontend"},
+        {"value": "backend", "label": "Backend"},
+        {"value": "devops", "label": "DevOps"},
+        {"value": "ux", "label": "UX/UI"},
+        {"value": "qa", "label": "QA/Testing"},
+    ]
+
+    # Tabella interattiva con form-in-cell
+    advanced_table_headers = [
+        {"key": "id", "label": "#", "width": "60px", "align": "right"},
+        {"key": "name", "label": "Nome", "width": "180px"},
+        {"key": "role", "label": "Ruolo"},
+        {"key": "active", "label": "Attivo", "width": "70px", "align": "center"},
+        {"key": "tier", "label": "Piano"},
+    ]
+    advanced_table_rows = [
+        {
+            "id": 1,
+            "name": {
+                "value": "Mario Rossi",
+                "form_in_cell": {
+                    "type": "text",
+                    "name": "name",
+                    "value": "Mario Rossi",
+                    "url": "/api/users/1/",
+                    "row_id": 1,
+                },
+            },
+            "role": {
+                "value": "Admin",
+                "form_in_cell": {
+                    "type": "select",
+                    "name": "role",
+                    "value": "admin",
+                    "url": "/api/users/1/",
+                    "row_id": 1,
+                    "choices": [("admin", "Admin"), ("editor", "Editor"), ("viewer", "Viewer")],
+                },
+            },
+            "active": {
+                "value": True,
+                "form_in_cell": {
+                    "type": "onoff",
+                    "name": "active",
+                    "value": True,
+                    "url": "/api/users/1/",
+                    "row_id": 1,
+                },
+            },
+            "tier": "Pro",
+        },
+        {
+            "id": 2,
+            "name": {
+                "value": "Luca Bianchi",
+                "form_in_cell": {
+                    "type": "text",
+                    "name": "name",
+                    "value": "Luca Bianchi",
+                    "url": "/api/users/2/",
+                    "row_id": 2,
+                },
+            },
+            "role": {
+                "value": "Editor",
+                "form_in_cell": {
+                    "type": "select",
+                    "name": "role",
+                    "value": "editor",
+                    "url": "/api/users/2/",
+                    "row_id": 2,
+                    "choices": [("admin", "Admin"), ("editor", "Editor"), ("viewer", "Viewer")],
+                },
+            },
+            "active": {
+                "value": False,
+                "form_in_cell": {
+                    "type": "onoff",
+                    "name": "active",
+                    "value": False,
+                    "url": "/api/users/2/",
+                    "row_id": 2,
+                },
+            },
+            "tier": "Free",
+        },
+        {
+            "id": 3,
+            "name": {
+                "value": "Giulia Verdi",
+                "form_in_cell": {
+                    "type": "text",
+                    "name": "name",
+                    "value": "Giulia Verdi",
+                    "url": "/api/users/3/",
+                    "row_id": 3,
+                },
+            },
+            "role": {
+                "value": "Viewer",
+                "form_in_cell": {
+                    "type": "select",
+                    "name": "role",
+                    "value": "viewer",
+                    "url": "/api/users/3/",
+                    "row_id": 3,
+                    "choices": [("admin", "Admin"), ("editor", "Editor"), ("viewer", "Viewer")],
+                },
+            },
+            "active": {
+                "value": True,
+                "form_in_cell": {
+                    "type": "onoff",
+                    "name": "active",
+                    "value": True,
+                    "url": "/api/users/3/",
+                    "row_id": 3,
+                },
+            },
+            "tier": "Pro",
+        },
+    ]
+
+    bulk_actions = [
+        {"label": "Archivia", "value": "archive", "variant": "secondary"},
+        {
+            "label": "Elimina",
+            "value": "delete",
+            "variant": "danger",
+            "confirm": "Eliminare le righe selezionate? L'operazione e` irreversibile.",
+        },
+    ]
+
     # Demo del pattern django messages -> velora_toast_messages.
     # Aggiungere ?toast=success|error|warning|info alla URL emette un
     # messaggio del livello corrispondente; il template base.html lo
@@ -225,5 +379,10 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_submenu_items": submenu_items,
             "showcase_dropdown_items": dropdown_items,
             "showcase_wizard_steps": wizard_steps,
+            "showcase_autocomplete_options": autocomplete_options,
+            "showcase_multiselect_options": multiselect_options,
+            "showcase_advanced_table_headers": advanced_table_headers,
+            "showcase_advanced_table_rows": advanced_table_rows,
+            "showcase_bulk_actions": bulk_actions,
         },
     )

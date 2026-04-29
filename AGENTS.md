@@ -1,6 +1,6 @@
 # AGENTS.md — Contratti dei template tag Velora UI
 
-Questo documento e` la **fonte di verita`** per i contratti dei template tag della v0.1: chiavi accettate dei dict in input, default, comportamento con valori mancanti o invalidi. Lo usano:
+Questo documento e` la **fonte di verita`** per i contratti dei template tag delle v0.1/v0.2/v0.3: chiavi accettate dei dict in input, default, comportamento con valori mancanti o invalidi. Lo usano:
 
 - gli **agenti AI** che generano codice che usa Velora (Cursor / Copilot / altri): qui trovano gli schema senza dover leggere i sorgenti
 - gli **sviluppatori umani** che integrano Velora in un'app: qui trovano un riassunto pratico
@@ -19,8 +19,8 @@ Convenzioni:
 
 - [`velora_assets`](#velora_assets)
 - [`velora_layout` — header e title bar](#velora_layout)
-- [`velora_forms` — form_row, search_box, fields_separator](#velora_forms)
-- [`velora_data` — table, pagination](#velora_data)
+- [`velora_forms` — form_row (v0.1 + v0.3), search_box, fields_separator, checkbox_tag (v0.3)](#velora_forms)
+- [`velora_data` — table (v0.1 + v0.3 form-in-cell + selectable), pagination, select_all_table_rows (v0.3)](#velora_data)
 - [`velora_links` — action/nav/delete/btn + v0.2: settings/toggle/copy/dropdown/dialog](#velora_links)
 - [`velora_feedback` — alert, label, toast_messages](#velora_feedback)
 - [`velora_navigation` — breadcrumb, submenu, progress (v0.2)](#velora_navigation)
@@ -286,6 +286,84 @@ choices = [
 
 Tutti normalizzati internamente a `[{value, label, disabled}]`.
 
+### Parametri specifici per tipo (v0.3)
+
+**Aggiunti in v0.3.0**: 9 nuovi field type. Tutti zero-deps (no librerie esterne). I parametri comuni (name/label/value/required/disabled/error/help_text/extra_class/autofocus/id) restano identici.
+
+| Tipo | Param extra | Tipo | Default | Note |
+|---|---|---|---|---|
+| `datepicker` | `format` | `str` | `"YYYY-MM-DD"` | hint formato (validazione e` lato server) |
+| `datepicker` | `min` / `max` | `str` | `""` | vincoli (stesso formato) |
+| `datepicker` | `first_day` | `int` | `1` | 0=Domenica, 1=Lunedi |
+| `datetimepicker` | `time_format` | `str` | `"HH:mm"` | |
+| `datetimepicker` | `step_minutes` | `int` | `5` | granularita` minuti del select |
+| `datetimepicker` | `format`, `min`, `max`, `first_day` | come datepicker | | |
+| `multiselect` | `choices` | `iterable` | `[]` | stesso schema di `select` |
+| `multiselect` | `value` | `list \| str` | `""` | pre-selezione (lista, CSV, valore singolo) |
+| `autocomplete` | `options` | `iterable` | `[]` | `[{value,label}]`, tuple `(value,label)` o stringa |
+| `autocomplete` | `min_chars` | `int` | `1` | caratteri minimi prima di filtrare |
+| `remote_autocomplete` | `url` | `str` | — | **required**: lancia `TemplateSyntaxError` se vuoto |
+| `remote_autocomplete` | `query_param` | `str` | `"q"` | nome del param GET |
+| `remote_autocomplete` | `min_chars` | `int` | `2` | |
+| `remote_autocomplete` | `debounce_ms` | `int` | `300` | |
+| `remote_autocomplete` | `limit` | `int` | `10` | |
+| `remote_autocomplete` | `value` | `str` | `""` | id selezione corrente (campo hidden) |
+| `remote_autocomplete` | `value_label` | `str` | `""` | label da mostrare nel campo testo |
+| `image_preview` | `accept` | `str` | `"image/*"` | |
+| `image_preview` | `clearable` | `bool` | `True` | |
+| `image_preview` | `max_size_kb` | `int` | `0` | hint client-side (0 = no check) |
+| `image_preview` | `value` | `str` | `""` | URL preview iniziale |
+| `image_preview` | `alt` | `str` | `""` | alt text dell'immagine |
+| `rating_stars` | `max_value` | `int` | `5` | clamp 1..10 |
+| `rating_stars` | `value` | `int` | `0` | stelle correnti (0 = nessuna) |
+| `timer_fields` | `units` | `str \| list` | `"h,m,s"` | unita`: `y\|mo\|d\|h\|m\|s` |
+| `timer_fields` | `value` | `int \| str` | `0` | durata corrente in **secondi** |
+| `redactor` | `rows` | `int` | `8` | textarea fallback |
+| `redactor` | `toolbar` | `str` | `"default"` | hint per il componente JS |
+
+**Schema endpoint per `remote_autocomplete`**:
+
+```json
+[{"value": "1", "label": "Mario Rossi"}, {"value": "2", "label": "Luca Bianchi"}]
+```
+
+oppure:
+
+```json
+{"results": [{"value": "1", "label": "Mario Rossi"}, ...]}
+```
+
+Il client manda `?q=<term>` (configurabile via `query_param`), risponde max `limit` items. Header `X-Requested-With: XMLHttpRequest` automatico. `AbortController` cancella la richiesta in volo se l'utente continua a digitare.
+
+**Comportamento generale (v0.3)**:
+
+- Auto-init: tutti i field type avanzati si registrano via `data-velora-component="..."` e vengono inizializzati al boot e ad ogni mutation del DOM (compatibile HTMX/Turbo).
+- Fallback no-JS: `multiselect` → `<select multiple>` nativo; `autocomplete` → input testo libero; `image_preview` → `<input type=file>` standard; `rating_stars` → 5 radio impilate.
+- `redactor` e` un **stub minimal** (toolbar B/I/U/list/link via `execCommand`): per editor full-featured (Quill/TinyMCE) il consumer registri il proprio `data-velora-component="redactor"` _prima_ del `register()` di Velora, oppure sovrascriva la classe `.velora-redactor` via CSS.
+
+### `velora_checkbox_tag` (v0.3)
+
+```django
+{% load velora_forms %}
+{% velora_checkbox_tag name="agree" label="Accetto le condizioni" variant="success" %}
+{% velora_checkbox_tag name="role" label="Admin" value="admin" radio=True variant="primary" %}
+```
+
+Checkbox/radio inline standalone (NON e` un `velora_form_row`: niente label sopra/help/error sotto, e` solo un control).
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `name` | `str` | `""` | required: tag emette stringa vuota se vuoto |
+| `label` | `str` | `""` | testo accanto al control |
+| `value` | `Any` | `"1"` | valore submitted |
+| `checked` | `bool` | `False` | |
+| `disabled` | `bool` | `False` | |
+| `variant` | `"default" \| "primary" \| "info" \| "success" \| "danger"` | `"default"` | sconosciuto → fallback default |
+| `align` | `"left" \| "right"` | `"left"` | sconosciuto → fallback left |
+| `radio` | `bool` | `False` | se True usa `<input type=radio>` |
+| `extra_class` | `str` | `""` | |
+| `id` | `str` | derivato | default `id_<name>` per checkbox; per radio `id_<name>_<value>` (facilita group) |
+
 ### `velora_search_box`
 
 ```django
@@ -334,6 +412,8 @@ Linea visiva con eventuale testo centrale.
 | `empty_message` | `str` | `"Nessun risultato"` | mostrato come singola cella `colspan` se `rows` vuoto |
 | `extra_class` | `str` | `""` | sul `<table>` |
 | `id` | `str` | `""` | id HTML opzionale |
+| `selectable` | `bool` | `False` | (v0.3) aggiunge colonna iniziale con checkbox di riga + master |
+| `row_id_key` | `str` | `"id"` | (v0.3) chiave per leggere l'id riga (solo se `selectable=True`) |
 
 **Schema headers:**
 
@@ -364,6 +444,31 @@ rows = [
 
 I valori delle celle non vengono escapati: la view e` libera di passare HTML pre-renderizzato (es. tag `velora_action_link`) wrappato con `mark_safe` o `format_html`.
 
+**Schema cella editabile inline (v0.3 — form-in-cell)**:
+
+Una cella puo` essere un dict con `form_in_cell` per attivare l'editing AJAX:
+
+```python
+{
+    "value": "Mario",                 # fallback testo (no-JS o errore di schema)
+    "form_in_cell": {
+        "type": "text",               # text|number|select|checkbox|onoff (required)
+        "name": "name",               # required (chiave per il backend)
+        "value": "Mario",
+        "url": "/api/users/1/",       # required: endpoint PATCH/POST
+        "method": "patch",            # patch|post|put (default patch)
+        "csrf": True,                 # default True (legge meta csrf-token)
+        "auto_submit": True,          # default True (debounce 400ms su input testo)
+        "row_id": 1,                  # opzionale: passato come `id` nella request
+        "choices": [...],             # solo se type="select"
+    },
+}
+```
+
+Lato client: il componente JS `table-cell` legge `<meta name="csrf-token">` (preferito) o il cookie `csrftoken` (Django default), invia `FormData` via `fetch()` con header `X-Requested-With: XMLHttpRequest` e `X-CSRFToken: <token>`. Mostra status `Salvataggio... → ✓ → (errore)` accanto al control.
+
+Schema invalido (es. `type` sconosciuto, `url` o `name` mancanti, `method` sconosciuto: fallback patch) → la cella renderizza solo `value` come testo statico (degrade gentile).
+
 ### `velora_pagination`
 
 ```django
@@ -389,6 +494,42 @@ page = {
 ```
 
 Render: link prev/next + finestra di al massimo 5 numeri attorno alla pagina corrente, gap `…` quando si salta. La pagina corrente e` un `<span aria-current="page">`, le altre `<a>`. Il querystring esistente di `base_url` viene preservato (override del solo `param`).
+
+### `velora_select_all_table_rows` (v0.3)
+
+```django
+{% velora_select_all_table_rows
+    target="#tab-clienti"
+    url="/api/clienti/bulk/"
+    actions=actions %}
+{% velora_table id="tab-clienti" headers=h rows=r selectable=True %}
+```
+
+Toolbar bulk-actions agganciata a una tabella `selectable=True`.
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `target` | `str` | `""` | required (selettore CSS della tabella); se vuoto tag emette stringa vuota |
+| `actions` | `list[dict]` | `None` | schema sotto |
+| `url` | `str` | `""` | endpoint default per le azioni (override per action via `url` nel dict) |
+| `name` | `str` | `"ids"` | nome del campo che contiene gli id selezionati (CSV) |
+| `label` | `str` | `"Selezionati"` | prefisso del contatore (suffisso `(N)` aggiunto dal JS) |
+| `extra_class` | `str` | `""` | |
+
+**Schema action**:
+
+```python
+{
+    "label": str,                                 # required
+    "value": str,                                 # required (passato come `action` nel body)
+    "url": str,                                   # default = url del tag
+    "method": "post" | "patch" | "delete",        # default "post"; sconosciuto → "post"
+    "variant": "primary" | "secondary" | "danger",# default "secondary"; sconosciuto → "secondary"
+    "confirm": str,                               # default "" (se non vuoto: window.confirm prima del submit)
+}
+```
+
+Item senza `label` o `value` scartato. Lato client: `select-all-table` sincronizza master + righe + contatore + abilita/disabilita azioni; submit FormData `action=<value>&<name>=id1,id2,...` con CSRF; emette CustomEvent `velora-bulk-done` (`{detail: {action, ids}}`) per consentire al consumer di aggiornare la pagina.
 
 ---
 
@@ -765,4 +906,6 @@ Tutti i componenti Velora si auto-inizializzano cercando elementi con `data-velo
 
 ## Compatibilita`
 
-Le firme documentate qui valgono per `v0.1.x`. Le aggiunte di `v0.2.0` saranno **additive** (nuovi tipi/parametri opzionali con default sicuri). Le modifiche **breaking** saranno annunciate nel `CHANGELOG.md` e raggruppate in una `v0.x.0` con bump minor (semver pre-1.0).
+Le firme documentate qui valgono per `v0.1.x`, `v0.2.x`, `v0.3.x`. Tutte le aggiunte di `v0.2.0` e `v0.3.0` sono state **additive** (nuovi tipi/parametri opzionali con default sicuri, full backward compatibility con v0.1). Le modifiche **breaking** saranno annunciate nel `CHANGELOG.md` e raggruppate in una `v0.x.0` con bump minor (semver pre-1.0).
+
+**Lock-in API in v0.3**: avendo saltato il gate strategico di feedback su v0.2 (richiesto: 1-2 settimane di uso reale) gli schema dei nuovi field type avanzati (datepicker, multiselect, autocomplete, ecc.) e del form-in-cell sono **provvisori**. Eventuali aggiustamenti raccolti dall'uso reale saranno raggruppati in una `v0.4.0` con sezione "Breaking" dedicata.

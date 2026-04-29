@@ -1,0 +1,35 @@
+{% comment %}
+  Form row: image_preview.
+  <input type=file accept=image/*> con preview immagine sotto. Se `value`
+  contiene gia` un URL (es. l'immagine corrente da edit form) viene mostrata
+  come preview iniziale.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--image-preview{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-image-preview"
+         data-velora-component="image-preview"
+         data-max-size-kb="{{ max_size_kb }}">
+        <input
+            type="file"
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-form-row__control velora-image-preview__input"
+            accept="{{ accept }}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>
+        <div class="velora-image-preview__thumb {% if not value %}is-empty{% endif %}">
+            {% if value %}
+                <img src="{{ value }}" alt="{{ alt|default:'Anteprima' }}" class="velora-image-preview__img">
+            {% else %}
+                <span class="velora-image-preview__placeholder" aria-hidden="true">🖼</span>
+            {% endif %}
+        </div>
+        {% if value and clearable %}
+        <button type="button" class="velora-image-preview__clear" data-clear>
+            Rimuovi
+        </button>
+        {% endif %}
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

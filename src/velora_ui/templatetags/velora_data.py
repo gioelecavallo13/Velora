@@ -41,6 +41,100 @@ from django.utils.safestring import SafeString, mark_safe
 register = template.Library()
 
 
+@register.filter
+def index_or_empty(seq: Any, idx: int) -> str:
+    """Filtro template: ritorna seq[idx] o "" se fuori range."""
+    try:
+        return str(seq[int(idx)])
+    except (IndexError, TypeError, ValueError):
+        return ""
+
+
+# ---------------------------------------------------------------------------
+# v0.3 — form-in-cell schema
+# ---------------------------------------------------------------------------
+#
+# Una cella di `velora_table` puo` essere:
+#
+#   1. Stringa o numero        -> render testo plain (v0.1)
+#   2. Markup pre-renderizzato -> mark_safe lato view (v0.1)
+#   3. Dict {form_in_cell: {...}} -> input editabile inline (v0.3)
+#
+# Schema `form_in_cell`:
+#
+#     {
+#         "type": "text" | "select" | "checkbox" | "onoff",   # required
+#         "name": str,           # required (chiave per il backend)
+#         "value": Any,          # default ""
+#         "url": str,            # required: endpoint PATCH/POST
+#         "method": "patch"|"post"|"put",  # default "patch"
+#         "csrf": bool,          # default True (legge __velora_csrf__ globale)
+#         "auto_submit": bool,   # default True (debounce 400ms; False = submit
+#                                #  manuale via tasto Enter o blur)
+#         "choices": [...],      # solo per type=select
+#         "row_id": str|int,     # opzionale; il client lo passa nel body
+#                                #  come campo "id"
+#     }
+#
+# Lato client: componente `table-cell` ascolta change/blur, costruisce
+# FormData o JSON body, fa fetch() con CSRF token Django.
+# ---------------------------------------------------------------------------
+
+
+_VALID_FIC_TYPES = {"text", "number", "select", "checkbox", "onoff"}
+_VALID_FIC_METHODS = {"patch", "post", "put"}
+
+
+def _normalize_fic_choices(raw: Any) -> list[dict[str, Any]]:
+    """Stesso shape di velora_forms._normalize_choices ma duplicato qui per
+    non creare dipendenza cross-tag."""
+    if not raw:
+        return []
+    out: list[dict[str, Any]] = []
+    for entry in raw:
+        if isinstance(entry, dict):
+            out.append(
+                {
+                    "value": entry.get("value", ""),
+                    "label": entry.get("label", entry.get("value", "")),
+                }
+            )
+        elif isinstance(entry, (list, tuple)) and len(entry) >= 2:
+            out.append({"value": entry[0], "label": entry[1]})
+        else:
+            out.append({"value": entry, "label": entry})
+    return out
+
+
+def _normalize_form_in_cell(raw: Any) -> dict[str, Any] | None:
+    """Valida e normalizza un form_in_cell; ritorna None se invalido."""
+    if not isinstance(raw, dict):
+        return None
+    fic_type = raw.get("type", "")
+    if fic_type not in _VALID_FIC_TYPES:
+        return None
+    name = raw.get("name", "")
+    url = raw.get("url", "")
+    if not name or not url:
+        return None
+    method = str(raw.get("method", "patch")).lower()
+    if method not in _VALID_FIC_METHODS:
+        method = "patch"
+    normalized: dict[str, Any] = {
+        "type": fic_type,
+        "name": name,
+        "value": raw.get("value", ""),
+        "url": url,
+        "method": method,
+        "csrf": bool(raw.get("csrf", True)),
+        "auto_submit": bool(raw.get("auto_submit", True)),
+        "row_id": raw.get("row_id", ""),
+    }
+    if fic_type == "select":
+        normalized["choices"] = _normalize_fic_choices(raw.get("choices"))
+    return normalized
+
+
 # ---------------------------------------------------------------------------
 # velora_table
 # ---------------------------------------------------------------------------
@@ -76,6 +170,28 @@ def _normalize_headers(raw: Any) -> list[dict[str, Any]]:
     return normalized
 
 
+def _build_cell(value: Any, align: str) -> dict[str, Any]:
+    """Costruisce una cella normalizzata, riconoscendo lo schema form-in-cell.
+
+    Una cella e` un dict con campi:
+      value        : testo/HTML da mostrare quando NON c'e` form-in-cell
+      align        : '' | 'right' | 'center'
+      form_in_cell : dict normalizzato (None se cella semplice)
+
+    Se `value` e` un dict con chiave `form_in_cell`, il relativo schema
+    viene validato; valori sotto la chiave `value` (label visualizzata
+    quando il campo non e` editabile) sono passati come fallback.
+    """
+    if isinstance(value, dict) and "form_in_cell" in value:
+        fic = _normalize_form_in_cell(value["form_in_cell"])
+        return {
+            "value": value.get("value", ""),
+            "align": align,
+            "form_in_cell": fic,
+        }
+    return {"value": value, "align": align, "form_in_cell": None}
+
+
 def _normalize_rows(
     raw: Any, headers: list[dict[str, Any]]
 ) -> list[list[dict[str, Any]]]:
@@ -94,16 +210,12 @@ def _normalize_rows(
             for header in headers:
                 key = header.get("key")
                 value = row.get(key, "") if key else ""
-                cells.append(
-                    {"value": value, "align": header.get("align", "")}
-                )
+                cells.append(_build_cell(value, header.get("align", "")))
         else:
             row_list = list(row)
             for index, header in enumerate(headers):
                 value = row_list[index] if index < len(row_list) else ""
-                cells.append(
-                    {"value": value, "align": header.get("align", "")}
-                )
+                cells.append(_build_cell(value, header.get("align", "")))
         table.append(cells)
     return table
 
@@ -115,6 +227,8 @@ def velora_table(
     empty_message: str = "Nessun risultato",
     extra_class: str = "",
     id: str = "",
+    selectable: bool = False,
+    row_id_key: str = "id",
 ) -> SafeString:
     """Render della tabella.
 
@@ -125,21 +239,43 @@ def velora_table(
             colspan).
         extra_class: classi CSS extra sul `<table>`.
         id: id HTML opzionale.
+        selectable: (v0.3) se True aggiunge una colonna iniziale con
+            checkbox per riga (compatibili con `velora_select_all_table_rows`).
+            Le righe devono essere dict per esporre `row_id_key` come id.
+        row_id_key: (v0.3) chiave usata per leggere l'id della riga
+            (default "id"). Ignorato se `selectable=False` o se la riga
+            e` lista posizionale.
     """
 
     norm_headers = _normalize_headers(headers)
     norm_rows = _normalize_rows(rows, norm_headers)
+    row_ids: list[str] = []
+    if selectable:
+        for row in raw_iter(rows):
+            if isinstance(row, dict):
+                row_ids.append(str(row.get(row_id_key, "")))
+            else:
+                row_ids.append("")
     ctx = {
         "headers": norm_headers,
         "rows": norm_rows,
         "empty_message": empty_message,
         "extra_class": extra_class,
         "id": id,
-        "colspan": max(len(norm_headers), 1),
+        "selectable": bool(selectable),
+        "row_ids": row_ids,
+        "colspan": max(len(norm_headers), 1) + (1 if selectable else 0),
     }
     return mark_safe(
         render_to_string("velora_ui/components/table/_table.html", ctx)
     )
+
+
+def raw_iter(raw: Any) -> list[Any]:
+    """Helper interno: ritorna sempre una lista (anche da iterabili)."""
+    if not raw:
+        return []
+    return list(raw)
 
 
 # ---------------------------------------------------------------------------
@@ -304,4 +440,90 @@ def velora_pagination(
     }
     return mark_safe(
         render_to_string("velora_ui/components/table/_pagination.html", ctx)
+    )
+
+
+# ---------------------------------------------------------------------------
+# velora_select_all_table_rows (v0.3 — Fase 11.11)
+# ---------------------------------------------------------------------------
+
+
+def _normalize_bulk_actions(raw: Any) -> list[dict[str, Any]]:
+    """Normalizza la lista di bulk actions in
+    [{label, value, url?, method?, variant?}].
+
+    `value`: identificativo passato come `action` nella request.
+    `url`: opzionale (default = la URL del tag, gestita lato JS).
+    `method`: post|patch|delete (default post).
+    `variant`: primary|secondary|danger (default secondary; danger evidenziato).
+    Item senza `label` o `value` scartato.
+    """
+    if not raw:
+        return []
+    out: list[dict[str, Any]] = []
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        label = entry.get("label", "")
+        value = entry.get("value", "")
+        if not label or not value:
+            continue
+        method = str(entry.get("method", "post")).lower()
+        if method not in {"post", "patch", "delete"}:
+            method = "post"
+        variant = entry.get("variant", "secondary")
+        if variant not in {"primary", "secondary", "danger"}:
+            variant = "secondary"
+        out.append(
+            {
+                "label": label,
+                "value": value,
+                "url": entry.get("url", ""),
+                "method": method,
+                "variant": variant,
+                "confirm": entry.get("confirm", ""),
+            }
+        )
+    return out
+
+
+@register.simple_tag
+def velora_select_all_table_rows(
+    target: str = "",
+    actions: Any = None,
+    url: str = "",
+    name: str = "ids",
+    label: str = "",
+    extra_class: str = "",
+) -> SafeString:
+    """Toolbar bulk-actions agganciata a una tabella `selectable=True`.
+
+    Args:
+        target: selettore CSS della tabella (es. "#tabella-clienti").
+            Se vuoto il tag non emette nulla.
+        actions: lista di azioni; vedi `_normalize_bulk_actions`.
+        url: URL endpoint che riceve la POST/PATCH dei bulk; il body
+            include `action=<value>` e `<name>=id1,id2,...`.
+        name: nome del campo che contiene gli id selezionati (default "ids").
+        label: testo a sinistra (es. "Selezionati:" — il contatore vivo
+            e` aggiunto dal JS).
+        extra_class: classi extra sul wrapper.
+
+    Render: `<div data-velora-component="select-all-table">`. Il JS
+    `select_all.js` aggancia la checkbox master del target, sincronizza
+    con le checkbox di riga, mostra il contatore "(N)" e gestisce il
+    submit AJAX delle azioni.
+    """
+    if not target:
+        return mark_safe("")
+    ctx = {
+        "target": target,
+        "actions": _normalize_bulk_actions(actions),
+        "url": url,
+        "name": name,
+        "label": label or "Selezionati",
+        "extra_class": extra_class,
+    }
+    return mark_safe(
+        render_to_string("velora_ui/components/table/_select_all.html", ctx)
     )

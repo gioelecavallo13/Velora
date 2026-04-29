@@ -1,0 +1,35 @@
+{% comment %}
+  Toolbar bulk-actions per `velora_select_all_table_rows`.
+  Aspetta:
+    target      : selettore CSS della tabella selectable
+    actions     : list[{label, value, url, method, variant, confirm}]
+    url         : endpoint default
+    name        : nome del campo "ids"
+    label       : prefisso del contatore (es. "Selezionati")
+    extra_class : str
+{% endcomment %}
+<div class="velora-bulk-toolbar {{ extra_class }}"
+     data-velora-component="select-all-table"
+     data-target="{{ target }}"
+     data-url="{{ url }}"
+     data-name="{{ name }}">
+    <span class="velora-bulk-toolbar__count">
+        {{ label }}:
+        <strong class="velora-bulk-toolbar__count-num" data-count>0</strong>
+    </span>
+    {% if actions %}
+    <div class="velora-bulk-toolbar__actions">
+        {% for action in actions %}
+        <button type="button"
+                class="velora-btn velora-btn--{{ action.variant }} velora-bulk-toolbar__action"
+                data-action="{{ action.value }}"
+                data-method="{{ action.method }}"
+                {% if action.url %}data-url="{{ action.url }}"{% endif %}
+                {% if action.confirm %}data-confirm="{{ action.confirm }}"{% endif %}
+                disabled>
+            {{ action.label }}
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

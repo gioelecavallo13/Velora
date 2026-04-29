@@ -1,0 +1,104 @@
+// Velora UI v0.3 — Checkbox tag (Fase 11.12)
+// Standalone checkbox/radio con varianti colore: default (arancio), primary
+// (blu), info (azzurro), success (verde), danger (rosso).
+
+.velora-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--velora-fs-base);
+  color: var(--velora-c-text);
+
+  &.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--align-right {
+    flex-direction: row-reverse;
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--velora-gray-400);
+    border-radius: 3px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.1s ease, border-color 0.1s ease;
+
+    &::after {
+      content: "";
+      width: 4px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.1s ease;
+      margin-bottom: 2px;
+    }
+  }
+
+  &__input[type="radio"] + &__box {
+    border-radius: 50%;
+
+    &::after {
+      width: 8px;
+      height: 8px;
+      border: none;
+      border-radius: 50%;
+      background: #fff;
+      transform: none;
+      margin-bottom: 0;
+    }
+  }
+
+  &__input:focus-visible + &__box {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: 2px;
+  }
+
+  &__input:checked + &__box {
+    &::after { opacity: 1; }
+  }
+
+  // Varianti colore: applicate sullo state checked
+  &--default &__input:checked + &__box {
+    background: var(--velora-c-orange);
+    border-color: var(--velora-c-orange);
+  }
+  &--primary &__input:checked + &__box {
+    background: #2f6fed;
+    border-color: #2f6fed;
+  }
+  &--info &__input:checked + &__box {
+    background: #36a3d6;
+    border-color: #36a3d6;
+  }
+  &--success &__input:checked + &__box {
+    background: var(--velora-c-green);
+    border-color: var(--velora-c-green);
+  }
+  &--danger &__input:checked + &__box {
+    background: var(--velora-c-red);
+    border-color: var(--velora-c-red);
+  }
+
+  &__label {
+    line-height: 1.3;
+  }
+}

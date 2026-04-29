@@ -4,6 +4,59 @@ Tutte le modifiche significative a Velora UI sono documentate in questo file.
 
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il versionamento segue [Semantic Versioning](https://semver.org/) — pre-1.0 ogni `0.x.0` puo` introdurre breaking change documentati qui.
 
+## [0.3.0] — 2026-04-29
+
+Terza release: **form avanzati & tabelle interattive**. Aggiunti 9 nuovi `field_type` per `velora_form_row` (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), estensione di `velora_table` con form-in-cell AJAX e selezione multi-riga, nuovo tag `velora_select_all_table_rows` con bulk-actions, nuovo tag standalone `velora_checkbox_tag` con 5 varianti colore. Tutti i nuovi componenti JS sono **zero-dipendenze runtime** (no Flatpickr, no Select2, no Choices.js, no Quill).
+
+### Aggiunto
+
+#### Form row avanzati (`velora_forms.velora_form_row`)
+- `type="datepicker"`: input testo + calendario popup custom (zero deps). Supporta `format` (default `YYYY-MM-DD`), `min`/`max`, `first_day` (0=Dom, 1=Lun, default 1), navigazione mensile, oggi/pulisci/conferma.
+- `type="datetimepicker"`: estensione del datepicker con select ore + minuti, `time_format` (default `HH:mm`), `step_minutes` (default 5), conferma esplicita.
+- `type="multiselect"`: `<select multiple>` nativo (fallback no-JS) trasformato dal componente JS in UI con chip rimuovibili + dropdown delle opzioni; pre-selezione tramite `value` (lista, CSV o singolo valore).
+- `type="autocomplete"` (locale): opzioni inline come JSON in `<script type="application/json">`; filter in memoria al keyup, navigation via Arrow Up/Down, conferma con Enter o click.
+- `type="remote_autocomplete"` (AJAX): `url` required, `query_param` (default `q`), `min_chars` (default 2), `debounce_ms` (default 300), `limit` (default 10). Ritorna lista JSON `[{value,label}]` o `{results:[...]}`. Doppio campo: visibile (label) + hidden (value submit-ready). `AbortController` per cancellare richieste in volo.
+- `type="image_preview"`: `<input type=file accept="image/*">` con preview thumbnail; `value` URL come immagine iniziale, `clearable=True` (default) aggiunge bottone rimuovi, `max_size_kb` per limite client-side con toast error in caso di sforamento.
+- `type="rating_stars"`: 5 stelle (configurabile via `max_value`, clamp 1..10). Implementato come radio button nativi (CSS `:checked + general sibling`) + JS opzionale per hover preview. Submit invia il valore numerico `1..max`.
+- `type="timer_fields"`: input multipli per durata composita (anni/mesi/giorni/ore/minuti/secondi). `units` come stringa CSV o lista (es. `"h,m,s"` default). Hidden field `name` con il totale in secondi sincronizzato in tempo reale.
+- `type="redactor"`: textarea + toolbar minimale (B, I, U, list, link, removeFormat) via `document.execCommand` per esperienza decente out-of-the-box senza dipendenze; consumer puo` registrare proprio componente per editor full-featured (Quill/TinyMCE/ProseMirror).
+
+#### Tabelle interattive (`velora_data`)
+- `velora_table`: due nuovi parametri opzionali:
+  - `selectable=True` aggiunge una colonna iniziale con checkbox di riga + master in `<thead>`. Le righe devono essere dict per esporre `row_id_key` (default `"id"`) come identificativo passato al backend.
+  - Cella **form-in-cell**: il valore di una cella puo` essere `{value, form_in_cell: {type, name, value, url, method, csrf, auto_submit, choices?, row_id?}}`. Tipi supportati: `text`, `number`, `select`, `checkbox`, `onoff` (toggle visivo). Il componente JS `table-cell` ascolta change/blur/Enter, costruisce FormData con CSRF token (letto da `<meta name="csrf-token">` o cookie `csrftoken`), invia `fetch()` al `url` con metodo `method` (default PATCH).
+- `velora_select_all_table_rows`: toolbar bulk-actions agganciata a una tabella `selectable=True` via `target="#id"`. `actions=[{label, value, url?, method?, variant?, confirm?}]` con varianti `primary`/`secondary`/`danger`; il JS `select-all-table` sincronizza il master, mostra il contatore `(N)`, abilita le azioni solo se ci sono righe selezionate, gestisce il submit AJAX e la conferma `window.confirm` quando richiesta. Emette `velora-bulk-done` (CustomEvent) per consentire al consumer di reagire (refresh, redirect, ecc.).
+
+#### Checkbox tag (`velora_forms`)
+- `velora_checkbox_tag`: checkbox/radio standalone (non form_row) per uso inline in tabelle, toolbar, list-item. 5 varianti colore: `default` (arancio), `primary` (blu), `info` (azzurro), `success` (verde), `danger` (rosso). Modalita` `radio=True` per radio group. `align="left|right"`, stato `disabled` con styling sobrio. Nome vuoto -> tag emette stringa vuota.
+
+### Modificato
+
+- `velora_table` mantiene 100% backward compatible: i due nuovi parametri (`selectable`, `row_id_key`) sono opzionali e con default sicuri. Le celle stringa/HTML continuano a funzionare come in v0.1; il riconoscimento del form-in-cell e` puramente _opt-in_ (richiede struttura dict con chiave `form_in_cell`).
+- `velora.scss`: aggiunti 3 nuovi partial (`form-row-v03`, `table-v03`, `checkbox`).
+- `velora.js`: registrati 9 nuovi componenti (`datepicker`, `multiselect`, `autocomplete`, `image-preview`, `rating`, `timer`, `redactor`, `table-cell`, `select-all-table`). Bundle: 56 KB (era 16 KB; +40 KB per i 9 nuovi componenti).
+
+### Test
+
+- `tests/test_forms_v03.py`: 37 nuovi test per i 9 nuovi field type + checkbox tag (rendering, normalizzazione input, fallback su valori invalidi, casting stringa->numero/lista, attributi data-* corretti).
+- `tests/test_data_v03.py`: 17 nuovi test per form-in-cell + selectable + select_all (schema, scarto silenzioso di item malformati, default sicuri).
+- `tests/visual/test_showcase.py`: aggiunte 3 sezioni alla parametrizzazione (`form-advanced`, `tables-advanced`, `checkbox`); 13 snapshot Playwright (era 10).
+- **Suite full v0.3: 222/222 verdi** (209 unit + 13 visual). Era 165/165 in v0.2 (+57 nuovi test).
+
+### Showcase
+
+- Nuova sezione `#form-advanced`: demo "snippet + render live" di tutti i 9 field type avanzati (datepicker, datetimepicker, multiselect con preselezione, autocomplete locale, remote_autocomplete, image_preview con max-size, rating con valore predefinito, timer_fields con valore composito, redactor con HTML iniziale).
+- Nuova sezione `#tables-advanced`: tabella editabile inline con 3 utenti (`text`, `select`, `onoff` form-in-cell) + bulk-actions toolbar con archivia/elimina (con confirm).
+- Nuova sezione `#checkbox`: dimostrazione di tutte e 5 le varianti colore + radio group + stato disabled + align right.
+- Sidebar TOC estesa con 3 nuove voci (`Form avanzati`, `Tabelle interattive`, `Checkbox`).
+
+### Note tecniche
+
+- **Strategia "zero deps"**: scelta consapevole di NON usare Flatpickr/Choices.js/Select2/Quill nonostante alcuni casi avrebbero beneficiato (es. il datepicker custom non ha keyboard navigation completa). Pattern: in v0.x manteniamo zero deps; un eventuale `velora-ui-extras` separato in v1.0+ potra` impacchettare integrazioni opzionali con librerie pesanti. Il `redactor` e` lo stub piu` minimal: il consumer puo` sostituirlo registrando un proprio componente `data-velora-component="redactor"` _prima_ del `register()` di Velora.
+- **Form-in-cell e CSRF**: il componente legge il token da `<meta name="csrf-token">` (preferito) o dal cookie `csrftoken` (Django default). Per il primo metodo bisogna iniettare il meta nel base template del progetto host: `<meta name="csrf-token" content="{{ csrf_token }}">`. Senza CSRF la richiesta partira` senza header e Django rispondera` 403 (gestito a livello di consumer; Velora non genera errori).
+- **Bundle JS cresciuto a 56 KB**: il datepicker (~6 KB), il dialog (~3 KB), e i nuovi componenti pesano. Per progetti che usano solo un sottoinsieme, in v0.4 sara` valutato lo split in chunks separati con import dinamico.
+- **API lock-in**: avendo saltato il gate strategico di feedback su v0.2 (richiesto: 1-2 settimane), gli schema dei nuovi field type rimangono **provvisori**. Eventuali breaking change saranno raccolti in una `v0.4.0` con nota dedicata.
+
 ## [0.2.0] — 2026-04-28
 
 Seconda release: **navigation e feedback ricchi**. Aggiunti header item interattivi (single/multi-menu, apps-menu, notifications, logo aggiuntivo), breadcrumb, submenu, drop-down inline, dialog modale (inline + remote AJAX), tooltip, toggle/copy link, settings link verde, tre varianti di progress bar.

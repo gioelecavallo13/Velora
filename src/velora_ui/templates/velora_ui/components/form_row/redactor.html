@@ -1,0 +1,29 @@
+{% comment %}
+  Form row: redactor (rich text).
+  Stub: rendiamo una <textarea> con classe e data-attribute hook. Il consumer
+  decide quale editor agganciare (Quill, TinyMCE, ProseMirror, ...) registrando
+  un componente JS custom su `data-velora-component="redactor"` o sostituendo
+  la classe via CSS selector.
+
+  Velora distribuisce un componente JS di default `redactor.js` che applica una
+  toolbar minimale via document.execCommand fallback (B/I/U/list/link/clear)
+  per fornire un esperienza decente out-of-the-box senza dipendenze runtime.
+  Per editor full-featured il piano e` di lasciare al consumer la scelta.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--redactor{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-redactor"
+         data-velora-component="redactor"
+         data-toolbar="{{ toolbar }}">
+        <textarea
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-form-row__control velora-redactor__textarea"
+            rows="{{ rows }}"
+            placeholder="{{ placeholder }}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>{{ value|default_if_none:'' }}</textarea>
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

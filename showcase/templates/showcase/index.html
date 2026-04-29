@@ -700,6 +700,148 @@ def save_view(request):
 {% velora_new_progress_bar current=0 total=0  label="Indet."  %}  {# senza barra #}{% endverbatim %}</code></pre>
     </div>
 </section>
+
+{# ===================== v0.3 - Form avanzati (Fase 11.1-11.9) ===================== #}
+<section id="form-advanced" class="showcase-section">
+    <h2 class="showcase-section__title">Form avanzati (v0.3)</h2>
+    <p class="showcase-section__lead">
+        9 nuovi <code>field_type</code> per <code>velora_form_row</code>. Tutti zero-deps:
+        zero librerie esterne, solo HTML/CSS/JS vanilla.
+    </p>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Datepicker e Datetimepicker</div>
+        <div class="showcase-demo__render">
+            {% velora_form_row type="datepicker" name="dob" label="Data di nascita" placeholder="2026-01-15" %}
+            {% velora_form_row type="datetimepicker" name="appointment" label="Appuntamento" step_minutes=15 %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row type="datepicker" name="dob" label="Data di nascita" %}
+{% velora_form_row type="datetimepicker" name="appointment" step_minutes=15 %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Multiselect (chip + dropdown)</div>
+        <div class="showcase-demo__render">
+            {% velora_form_row type="multiselect" name="skills" label="Competenze" choices=showcase_multiselect_options value="frontend,ux" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row type="multiselect" name="skills"
+                  choices=options value="frontend,ux" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Autocomplete (locale e remoto)</div>
+        <div class="showcase-demo__render">
+            {% velora_form_row type="autocomplete" name="city" label="Citta` (locale)" options=showcase_autocomplete_options placeholder="Inizia a scrivere..." %}
+            {% velora_form_row type="remote_autocomplete" name="user" label="Utente (remoto demo)" url="/api/users/search/" placeholder="Cerca utente..." min_chars=2 %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{# Locale: opzioni passate inline #}
+{% velora_form_row type="autocomplete" name="city" options=cities %}
+
+{# Remoto: AJAX a endpoint che ritorna [{value,label}] #}
+{% velora_form_row type="remote_autocomplete" name="user" url="/api/users/search/" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Image preview, rating, timer</div>
+        <div class="showcase-demo__render">
+            {% velora_form_row type="image_preview" name="avatar" label="Avatar" max_size_kb=500 %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_form_row type="rating_stars" name="quality" label="Qualita`" value=4 %}
+            <div style="height: var(--velora-space-3);"></div>
+            {% velora_form_row type="timer_fields" name="duration" label="Durata sessione" value=5415 units="h,m,s" help_text="Inserisci ore, minuti e secondi" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row type="image_preview" name="avatar" max_size_kb=500 %}
+{% velora_form_row type="rating_stars" name="quality" value=4 %}
+{% velora_form_row type="timer_fields" name="duration" value=5415 units="h,m,s" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Redactor (toolbar + textarea)</div>
+        <div class="showcase-demo__render">
+            {% velora_form_row type="redactor" name="bio" label="Biografia" rows=6 value="<p>Testo iniziale <strong>HTML</strong> editabile.</p>" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_form_row type="redactor" name="bio" rows=6 %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ===================== v0.3 - Tabelle interattive (Fase 11.10-11.11) ===================== #}
+<section id="tables-advanced" class="showcase-section">
+    <h2 class="showcase-section__title">Tabelle interattive (v0.3)</h2>
+    <p class="showcase-section__lead">
+        <code>velora_table</code> con <em>form-in-cell</em> AJAX, selezione multi-riga e
+        <code>velora_select_all_table_rows</code> per le bulk-actions.
+    </p>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Tabella editabile + bulk actions</div>
+        <div class="showcase-demo__render">
+            {% velora_select_all_table_rows target="#tab-adv" url="/api/users/bulk/" actions=showcase_bulk_actions %}
+            {% velora_table id="tab-adv" headers=showcase_advanced_table_headers rows=showcase_advanced_table_rows selectable=True %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_select_all_table_rows
+    target="#tab-adv"
+    url="/api/users/bulk/"
+    actions=bulk_actions %}
+
+{% velora_table id="tab-adv"
+    headers=headers
+    rows=rows_with_form_in_cell
+    selectable=True %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Schema riga con form-in-cell</div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}# Una cella editabile inline:
+{
+    "value": "Mario",                     # fallback non-JS
+    "form_in_cell": {
+        "type": "text",                   # text|select|checkbox|onoff
+        "name": "name",
+        "value": "Mario",
+        "url": "/api/users/1/",           # endpoint PATCH/POST
+        "method": "patch",                # default patch
+        "auto_submit": True,              # debounce 400ms su input
+        "row_id": 1,                      # passato come `id` nella request
+    },
+}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ===================== v0.3 - Checkbox tag (Fase 11.12) ===================== #}
+<section id="checkbox" class="showcase-section">
+    <h2 class="showcase-section__title">Checkbox e Radio standalone (v0.3)</h2>
+    <p class="showcase-section__lead">
+        <code>velora_checkbox_tag</code>: checkbox/radio inline con 5 varianti colore.
+        Usali in tabelle, toolbar, list-item dove non serve la "form row" completa.
+    </p>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Varianti colore</div>
+        <div class="showcase-demo__render" style="display: flex; flex-direction: column; gap: 8px;">
+            {% velora_checkbox_tag name="cb1" label="Default (arancio)" checked=True %}
+            {% velora_checkbox_tag name="cb2" label="Primary (blu)" variant="primary" checked=True %}
+            {% velora_checkbox_tag name="cb3" label="Info (azzurro)" variant="info" checked=True %}
+            {% velora_checkbox_tag name="cb4" label="Success (verde)" variant="success" checked=True %}
+            {% velora_checkbox_tag name="cb5" label="Danger (rosso)" variant="danger" checked=True %}
+            {% velora_checkbox_tag name="cb6" label="Disabled" disabled=True checked=True %}
+            {% velora_checkbox_tag name="cb7" label="Allineato a destra" align="right" %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_checkbox_tag name="agree" label="Accetto" variant="success" checked=True %}
+{% velora_checkbox_tag name="role" label="Admin" value="admin" radio=True variant="primary" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <div class="showcase-demo">
+        <div class="showcase-demo__title">Radio group</div>
+        <div class="showcase-demo__render" style="display: flex; flex-direction: column; gap: 8px;">
+            {% velora_checkbox_tag name="plan" label="Free" value="free" radio=True %}
+            {% velora_checkbox_tag name="plan" label="Pro" value="pro" radio=True checked=True variant="primary" %}
+            {% velora_checkbox_tag name="plan" label="Enterprise" value="enterprise" radio=True %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_checkbox_tag name="plan" label="Free" value="free" radio=True %}
+{% velora_checkbox_tag name="plan" label="Pro"  value="pro"  radio=True checked=True %}
+{% velora_checkbox_tag name="plan" label="Enterprise" value="enterprise" radio=True %}{% endverbatim %}</code></pre>
+    </div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

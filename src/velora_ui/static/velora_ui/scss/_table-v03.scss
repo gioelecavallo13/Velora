@@ -1,0 +1,146 @@
+// Velora UI v0.3 — Tabella interattiva (Fase 11.10 + 11.11)
+// Estensioni a `velora-table` per supportare:
+//   - velora-table--selectable (colonna checkbox di riga)
+//   - velora-cell-form (form-in-cell AJAX)
+//   - velora-bulk-toolbar (select_all + bulk actions)
+
+.velora-table {
+  &--selectable {
+    .velora-table__th--checkbox,
+    .velora-table__td--checkbox {
+      width: 32px;
+      text-align: center;
+      padding-left: 8px;
+      padding-right: 0;
+    }
+  }
+
+  &__select-master,
+  &__select-row {
+    cursor: pointer;
+    accent-color: var(--velora-c-orange);
+  }
+
+  &__td--editable {
+    padding: 2px 8px;
+    background: rgba(245, 160, 0, 0.04);
+
+    &:hover {
+      background: rgba(245, 160, 0, 0.08);
+    }
+  }
+}
+
+// ----- FORM IN CELL -----
+.velora-cell-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+
+  &__input,
+  &__select {
+    flex: 1;
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-radius: var(--velora-radius-sm);
+    font: inherit;
+    background: transparent;
+    color: var(--velora-c-text);
+
+    &:focus {
+      outline: none;
+      border-color: var(--velora-c-orange);
+      background: #fff;
+    }
+  }
+
+  &__checkbox {
+    accent-color: var(--velora-c-orange);
+    cursor: pointer;
+  }
+
+  &__onoff {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__onoff-track {
+    display: inline-block;
+    width: 32px;
+    height: 18px;
+    background: var(--velora-gray-200);
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.15s ease;
+  }
+
+  &__onoff-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  &__onoff.is-on &__onoff-track {
+    background: var(--velora-c-green);
+  }
+
+  &__onoff.is-on &__onoff-thumb {
+    left: 16px;
+  }
+
+  &__status {
+    font-size: var(--velora-fs-xs);
+    min-width: 60px;
+
+    &.is-saving { color: var(--velora-gray-500); }
+    &.is-saved { color: var(--velora-c-green); font-weight: var(--velora-fw-medium); }
+    &.is-error { color: var(--velora-c-red); }
+  }
+}
+
+// ----- BULK TOOLBAR -----
+.velora-bulk-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--velora-gray-50);
+  border: 1px solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  margin-bottom: 8px;
+
+  &__count {
+    font-size: var(--velora-fs-sm);
+    color: var(--velora-gray-700);
+  }
+
+  &__count-num {
+    color: var(--velora-c-orange);
+    font-weight: var(--velora-fw-medium);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  &__action[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

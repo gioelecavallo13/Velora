@@ -1,17 +1,31 @@
-{% comment %}
-  Tabella statica.
+{% load velora_data %}{% comment %}
+  Tabella con supporto v0.3:
+    - selectable: aggiunge una colonna iniziale con checkbox di riga
+    - form_in_cell: render input editabile inline (text/select/checkbox/onoff)
+
   Aspetta:
     headers       : list[{label, key, width, extra_class, align}]
-    rows          : list[list[{value, align}]]
+    rows          : list[list[{value, align, form_in_cell}]]
+    row_ids       : list[str]  (parallelo a rows; valorizzato se selectable=True)
+    selectable    : bool
     empty_message : str
     extra_class   : str
     id            : str
-    colspan       : int  (per la cella vuota)
+    colspan       : int  (per la cella vuota; gia` include la colonna selectable)
 {% endcomment %}
 <div class="velora-table-wrapper">
-    <table class="velora-table {{ extra_class }}"{% if id %} id="{{ id }}"{% endif %}>
+    <table class="velora-table {{ extra_class }}{% if selectable %} velora-table--selectable{% endif %}"
+           {% if id %}id="{{ id }}"{% endif %}
+           {% if selectable %}data-velora-table-selectable="1"{% endif %}>
         <thead>
             <tr>
+                {% if selectable %}
+                <th scope="col" class="velora-table__th velora-table__th--checkbox">
+                    <input type="checkbox"
+                           class="velora-table__select-master"
+                           aria-label="Seleziona tutte le righe">
+                </th>
+                {% endif %}
                 {% for header in headers %}
                 <th
                     scope="col"
@@ -24,9 +38,24 @@
         </thead>
         <tbody>
             {% for row in rows %}
-            <tr class="velora-table__row">
+            <tr class="velora-table__row"
+                {% if selectable %}data-row-id="{{ row_ids|index_or_empty:forloop.counter0 }}"{% endif %}>
+                {% if selectable %}
+                <td class="velora-table__td velora-table__td--checkbox">
+                    <input type="checkbox"
+                           class="velora-table__select-row"
+                           value="{{ row_ids|index_or_empty:forloop.counter0 }}"
+                           aria-label="Seleziona riga">
+                </td>
+                {% endif %}
                 {% for cell in row %}
-                <td class="velora-table__td{% if cell.align %} velora-table__cell--{{ cell.align }}{% endif %}">{{ cell.value }}</td>
+                <td class="velora-table__td{% if cell.align %} velora-table__cell--{{ cell.align }}{% endif %}{% if cell.form_in_cell %} velora-table__td--editable{% endif %}">
+                    {% if cell.form_in_cell %}
+                        {% include "velora_ui/components/table/_form_in_cell.html" with fic=cell.form_in_cell display_value=cell.value %}
+                    {% else %}
+                        {{ cell.value }}
+                    {% endif %}
+                </td>
                 {% endfor %}
             </tr>
             {% empty %}

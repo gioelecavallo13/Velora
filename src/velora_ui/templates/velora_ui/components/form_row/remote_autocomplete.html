@@ -1,0 +1,36 @@
+{% comment %}
+  Form row: remote_autocomplete (AJAX).
+  L'endpoint deve rispondere con JSON nella forma:
+      [{"value": "1", "label": "Mario Rossi"}, ...]
+  oppure un dict {"results": [...]}. Il client manda `?q=<term>` (configurabile
+  via `query_param`) e attende una lista di max `limit` risultati.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--autocomplete velora-form-row--autocomplete-remote{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-autocomplete velora-autocomplete--remote"
+         data-velora-component="autocomplete"
+         data-remote-url="{{ url }}"
+         data-query-param="{{ query_param }}"
+         data-min-chars="{{ min_chars }}"
+         data-debounce-ms="{{ debounce_ms }}"
+         data-limit="{{ limit }}">
+        <input
+            type="text"
+            name="{{ name }}_label"
+            id="{{ id }}_label"
+            class="velora-form-row__control velora-form-row__input velora-autocomplete__input"
+            value="{{ value_label|default_if_none:'' }}"
+            autocomplete="off"
+            placeholder="{{ placeholder }}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>
+        <input
+            type="hidden"
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-autocomplete__hidden"
+            value="{{ value|default_if_none:'' }}">
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

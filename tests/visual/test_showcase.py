@@ -38,6 +38,10 @@ SECTIONS = [
     ("navigation", "#navigation", "Navigation v0.2"),
     ("overlays", "#overlays", "Overlays v0.2"),
     ("progress", "#progress", "Progress v0.2"),
+    # v0.3 — Fase 11
+    ("form-advanced", "#form-advanced", "Form avanzati v0.3"),
+    ("tables-advanced", "#tables-advanced", "Tabelle interattive v0.3"),
+    ("checkbox", "#checkbox", "Checkbox tag v0.3"),
 ]
 
 

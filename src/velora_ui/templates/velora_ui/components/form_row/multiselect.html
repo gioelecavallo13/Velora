@@ -1,0 +1,30 @@
+{% comment %}
+  Form row: multiselect.
+  Sotto al cofano un <select multiple> reale: in caso di JS disattivato
+  l'utente vede comunque la lista nativa multipla (Ctrl/Cmd+click). Con JS
+  attivo il componente `multiselect` lo nasconde e mostra una pillola UI con
+  chip rimuovibili e dropdown di selezione.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--multiselect{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-multiselect"
+         data-velora-component="multiselect"
+         data-placeholder="{{ placeholder|default:'Seleziona...' }}">
+        <select
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-form-row__control velora-multiselect__native"
+            multiple
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>
+            {% for choice in choices %}
+            <option
+                value="{{ choice.value }}"
+                {% if choice.selected %}selected{% endif %}
+                {% if choice.disabled %}disabled{% endif %}>{{ choice.label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

@@ -1,0 +1,535 @@
+// Velora UI v0.3 — Form row avanzati (Fase 11)
+// SCSS per i 9 nuovi field type aggiunti in v0.3:
+// datepicker, datetimepicker, multiselect, autocomplete (locale + remoto),
+// image_preview, rating_stars, timer_fields, redactor.
+//
+// Tutti i pattern condividono il wrapper `.velora-form-row` esistente; questi
+// stili coprono solo le parti _interne_ specifiche di ogni tipo.
+
+// ----- DATEPICKER / DATETIMEPICKER -----
+.velora-datepicker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__input {
+    flex: 1;
+  }
+
+  &__trigger {
+    background: transparent;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    padding: 6px 8px;
+    cursor: pointer;
+    line-height: 1;
+    color: var(--velora-c-text);
+
+    &:hover:not(:disabled) {
+      background: var(--velora-gray-50);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  &__panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: var(--velora-z-dropdown);
+    width: 280px;
+    background: #fff;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-md);
+    box-shadow: var(--velora-shadow-md);
+    padding: 8px;
+
+    &.is-open {
+      display: block;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+  }
+
+  &__title {
+    font-weight: var(--velora-fw-medium);
+    color: var(--velora-gray-900);
+  }
+
+  &__nav {
+    background: transparent;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--velora-radius-sm);
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--velora-c-text);
+
+    &:hover { background: var(--velora-gray-50); }
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+    font-size: var(--velora-fs-xs);
+    color: var(--velora-gray-500);
+    margin-bottom: 4px;
+  }
+
+  &__weekday {
+    padding: 4px 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  &__cell {
+    background: transparent;
+    border: none;
+    padding: 6px 0;
+    border-radius: var(--velora-radius-sm);
+    font: inherit;
+    cursor: pointer;
+    color: var(--velora-c-text);
+
+    &--empty {
+      visibility: hidden;
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--velora-gray-100);
+    }
+
+    &.is-today {
+      box-shadow: inset 0 0 0 1px var(--velora-c-orange);
+    }
+
+    &.is-selected {
+      background: var(--velora-c-orange);
+      color: #fff;
+      font-weight: var(--velora-fw-medium);
+
+      &:hover { background: var(--velora-c-orange-dark); }
+    }
+
+    &.is-disabled {
+      color: var(--velora-gray-400);
+      cursor: not-allowed;
+    }
+  }
+
+  &__time {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--velora-border-color);
+    text-align: center;
+
+    select {
+      font: inherit;
+      padding: 2px 4px;
+    }
+  }
+
+  &__footer {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--velora-border-color);
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  &__action {
+    background: transparent;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    padding: 4px 10px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--velora-c-text);
+
+    &:hover { background: var(--velora-gray-50); }
+
+    &--primary {
+      background: var(--velora-c-orange);
+      color: #fff;
+      border-color: var(--velora-c-orange);
+
+      &:hover { background: var(--velora-c-orange-dark); }
+    }
+  }
+}
+
+// ----- MULTISELECT -----
+.velora-multiselect {
+  position: relative;
+
+  &__native {
+    display: block;
+    width: 100%;
+
+    &--hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &__control {
+    min-height: 36px;
+    padding: 4px 28px 4px 8px;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    &:focus { outline: 2px solid var(--velora-c-orange); outline-offset: -1px; }
+    &.is-disabled { background: var(--velora-gray-50); cursor: not-allowed; }
+
+    &::after {
+      content: "▾";
+      position: absolute;
+      right: 8px;
+      color: var(--velora-gray-500);
+      pointer-events: none;
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px 2px 8px;
+    background: var(--velora-c-orange);
+    color: #fff;
+    border-radius: 12px;
+    font-size: var(--velora-fs-xs);
+  }
+
+  &__chip-remove {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+
+    &:hover { color: var(--velora-gray-100); }
+  }
+
+  &__placeholder {
+    color: var(--velora-gray-400);
+  }
+
+  &__dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    z-index: var(--velora-z-dropdown);
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    box-shadow: var(--velora-shadow-md);
+  }
+
+  &.is-open &__dropdown {
+    display: block;
+  }
+
+  &__option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--velora-c-text);
+
+    &:hover { background: var(--velora-gray-50); }
+    &.is-selected {
+      background: var(--velora-gray-100);
+      font-weight: var(--velora-fw-medium);
+
+      &::after {
+        content: " ✓";
+        color: var(--velora-c-orange);
+      }
+    }
+  }
+}
+
+// ----- AUTOCOMPLETE -----
+.velora-autocomplete {
+  position: relative;
+
+  &__results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    z-index: var(--velora-z-dropdown);
+    max-height: 220px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    box-shadow: var(--velora-shadow-md);
+
+    &.is-open { display: block; }
+  }
+
+  &__option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--velora-c-text);
+
+    &:hover, &.is-active {
+      background: var(--velora-gray-50);
+    }
+  }
+
+  &__empty {
+    padding: 8px 12px;
+    color: var(--velora-gray-500);
+    font-size: var(--velora-fs-sm);
+  }
+}
+
+// ----- IMAGE PREVIEW -----
+.velora-image-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  &__input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__thumb {
+    width: 96px;
+    height: 96px;
+    border: 1px dashed var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--velora-gray-50);
+
+    &.is-empty { background: repeating-linear-gradient(45deg,
+        var(--velora-gray-50), var(--velora-gray-50) 6px,
+        var(--velora-gray-100) 6px, var(--velora-gray-100) 12px); }
+  }
+
+  &__img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  &__placeholder {
+    font-size: 32px;
+    color: var(--velora-gray-400);
+  }
+
+  &__clear {
+    background: transparent;
+    border: 1px solid var(--velora-c-red);
+    color: var(--velora-c-red);
+    padding: 4px 10px;
+    border-radius: var(--velora-radius-sm);
+    cursor: pointer;
+    align-self: center;
+    font: inherit;
+
+    &:hover { background: var(--velora-c-red); color: #fff; }
+  }
+}
+
+// ----- RATING STARS -----
+.velora-rating {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 2px;
+  font-size: 22px;
+
+  &[data-disabled="true"] {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  &__star {
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover ~ .velora-rating__star .velora-rating__icon,
+    &.is-hover .velora-rating__icon {
+      color: var(--velora-c-orange);
+    }
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__icon {
+    color: var(--velora-gray-200);
+    transition: color 0.15s ease;
+  }
+
+  // Stelle "selezionate": pattern :checked + general sibling combinator.
+  // L'ordine in HTML va dal valore massimo al minimo (vedi _build_rating_stars).
+  &__input:checked ~ .velora-rating__icon,
+  &__star.is-selected .velora-rating__icon,
+  &__input:checked ~ * .velora-rating__icon {
+    color: var(--velora-c-orange);
+  }
+
+  &__star.is-selected ~ &__star .velora-rating__icon {
+    color: var(--velora-c-orange);
+  }
+
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+// ----- TIMER FIELDS -----
+.velora-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  &__unit {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  &__field {
+    width: 56px;
+    padding: 4px 6px;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    font: inherit;
+    text-align: right;
+  }
+
+  &__suffix {
+    font-size: var(--velora-fs-xs);
+    color: var(--velora-gray-500);
+  }
+}
+
+// ----- REDACTOR -----
+.velora-redactor {
+  border: 1px solid var(--velora-border-color);
+  border-radius: var(--velora-radius-sm);
+  background: #fff;
+  overflow: hidden;
+
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 4px;
+    border-bottom: 1px solid var(--velora-border-color);
+    background: var(--velora-gray-50);
+  }
+
+  &__btn {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 4px 8px;
+    border-radius: var(--velora-radius-sm);
+    cursor: pointer;
+    font: inherit;
+    color: var(--velora-c-text);
+
+    &:hover { background: var(--velora-gray-100); }
+  }
+
+  &__editable {
+    min-height: 120px;
+    padding: 8px;
+    outline: none;
+    line-height: var(--velora-lh-base);
+
+    &:focus {
+      box-shadow: inset 0 0 0 2px var(--velora-c-orange);
+    }
+  }
+
+  &__textarea {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 8px;
+    font: inherit;
+    resize: vertical;
+
+    &:focus { outline: none; }
+
+    &--hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{% comment %}
+  Standalone checkbox/radio tag (v0.3).
+  Diverso da `velora_form_row type="checkbox"` perche` non e` una "riga di
+  form" (no label sopra, no help/error block sotto): e` un semplice control
+  inline da usare in tabelle, list-item, toolbar, ecc.
+
+  Render saltato se `name` e` vuoto: l'inclusion_tag ritorna un context con
+  name="" e questo if-guard previene l'emissione di markup malformato.
+{% endcomment %}
+{% if name %}
+<label class="velora-checkbox velora-checkbox--{{ variant }} velora-checkbox--align-{{ align }}{% if disabled %} is-disabled{% endif %} {{ extra_class }}"
+       for="{{ id }}">
+    <input
+        type="{{ input_type }}"
+        name="{{ name }}"
+        id="{{ id }}"
+        class="velora-checkbox__input"
+        value="{{ value }}"
+        {% if checked %}checked{% endif %}
+        {% if disabled %}disabled{% endif %}>
+    <span class="velora-checkbox__box" aria-hidden="true"></span>
+    {% if label %}<span class="velora-checkbox__label">{{ label }}</span>{% endif %}
+</label>
+{% endif %}

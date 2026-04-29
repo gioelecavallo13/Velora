@@ -1,0 +1,35 @@
+{% comment %}
+  Form row: timer_fields (durata in unita` multiple).
+  Genera N campi `<input type=number>` affiancati, uno per unita` selezionata
+  (es. ore + minuti + secondi). Il valore submitted e` la somma in secondi nel
+  campo hidden di nome `name`. Il componente JS sincronizza i sub-input al
+  hidden (e viceversa quando `value` arriva pre-popolato).
+{% endcomment %}
+<div class="velora-form-row velora-form-row--timer{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-timer"
+         data-velora-component="timer"
+         data-units="{{ units_csv }}">
+        {% for unit in units %}
+        <div class="velora-timer__unit">
+            <input
+                type="number"
+                class="velora-timer__field"
+                data-unit="{{ unit.key }}"
+                data-seconds="{{ unit.seconds }}"
+                value="{{ unit.value }}"
+                min="0"
+                {% if unit.max %}max="{{ unit.max }}"{% endif %}
+                {% if disabled %}disabled{% endif %}>
+            <span class="velora-timer__suffix">{{ unit.suffix }}</span>
+        </div>
+        {% endfor %}
+        <input
+            type="hidden"
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-timer__hidden"
+            value="{{ value_seconds }}">
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>

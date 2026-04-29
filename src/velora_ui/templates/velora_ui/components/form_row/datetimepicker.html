@@ -1,0 +1,37 @@
+{% comment %}
+  Form row: datetimepicker (date + ora).
+  Variante del datepicker con due campi sincronizzati (data + ora). Il valore
+  submitted e` un'unica stringa nel formato `<format> <time_format>`.
+{% endcomment %}
+<div class="velora-form-row velora-form-row--datetimepicker{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
+    {% include "velora_ui/components/form_row/_label.html" %}
+    <div class="velora-datepicker velora-datepicker--datetime"
+         data-velora-component="datepicker"
+         data-format="{{ format }}"
+         data-time="true"
+         data-time-format="{{ time_format }}"
+         data-step-minutes="{{ step_minutes }}"
+         {% if min %}data-min="{{ min }}"{% endif %}
+         {% if max %}data-max="{{ max }}"{% endif %}
+         data-first-day="{{ first_day }}">
+        <input
+            type="text"
+            name="{{ name }}"
+            id="{{ id }}"
+            class="velora-form-row__control velora-form-row__input velora-datepicker__input"
+            value="{{ value|default_if_none:'' }}"
+            autocomplete="off"
+            placeholder="{{ placeholder|default:datetime_placeholder }}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if autofocus %}autofocus{% endif %}>
+        <button type="button"
+                class="velora-datepicker__trigger"
+                aria-label="Apri calendario e ora"
+                {% if disabled %}disabled{% endif %}
+                tabindex="-1">
+            <span aria-hidden="true">🕒</span>
+        </button>
+    </div>
+    {% include "velora_ui/components/form_row/_help_error.html" %}
+</div>
