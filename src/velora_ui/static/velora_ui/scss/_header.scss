@@ -8,7 +8,8 @@
 //   - single-menu, multi-menu, apps-menu, notifications  -> trigger + panel
 //   - logo                                               -> marchio aggiuntivo
 // I pannelli sono nascosti di default e mostrati quando il wrapper riceve la
-// classe `.is-open` (gestita dal componente JS `header-menu`).
+// classe `.is-open` (click su mobile / `header-menu.js`) oppure — su desktop
+// con hover — restano controllati da JS che imposta `.is-open` su enter/leave.
 
 .velora-header {
   display: flex;
@@ -82,6 +83,39 @@
 .velora-header__item--user {
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: var(--velora-fw-medium);
+  gap: var(--velora-space-2);
+}
+
+.velora-header__item--user-menu {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-header__menu-trigger--user {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  max-width: 220px;
+  padding: 0 var(--velora-space-2);
+}
+
+.velora-header__user-menu-ion {
+  flex-shrink: 0;
+  --velora-icon-color: rgba(255, 255, 255, 0.92);
+}
+
+.velora-header__user-menu-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.velora-header__item--notifications .velora-header__menu-trigger--icon {
+  .velora-header__notif-trigger-ion {
+    display: block;
+    --velora-icon-color: rgba(255, 255, 255, 0.92);
+  }
 }
 
 // ============================================================
@@ -99,6 +133,11 @@
   width: auto;
   display: block;
   object-fit: contain;
+}
+
+.velora-header__item--logo .velora-header__logo-ion {
+  flex-shrink: 0;
+  --velora-icon-color: rgba(255, 255, 255, 0.92);
 }
 
 .velora-header__logo-label {
@@ -153,6 +192,11 @@
 .velora-header__menu-trigger--icon {
   position: relative;
   padding: 0 var(--velora-space-3);
+
+  .velora-header__apps-menu-ion {
+    display: block;
+    --velora-icon-color: rgba(255, 255, 255, 0.92);
+  }
 }
 
 .velora-header__menu-icon {
@@ -163,9 +207,32 @@
   line-height: 1;
 }
 
-.velora-header__menu-caret {
-  font-size: 10px;
-  opacity: 0.7;
+// Chevron accordion: nascosto solo su desktop “mouse” (stessa logica di
+// `header_menu.js`: min-width 721px, hover, pointer fine). Doppia classe per
+// battere `.velora-icon` caricato dopo nel bundle.
+.velora-icon.velora-header__menu-caret-ion {
+  display: inline-flex;
+  pointer-events: none;
+  flex-shrink: 0;
+  --velora-icon-color: rgba(255, 255, 255, 0.88);
+  transition:
+    transform 0.2s ease,
+    opacity 0.15s ease;
+}
+
+.velora-header__menu-trigger:hover .velora-header__menu-caret-ion {
+  --velora-icon-color: #fff;
+  opacity: 1;
+}
+
+.velora-header__item--menu.is-open .velora-header__menu-caret-ion {
+  transform: rotate(-180deg);
+}
+
+@media (min-width: 721px) and (hover: hover) and (pointer: fine) {
+  .velora-icon.velora-header__menu-caret-ion {
+    display: none;
+  }
 }
 
 // Pannello base (single/multi/apps/notifications condividono il guscio)
@@ -351,6 +418,10 @@
 
   &.is-unread .velora-header__notif-link {
     background-color: rgba(245, 160, 0, 0.04);
+
+    &:hover {
+      background-color: rgba(245, 160, 0, 0.1);
+    }
   }
 }
 

@@ -446,7 +446,7 @@
             {% velora_header items=showcase_header_demo_v02_apps %}
         </div>
         <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
-    {"type": "apps-menu", "label": "App",
+    {"type": "apps-menu", "label": "App", "icon_slug": "apps-sharp",
      "apps": [
          {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
          {"label": "Drive",      "url": "/drive/", "color": "#34a853"},
@@ -495,8 +495,8 @@
 %}{% endverbatim %}</code></pre>
     </div>
 
-    <h3 class="showcase-section__subtitle">Sidebar collassabile</h3>
-    <p>{% blocktrans trimmed %}Cliccando <strong>Più spazio</strong> in fondo alla sidebar si commuta la classe <code>velora-app--sidebar-collapsed</code> sul <code>body</code>; lo stato è persistito in <code>localStorage</code>.{% endblocktrans %}</p>
+    <h3 class="showcase-section__subtitle">Sidebar a larghezza fissa</h3>
+    <p>{% blocktrans trimmed %}La colonna laterale ha larghezza costante definita da <code>--velora-sidebar-width</code>. Il pulsante <strong>Più spazio</strong> commuta solo le etichette visibili (compatto / esteso), non la larghezza del layout; lo stato è salvato in <code>localStorage</code>.{% endblocktrans %}</p>
 
     <h3 class="showcase-section__subtitle">Interazione dei dropdown header</h3>
     <p>I tipi <code>single-menu</code>, <code>multi-menu</code>, <code>apps-menu</code>

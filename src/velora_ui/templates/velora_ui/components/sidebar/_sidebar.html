@@ -1,11 +1,13 @@
 {% load i18n velora_icons velora_overlays %}
 {% comment %}
   Sidebar navigazione: stato collapsed/expanded su body (`velora-app--sidebar-collapsed`).
-  Voci: link semplice oppure `children` per sottomenu (accordion se expanded,
-  pannello flyout se collapsed). Ionicons: `icon_slug` es. `home-outline`.
+  Voci: link semplice oppure `children` per sottomenu (stesso pannello flyout
+  con sidebar espansa o collassata). Ionicons: `icon_slug` es. `home-outline`.
 
   Contesto opzionale:
-    velora_sidebar_items (required)
+    velora_sidebar_items (required) — dict per voce: label, url, icon_slug,
+        icon, children[]. La chiave `active` non è usata per gli stili: lo stato
+        attivo (is-active) è impostato al click dal JS `velora-sidebar`.
     velora_sidebar_brand_full (default "Velora")
     velora_sidebar_brand_short (default primi 2 caratteri del brand)
     velora_sidebar_show_search (default False)
@@ -65,7 +67,7 @@
             <span class="velora-sidebar__footer-text">{% trans "Più spazio" %}</span>
         </button>
     </footer>
-    {# Pannelli flyout (solo modalità collapsed): stesso markup ripetuto per ogni branch #}
+    {# Pannelli flyout per le voci con children (indipendente da collapsed) #}
     <div class="velora-sidebar__flyout-layer" data-velora-sidebar-flyout-layer hidden aria-hidden="true">
         <div class="velora-sidebar__flyout-backdrop" data-velora-sidebar-flyout-backdrop tabindex="-1"></div>
         {% for item in velora_sidebar_items %}
@@ -80,12 +82,15 @@
                 <p class="velora-sidebar__flyout-heading">{{ item.label }}</p>
                 <ul class="velora-sidebar__flyout-list">
                     {% for child in item.children %}
-                    <li><a href="{{ child.url }}" class="velora-sidebar__flyout-link{% if child.active %} is-active{% endif %}">{{ child.label }}</a></li>
+                    <li><a href="{{ child.url }}" class="velora-sidebar__flyout-link">{{ child.label }}</a></li>
                     {% endfor %}
+                    <li class="velora-sidebar__flyout-item--back">
+                        <button type="button" class="velora-sidebar__flyout-back" data-velora-sidebar-flyout-back>
+                            <span class="velora-sidebar__flyout-back-chevron" aria-hidden="true">‹</span>
+                            <span class="velora-sidebar__flyout-back-text">{% trans "Indietro" %}</span>
+                        </button>
+                    </li>
                 </ul>
-                <button type="button" class="velora-sidebar__flyout-back" data-velora-sidebar-flyout-back>
-                    {% trans "Indietro" %}
-                </button>
             </div>
             {% endif %}
         {% endfor %}

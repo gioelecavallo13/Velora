@@ -162,6 +162,7 @@ def index(request: HttpRequest) -> HttpResponse:
         {
             "type": "apps-menu",
             "label": "App",
+            "icon_slug": "apps-sharp",
             "apps": [
                 {"label": "Calendario", "url": "#", "color": "#4285f4"},
                 {"label": "Drive", "url": "#", "color": "#34a853"},
@@ -175,6 +176,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "type": "notifications",
             "label": "Notifiche",
             "unread_count": 3,
+            "icon_slug": "notifications-sharp",
             "items": [
                 {
                     "title": "Nuovo cliente registrato",
@@ -206,19 +208,27 @@ def index(request: HttpRequest) -> HttpResponse:
             "footer_label": "Vedi tutte",
             "footer_url": "#",
         },
-        {"type": "user-menu", "label": "Sviluppatore", "url": "#"},
+        {
+            "type": "user-menu",
+            "label": _("Utente"),
+            "url": "#",
+            "icon_slug": "person-sharp",
+            "items": [
+                {"label": _("Impostazioni"), "url": "#"},
+                {"label": _("Esci"), "url": "#"},
+            ],
+        },
     ]
 
     # Sidebar dello showcase = indice cliccabile delle sezioni della pagina.
     # Aggiungere una sezione qui ed in showcase/index.html mantiene la TOC
     # in sync con il contenuto.
-    # Sidebar: Ionicons + link semplici + ramo con sottomenu (accordion / flyout).
+    # Sidebar: Ionicons + link semplici + ramo con sottomenu (flyout).
     sidebar_items = [
         {
             "label": _("Panoramica"),
             "url": "#overview",
             "icon_slug": "home-outline",
-            "active": True,
         },
         {
             "label": _("Contenuti showcase"),
@@ -498,6 +508,7 @@ def index(request: HttpRequest) -> HttpResponse:
         {
             "type": "apps-menu",
             "label": "App",
+            "icon_slug": "apps-sharp",
             "apps": [
                 {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
                 {"label": "Drive", "url": "/drive/", "color": "#34a853"},
@@ -510,6 +521,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "type": "notifications",
             "label": "Notifiche",
             "unread_count": 3,
+            "icon_slug": "notifications-sharp",
             "items": [
                 {
                     "title": "Nuovo cliente",

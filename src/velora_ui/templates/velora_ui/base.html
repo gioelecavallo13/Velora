@@ -43,6 +43,18 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="velora-app{% if request.GET.no_sidebar %} velora-app--no-sidebar{% endif %} {% block body_class %}{% endblock %}">
+    {% if not request.GET.no_sidebar %}
+    <script>
+    (function () {
+        try {
+            var key = "velora.sidebar.collapsed";
+            var v = localStorage.getItem(key);
+            var collapsed = v !== "0";
+            document.body.classList.toggle("velora-app--sidebar-collapsed", collapsed);
+        } catch (e) {}
+    })();
+    </script>
+    {% endif %}
     <header class="velora-app__header">
         {% block header %}{% velora_header items=velora_header_items %}{% endblock %}
     </header>

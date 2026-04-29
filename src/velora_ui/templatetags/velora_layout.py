@@ -16,17 +16,24 @@ Schema dei dati (header v0.2):
             {"label": "Supporto",
              "items": [{"label": "Contatti", "url": "/c"}]},
         ]},
-        {"type": "apps-menu", "label": "App", "apps": [
+        {"type": "apps-menu", "label": "App", "icon_slug": "apps-sharp", "apps": [
             {"label": "Calendario", "url": "/cal/", "icon": "calendar"},
         ]},
         {"type": "notifications", "label": "Notifiche", "unread_count": 3,
+         "icon_slug": "notifications-sharp",
          "items": [{"title": "...", "body": "...", "url": "/n/1"}]},
-        {"type": "logo", "image_url": "/static/x.svg",
+        {"type": "logo", "icon_slug": "apps-sharp",
          "label": "Tenant", "url": "/"},
         {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
+        {"type": "user-menu", "label": "Account", "icon_slug": "person-sharp",
+         "items": [
+            {"label": "Impostazioni", "url": "/settings/"},
+            {"label": "Esci", "url": "/logout/"},
+        ]},
     ]
 
-I tipi `link` e `user-menu` sono v0.1 e restano invariati. I 5 tipi nuovi di
+I tipi `link` e `user-menu` sono v0.1 / v0.2: `user-menu` con `items` non vuoti
+diventa dropdown come `single-menu`. I 5 tipi nuovi di
 v0.2 (`single-menu`, `multi-menu`, `apps-menu`, `notifications`, `logo`) sono
 documentati per esteso in AGENTS.md.
 
@@ -41,6 +48,8 @@ from __future__ import annotations
 from typing import Any
 
 from django import template
+
+from velora_ui.templatetags.velora_icons import _normalize_slug
 
 register = template.Library()
 
@@ -195,7 +204,7 @@ def _normalize_header_items(items: Any) -> list[dict[str, Any]]:
             "extra_class": raw.get("extra_class", ""),
         }
 
-        if item_type in {"link", "user-menu"}:
+        if item_type == "link":
             label = common["label"]
             url = raw.get("url", "")
             if not label or not url:
@@ -207,6 +216,35 @@ def _normalize_header_items(items: Any) -> list[dict[str, Any]]:
                     "active": bool(raw.get("active", False)),
                 }
             )
+
+        elif item_type == "user-menu":
+            label = common["label"]
+            url = raw.get("url", "")
+            icon_slug = _normalize_slug(str(raw.get("icon_slug", "")))
+            menu_items = _coerce_subitems(raw.get("items"))
+            if menu_items:
+                if not label:
+                    continue
+                normalized.append(
+                    {
+                        **common,
+                        "url": url or "#",
+                        "icon_slug": icon_slug,
+                        "menu_items": menu_items,
+                        "active": bool(raw.get("active", False)),
+                    }
+                )
+            else:
+                if not label or not url:
+                    continue
+                normalized.append(
+                    {
+                        **common,
+                        "url": url,
+                        "icon_slug": icon_slug,
+                        "active": bool(raw.get("active", False)),
+                    }
+                )
 
         elif item_type == "single-menu":
             sub_items = _coerce_subitems(raw.get("items"))
@@ -238,11 +276,13 @@ def _normalize_header_items(items: Any) -> list[dict[str, Any]]:
             apps = _coerce_apps(raw.get("apps"))
             if not apps:
                 continue
+            icon_slug = _normalize_slug(str(raw.get("icon_slug", "")))
             normalized.append(
                 {
                     **common,
                     "label": common["label"] or "App",
                     "icon": raw.get("icon", "apps"),
+                    "icon_slug": icon_slug,
                     "apps": apps,
                 }
             )
@@ -252,11 +292,13 @@ def _normalize_header_items(items: Any) -> list[dict[str, Any]]:
             unread = _coerce_unread_count(raw.get("unread_count", 0))
             footer_label = raw.get("footer_label", "")
             footer_url = raw.get("footer_url", "")
+            icon_slug = _normalize_slug(str(raw.get("icon_slug", "")))
             normalized.append(
                 {
                     **common,
                     "label": common["label"] or "Notifiche",
                     "icon": raw.get("icon", "bell"),
+                    "icon_slug": icon_slug,
                     "items": entries,
                     "unread_count": unread,
                     "empty_label": raw.get("empty_label", "Nessuna notifica"),
@@ -267,13 +309,15 @@ def _normalize_header_items(items: Any) -> list[dict[str, Any]]:
 
         elif item_type == "logo":
             image_url = raw.get("image_url", "")
+            icon_slug = _normalize_slug(str(raw.get("icon_slug", "")))
             label = common["label"]
-            if not image_url and not label:
+            if not image_url and not label and not icon_slug:
                 continue
             normalized.append(
                 {
                     **common,
                     "image_url": image_url,
+                    "icon_slug": icon_slug,
                     "alt": raw.get("alt", label),
                     "url": raw.get("url", "/"),
                 }

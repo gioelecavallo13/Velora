@@ -7,7 +7,11 @@
  * `single-menu`, `multi-menu`, `apps-menu`, `notifications`.
  *
  * Comportamento:
- *   - Click sul `<button.velora-header__menu-trigger>` toggle del pannello
+ *   - Desktop (viewport ≥721px, hover primario e puntatore fine): menu su
+ *     hover/focus sul wrapper; chiusura all’uscita del puntatore salvo
+ *     `:focus-within`; chevron nascosto via CSS.
+ *   - Touch, puntatore grossolano o viewport stretta: toggle con click; chevron
+ *     visibile dove applicabile.
  *   - Click fuori dal wrapper -> chiude il pannello
  *   - Tasto ESC con focus dentro il pannello/trigger -> chiude
  *   - Apertura mutuamente esclusiva: aprendo un menu, gli altri si chiudono
@@ -24,6 +28,27 @@
 const OPEN_CLASS = "is-open";
 const TRIGGER_SELECTOR = ".velora-header__menu-trigger";
 const PANEL_SELECTOR = ".velora-header__menu-panel";
+
+/** Allineato a `_header.scss` (caret visibile) e ai breakpoint pannello mobile. */
+let _hoverDropdownMql = null;
+function hoverDropdownMql() {
+    if (!_hoverDropdownMql) {
+        _hoverDropdownMql = window.matchMedia("(min-width: 721px) and (hover: hover)");
+    }
+    return _hoverDropdownMql;
+}
+
+function prefersHoverDropdowns() {
+    return hoverDropdownMql().matches && finePointerMql().matches;
+}
+
+let _finePointerMql = null;
+function finePointerMql() {
+    if (!_finePointerMql) {
+        _finePointerMql = window.matchMedia("(pointer: fine)");
+    }
+    return _finePointerMql;
+}
 
 // Set globale dei pannelli attivi: serve per chiudere gli altri quando se ne
 // apre uno nuovo. La mutua esclusione e` voluta nello scope dell'header
@@ -91,6 +116,14 @@ function installGlobalListeners() {
     }
     globalListenersInstalled = true;
 
+    hoverDropdownMql().addEventListener("change", () => {
+        closeAll();
+    });
+
+    finePointerMql().addEventListener("change", () => {
+        closeAll();
+    });
+
     document.addEventListener("click", (event) => {
         if (openWrappers.size === 0) {
             return;
@@ -128,8 +161,45 @@ const headerMenu = {
         trigger.setAttribute("aria-expanded", "false");
 
         trigger.addEventListener("click", (event) => {
+            if (prefersHoverDropdowns()) {
+                return;
+            }
             event.stopPropagation();
             toggleWrapper(el);
+        });
+
+        el.addEventListener("mouseenter", () => {
+            if (prefersHoverDropdowns()) {
+                openWrapper(el);
+            }
+        });
+
+        el.addEventListener("mouseleave", () => {
+            if (!prefersHoverDropdowns()) {
+                return;
+            }
+            requestAnimationFrame(() => {
+                if (!el.matches(":focus-within")) {
+                    closeWrapper(el);
+                }
+            });
+        });
+
+        el.addEventListener("focusin", () => {
+            if (prefersHoverDropdowns()) {
+                openWrapper(el);
+            }
+        });
+
+        el.addEventListener("focusout", () => {
+            if (!prefersHoverDropdowns()) {
+                return;
+            }
+            requestAnimationFrame(() => {
+                if (!el.contains(document.activeElement)) {
+                    closeWrapper(el);
+                }
+            });
         });
 
         // Click dentro il pannello su un link -> chiudi (UX standard dropdown

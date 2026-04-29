@@ -82,18 +82,24 @@ Tipi sconosciuti → item scartato silenziosamente.
 }
 ```
 
-**Schema item — `user-menu`** (v0.1):
+**Schema item — `user-menu`** (v0.1, allineato a destra):
 
 ```python
 {
     "type": "user-menu",
-    "label": str,                   # required
-    "url": str,                     # required
+    "label": str,                   # required (testo sul trigger, es. nome utente)
+    "icon_slug": str,               # default "" — Ionicons accanto al label (es. person-sharp)
+    "url": str,                     # required se `items` assente (link semplice)
+    "items": [                      # opzionale: se non vuoto → dropdown come single-menu
+        {"label": str, "url": str, "icon": str, "extra_class": str},
+        ...
+    ],
+    "active": bool,                 # default False (solo modalità link)
     "extra_class": str,             # default ""
 }
 ```
 
-Stessa firma di `link`, ma allineato a destra dell'header. Il dropdown reale arriva via `single-menu` con `align="right"`.
+Con `items` valorizzato, `url` è opzionale (default `"#"`). Senza `items`, stessa firma di `link` (solo link al profilo).
 
 **Schema item — `single-menu`** (v0.2):
 
@@ -143,7 +149,8 @@ Colonne senza `items` validi vengono scartate.
 {
     "type": "apps-menu",
     "label": str,                   # default "App" (label screen-reader del trigger)
-    "icon": str,                    # default "apps"
+    "icon": str,                    # default "apps" (solo se `icon_slug` vuoto: classe .velora-icon--*)
+    "icon_slug": str,               # default "" — se valorizzato (slug Ionicons), icona nel trigger al posto di `icon`
     "apps": [                       # required, lista
         {
             "label": str,           # required
@@ -165,7 +172,8 @@ Item con `apps=[]` scartato. App senza `label` o `url` scartate.
 {
     "type": "notifications",
     "label": str,                   # default "Notifiche"
-    "icon": str,                    # default "bell"
+    "icon": str,                    # default "bell" (solo se `icon_slug` vuoto)
+    "icon_slug": str,               # default "" — slug Ionicons per l'icona del trigger (es. notifications-sharp)
     "unread_count": int,            # default 0; se >0 mostra badge rosso
     "items": [                      # default []
         {
@@ -192,19 +200,20 @@ Sempre allineato a destra dell'header (forzato a `align="right"`).
 {
     "type": "logo",
     "image_url": str,               # default ""
+    "icon_slug": str,               # default "" — slug Ionicons (es. apps-sharp); se valorizzato con `image_url` vuoto viene mostrata l'icona SVG inline
     "label": str,                   # default ""
-    "alt": str,                     # default = label
+    "alt": str,                     # default = label (solo immagine `<img>`)
     "url": str,                     # default "/"
     "extra_class": str,             # default ""
 }
 ```
 
-Almeno uno fra `image_url` e `label` deve essere presente, altrimenti l'item viene scartato. Usato per affiancare al brand principale (`app_name` + `app_icon_url`) un secondo marchio (es. tenant).
+Almeno uno fra `image_url`, `label` e `icon_slug` deve essere presente, altrimenti l'item viene scartato. Usato per affiancare al brand principale (`app_name` + `app_icon_url`) un secondo marchio (es. tenant).
 
 **Comportamento generale:**
 
 - App name e icona del brand principale: il context processor `velora_ui.context_processors.header_defaults` inietta `velora_header_app_name` e `velora_header_app_icon_url` letti dai settings `VELORA_HEADER_APP_NAME` / `VELORA_HEADER_APP_ICON_URL` (default: `"Velora UI"` e `None`).
-- I tipi con pannello (`single-menu`, `multi-menu`, `apps-menu`, `notifications`) sono auto-inizializzati dal componente JS `header-menu`: click sul trigger toggle, click fuori chiude, ESC chiude, apertura mutuamente esclusiva.
+- I tipi con pannello (`single-menu`, `multi-menu`, `apps-menu`, `notifications`, `user-menu` con `items`) sono auto-inizializzati dal componente JS `header-menu`: su viewport ampia con puntatore fine e hover, apertura al passaggio del mouse / focus sul wrapper; altrimenti toggle con click sul trigger; chevron del trigger nascosto solo in modalità hover. Click fuori chiude, ESC chiude, apertura mutuamente esclusiva.
 
 ### `velora_title_bar`
 

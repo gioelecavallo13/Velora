@@ -1,6 +1,6 @@
 {% load i18n velora_icons velora_overlays %}
 {% if item.children %}
-<li class="velora-sidebar__item velora-sidebar__item--branch{% if item.active %} is-active{% endif %}"
+<li class="velora-sidebar__item velora-sidebar__item--branch"
     data-velora-sidebar-branch
     data-velora-flyout-id="velora-sidebar-flyout-{{ branch_index }}">
     <button type="button"
@@ -21,13 +21,13 @@
     <ul class="velora-sidebar__sublist">
         {% for child in item.children %}
         <li class="velora-sidebar__subitem">
-            <a href="{{ child.url }}" class="velora-sidebar__sublink{% if child.active %} is-active{% endif %}">{{ child.label }}</a>
+            <a href="{{ child.url }}" class="velora-sidebar__sublink">{{ child.label }}</a>
         </li>
         {% endfor %}
     </ul>
 </li>
 {% else %}
-<li class="velora-sidebar__item{% if item.active %} is-active{% endif %}">
+<li class="velora-sidebar__item">
     <a href="{{ item.url }}"
        class="velora-sidebar__row velora-sidebar__row--link"
        {% velora_tooltip item.label placement="right" %}>

@@ -99,8 +99,8 @@ const ioniconsGallery = {
                 img.src = `${baseStatic}${slug}.svg`;
                 img.alt = "";
                 img.loading = "lazy";
-                img.width = 40;
-                img.height = 40;
+                img.width = 28;
+                img.height = 28;
                 wrap.appendChild(img);
 
                 const meta = document.createElement("div");
@@ -139,7 +139,7 @@ const ioniconsGallery = {
 
             let msg = "";
             if (initial) {
-                msg = `${ret} / ${total}`;
+                msg = `Prime ${ret} di ${total} — digita per cercare`;
             } else {
                 msg = `${ret} di ${matched} — catalogo ${total}`;
             }
@@ -199,7 +199,7 @@ const ioniconsGallery = {
                     ? `${list.length} di ${slugs.length}`
                     : q
                       ? `${Math.min(list.length, cap)} trovate su ${slugs.length}`
-                      : `${Math.min(list.length, slugs.length)} su ${slugs.length}`;
+                      : `Prime ${Math.min(list.length, slugs.length)} di ${slugs.length} — cerca per filtrare`;
             }
         }
 

@@ -7,10 +7,13 @@
  * persiste lo stato in localStorage con chiave `velora.sidebar.collapsed`,
  * cosi` la preferenza dell'utente sopravvive al reload.
  *
- * Allo script-load (prima del DOMContentLoaded) ripristiniamo subito lo
- * stato salvato per evitare il flash della sidebar piena -> ridotta:
- * applichiamo la classe direttamente a document.body se gia` parsato, o
- * registriamo un listener `DOMContentLoaded` come fallback.
+ * Default: sidebar chiusa (collapsed). In localStorage, `1` = chiusa, `0` =
+ * aperta; assenza della chiave = chiusa (prima visita).
+ *
+ * Lo stesso stato viene applicato anche da uno script inline in `base.html`
+ * appena dopo l'apertura del `<body>`, cosi` non c'e` flash prima che carichi
+ * questo bundle. Qui ripetiamo l'apply per coerenza quando `document.body`
+ * non era ancora disponibile al primo run.
  */
 
 // Nota: questo modulo NON importa da `../velora.js` per evitare cicli ESM.
@@ -40,9 +43,11 @@ function syncAllToggleAria(collapsed) {
 
 function readPersistedState() {
     try {
-        return window.localStorage.getItem(STORAGE_KEY) === "1";
+        const v = window.localStorage.getItem(STORAGE_KEY);
+        // Solo "0" = utente ha scelto sidebar espansa; null o "1" = collapsed.
+        return v !== "0";
     } catch (_err) {
-        return false;
+        return true;
     }
 }
 

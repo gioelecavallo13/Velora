@@ -1,3 +1,4 @@
+{% load velora_icons %}
 {% comment %}
   Partial dell'header globale (v0.2).
 
@@ -9,12 +10,14 @@
 
   Tipi item supportati:
     - "link"          (v0.1) voce di navigazione semplice
-    - "user-menu"     (v0.1) voce dell'utente, allineata a destra
+    - "user-menu"     (v0.1) voce utente a destra: link semplice oppure, con
+      chiave `items`, trigger + menu; opzionale `icon_slug` (Ionicons) sul trigger
     - "single-menu"   (v0.2) trigger + dropdown panel con lista di link
     - "multi-menu"    (v0.2) trigger + mega-menu a colonne
     - "apps-menu"     (v0.2) trigger + griglia di app launcher
     - "notifications" (v0.2) trigger campanella con contatore + lista notifiche
-    - "logo"          (v0.2) marchio aggiuntivo (es. tenant) inline nei nav
+    - "logo"          (v0.2) marchio aggiuntivo (es. tenant): immagine e/o
+      etichetta e/o icona Ionicons (`icon_slug`)
 
   Posizionamento:
     - link, single-menu, multi-menu, apps-menu, logo  -> allineati a sinistra
@@ -43,6 +46,8 @@
             class="velora-header__item velora-header__item--logo {{ item.extra_class }}">
             {% if item.image_url %}
             <img src="{{ item.image_url }}" alt="{{ item.alt }}" class="velora-header__logo-img">
+            {% elif item.icon_slug %}
+            {% velora_icon item.icon_slug extra_class="velora-header__logo-ion" size="sm" alt="" %}
             {% endif %}
             {% if item.label %}<span class="velora-header__logo-label">{{ item.label }}</span>{% endif %}
         </a>
@@ -55,19 +60,12 @@
                 type="button"
                 class="velora-header__menu-trigger"
                 aria-haspopup="true"
-                aria-expanded="false">
-                {% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
-                <span class="velora-header__menu-label">{{ item.label }}</span>
-                <span class="velora-header__menu-caret" aria-hidden="true">&#9662;</span>
-            </button>
+                aria-expanded="false">{% spaceless %}{% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}<span class="velora-header__menu-label">{{ item.label }}</span>{% velora_icon "chevron-down-sharp" extra_class="velora-header__menu-caret-ion" size="md" alt="" %}{% endspaceless %}</button>
             <div class="velora-header__menu-panel velora-header__menu-panel--single" role="menu">
                 <ul class="velora-header__menu-list">
                     {% for sub in item.items %}
                     <li role="none">
-                        <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">
-                            {% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}
-                            <span>{{ sub.label }}</span>
-                        </a>
+                        <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">{% spaceless %}{% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}<span>{{ sub.label }}</span>{% endspaceless %}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -82,11 +80,7 @@
                 type="button"
                 class="velora-header__menu-trigger"
                 aria-haspopup="true"
-                aria-expanded="false">
-                {% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}
-                <span class="velora-header__menu-label">{{ item.label }}</span>
-                <span class="velora-header__menu-caret" aria-hidden="true">&#9662;</span>
-            </button>
+                aria-expanded="false">{% spaceless %}{% if item.icon %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true"></span>{% endif %}<span class="velora-header__menu-label">{{ item.label }}</span>{% velora_icon "chevron-down-sharp" extra_class="velora-header__menu-caret-ion" size="md" alt="" %}{% endspaceless %}</button>
             <div class="velora-header__menu-panel velora-header__menu-panel--multi" role="menu">
                 <div class="velora-header__multi-grid">
                     {% for section in item.sections %}
@@ -95,10 +89,7 @@
                         <ul class="velora-header__menu-list">
                             {% for sub in section.items %}
                             <li role="none">
-                                <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">
-                                    {% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}
-                                    <span>{{ sub.label }}</span>
-                                </a>
+                                <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">{% spaceless %}{% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}<span>{{ sub.label }}</span>{% endspaceless %}</a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -117,9 +108,7 @@
                 class="velora-header__menu-trigger velora-header__menu-trigger--icon"
                 aria-haspopup="true"
                 aria-expanded="false"
-                aria-label="{{ item.label }}">
-                <span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#x25A6;</span>
-            </button>
+                aria-label="{{ item.label }}">{% spaceless %}{% if item.icon_slug %}{% velora_icon item.icon_slug extra_class="velora-header__apps-menu-ion" size="sm" alt="" %}{% else %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#x25A6;</span>{% endif %}{% endspaceless %}</button>
             <div class="velora-header__menu-panel velora-header__menu-panel--apps" role="menu">
                 <div class="velora-header__apps-grid">
                     {% for app in item.apps %}
@@ -151,12 +140,7 @@
                 class="velora-header__menu-trigger velora-header__menu-trigger--icon"
                 aria-haspopup="true"
                 aria-expanded="false"
-                aria-label="{{ item.label }}{% if item.unread_count %} ({{ item.unread_count }} non lette){% endif %}">
-                <span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#9788;</span>
-                {% if item.unread_count %}
-                <span class="velora-header__notif-badge" aria-hidden="true">{{ item.unread_count }}</span>
-                {% endif %}
-            </button>
+                aria-label="{{ item.label }}{% if item.unread_count %} ({{ item.unread_count }} non lette){% endif %}">{% spaceless %}{% if item.icon_slug %}{% velora_icon item.icon_slug extra_class="velora-header__notif-trigger-ion" size="sm" alt="" %}{% else %}<span class="velora-header__menu-icon velora-icon velora-icon--{{ item.icon }}" aria-hidden="true">&#9788;</span>{% endif %}{% if item.unread_count %}<span class="velora-header__notif-badge" aria-hidden="true">{{ item.unread_count }}</span>{% endif %}{% endspaceless %}</button>
             <div class="velora-header__menu-panel velora-header__menu-panel--notifications" role="menu">
                 <div class="velora-header__notif-header">{{ item.label }}</div>
                 {% if item.items %}
@@ -188,11 +172,32 @@
             </div>
         </div>
         {% elif item.type == "user-menu" %}
+        {% if item.menu_items %}
+        <div
+            class="velora-header__item velora-header__item--menu velora-header__item--user-menu {{ item.extra_class }}"
+            data-velora-component="header-menu"
+            data-velora-menu-align="right">
+            <button
+                type="button"
+                class="velora-header__menu-trigger velora-header__menu-trigger--user"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="{{ item.label }}">{% spaceless %}{% if item.icon_slug %}{% velora_icon item.icon_slug extra_class="velora-header__user-menu-ion" size="sm" alt="" %}{% endif %}<span class="velora-header__user-menu-label">{{ item.label }}</span>{% velora_icon "chevron-down-sharp" extra_class="velora-header__menu-caret-ion" size="md" alt="" %}{% endspaceless %}</button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--single velora-header__menu-panel--user" role="menu">
+                <ul class="velora-header__menu-list">
+                    {% for sub in item.menu_items %}
+                    <li role="none">
+                        <a role="menuitem" href="{{ sub.url }}" class="velora-header__menu-link {{ sub.extra_class }}">{% spaceless %}{% if sub.icon %}<span class="velora-header__menu-link-icon velora-icon velora-icon--{{ sub.icon }}" aria-hidden="true"></span>{% endif %}<span>{{ sub.label }}</span>{% endspaceless %}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% else %}
         <a
             href="{{ item.url }}"
-            class="velora-header__item velora-header__item--user {{ item.extra_class }}">
-            {{ item.label }}
-        </a>
+            class="velora-header__item velora-header__item--user {{ item.extra_class }}">{% spaceless %}{% if item.icon_slug %}{% velora_icon item.icon_slug extra_class="velora-header__user-menu-ion" size="sm" alt="" %}{% endif %}<span class="velora-header__user-menu-label">{{ item.label }}</span>{% endspaceless %}</a>
+        {% endif %}
         {% endif %}
         {% endfor %}
     </div>

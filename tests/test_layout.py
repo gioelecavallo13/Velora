@@ -54,6 +54,50 @@ def test_velora_header_renders_user_menu_item():
     assert "velora-header__item--user" in html
 
 
+def test_velora_header_renders_user_menu_with_items_as_dropdown():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "user-menu",
+                    "label": "Mario Rossi",
+                    "items": [
+                        {"label": "Impostazioni", "url": "/settings/"},
+                        {"label": "Esci", "url": "/logout/"},
+                    ],
+                }
+            ],
+            "velora_header_app_name": "App test",
+        },
+    )
+    assert "velora-header__item--user-menu" in html
+    assert 'data-velora-component="header-menu"' in html
+    assert 'data-velora-menu-align="right"' in html
+    assert "Mario Rossi" in html
+    assert 'href="/settings/"' in html
+    assert 'href="/logout/"' in html
+    assert html.count('role="menuitem"') == 2
+
+
+def test_velora_header_user_menu_dropdown_renders_icon_slug():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "user-menu",
+                    "label": "Utente",
+                    "icon_slug": "person-sharp",
+                    "items": [{"label": "Esci", "url": "/logout/"}],
+                }
+            ],
+        },
+    )
+    assert "velora-header__user-menu-ion" in html
+    assert ">Utente<" in html
+
+
 def test_velora_header_skips_malformed_items():
     html = render(
         "{% load velora_layout %}{% velora_header items=items %}",
@@ -394,6 +438,24 @@ def test_velora_header_renders_notifications_with_unread_badge():
     assert 'href="/notifications/"' in html
 
 
+def test_velora_header_notifications_uses_icon_slug_when_set():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "notifications",
+                    "label": "Notifiche",
+                    "icon_slug": "notifications-sharp",
+                    "items": [{"title": "x", "url": "/x"}],
+                }
+            ],
+        },
+    )
+    assert "velora-header__notif-trigger-ion" in html
+    assert "velora-header__menu-icon" not in html
+
+
 def test_velora_header_notifications_hides_badge_when_count_zero():
     html = render(
         "{% load velora_layout %}{% velora_header items=items %}",
@@ -478,6 +540,27 @@ def test_velora_header_logo_defaults_url_to_root():
     )
     assert 'href="/"' in html
     assert "Brand" in html
+
+
+def test_velora_header_renders_apps_menu_with_icon_slug():
+    html = render(
+        "{% load velora_layout %}{% velora_header items=items %}",
+        {
+            "items": [
+                {
+                    "type": "apps-menu",
+                    "label": "App",
+                    "icon_slug": "apps-sharp",
+                    "apps": [
+                        {"label": "A", "url": "/a/"},
+                    ],
+                }
+            ],
+        },
+    )
+    assert "velora-header__item--apps-menu" in html
+    assert "velora-header__apps-menu-ion" in html
+    assert "velora-icon" in html
 
 
 def test_velora_header_logo_label_only_renders_without_image():
