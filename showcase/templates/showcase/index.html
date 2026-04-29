@@ -93,10 +93,12 @@
 {% endblock %}
 
 {% block header %}
-    {# Override esplicito: passiamo gli item dello showcase al tag, perche` la
-       view popola `showcase_header_items` (non `velora_header_items` che e` il
-       nome usato dal default in base.html). In un'app reale puoi tenere il
-       nome `velora_header_items` e affidarti al default del block. #}
+    {% comment %}
+      Override esplicito: passiamo gli item dello showcase al tag, perche` la
+      view popola `showcase_header_items` (non `velora_header_items` che e` il
+      nome usato dal default in base.html). In un'app reale puoi tenere il
+      nome `velora_header_items` e affidarti al default del block.
+    {% endcomment %}
     {% velora_header items=showcase_header_items %}
 {% endblock %}
 
