@@ -4,6 +4,30 @@ Tutte le modifiche significative a Velora UI sono documentate in questo file.
 
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il versionamento segue [Semantic Versioning](https://semver.org/) — pre-1.0 ogni `0.x.0` puo` introdurre breaking change documentati qui.
 
+## [0.4.0] — 2026-04-29
+
+Quarta release: **Chart.js** (già in 12.1), **set Ionicons** con galleria ricercabile nello showcase, **`velora_logo`** e **`velora_satisfaction_bar`**, **tema scuro** (`data-velora-theme` + `localStorage`), **i18n** (catalogo inglese parallelo all’italiano per showcase + stringhe traducibili nei tag icone).
+
+### Aggiunto
+
+- `velora_logo` in `velora_layout`: marchio standalone (immagine e/o testo); output vuoto se entrambi assenti.
+- `velora_satisfaction_bar` in `velora_feedback`: segmenti orizzontali con varianti `default` / `success` / `danger`.
+- `velora_ionicons_gallery` in `velora_icons`: shell template + JS `ionicons-gallery`; sync asset con `npm run sync:icons` (`tools/sync_ionicons.sh`).
+- SCSS: `_theme-dark.scss`, `_satisfaction.scss`, `_logo.scss`, `_ionicons.scss` inclusi in `velora.scss`.
+- JS: `theme_toggle.js` registrato come `theme-toggle`.
+- Showcase: sezioni `#chart`, `#ionicons`, `#theme-brand`; lingua IT/EN via `set_language` e catalogo `showcase/locale/en/LC_MESSAGES/django.{po,mo}`.
+- Progetto host: `LocaleMiddleware`, `LANGUAGES`, `LOCALE_PATHS`, URL `i18n/setlang/`, context processor `django.template.context_processors.i18n`.
+- Test: `test_layout` (logo), `test_feedback` (satisfaction), `test_icons`, `test_i18n_urls`; snapshot Playwright estesi con tre ancore (`chart`, `ionicons`, `theme-brand`) — **aggiornare le baseline** con `pytest tests/visual --update-snapshots` nel container Playwright.
+
+### Modificato
+
+- `LANGUAGE_CODE` normalizzato a `it` (era `it-it`).
+- `showcase/views.py`: etichette sidebar e title actions avvolte in `gettext_lazy`.
+
+### Corretto
+
+- `ionicons_gallery.js`: stringa conteggio risultati (template literal rotto) ripristinata.
+
 ## [0.3.0] — 2026-04-29
 
 Terza release: **form avanzati & tabelle interattive**. Aggiunti 9 nuovi `field_type` per `velora_form_row` (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), estensione di `velora_table` con form-in-cell AJAX e selezione multi-riga, nuovo tag `velora_select_all_table_rows` con bulk-actions, nuovo tag standalone `velora_checkbox_tag` con 5 varianti colore. Tutti i nuovi componenti JS sono **zero-dipendenze runtime** (no Flatpickr, no Select2, no Choices.js, no Quill).

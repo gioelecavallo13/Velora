@@ -1,0 +1,11 @@
+{% comment %}
+  Logo marchio standalone (non l'header completo). Richiede almeno image_url o label.
+{% endcomment %}
+{% if show %}
+<a href="{{ url }}" class="velora-logo velora-logo--{{ size }} {{ extra_class }}">
+    {% if image_url %}
+        <img src="{{ image_url }}" alt="{{ alt }}" class="velora-logo__img">
+    {% endif %}
+    {% if label %}<span class="velora-logo__text">{{ label }}</span>{% endif %}
+</a>
+{% endif %}

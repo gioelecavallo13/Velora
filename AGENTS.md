@@ -1,6 +1,6 @@
 # AGENTS.md — Contratti dei template tag Velora UI
 
-Questo documento e` la **fonte di verita`** per i contratti dei template tag delle v0.1/v0.2/v0.3: chiavi accettate dei dict in input, default, comportamento con valori mancanti o invalidi. Lo usano:
+Questo documento e` la **fonte di verita`** per i contratti dei template tag delle v0.1–v0.4: chiavi accettate dei dict in input, default, comportamento con valori mancanti o invalidi. Lo usano:
 
 - gli **agenti AI** che generano codice che usa Velora (Cursor / Copilot / altri): qui trovano gli schema senza dover leggere i sorgenti
 - gli **sviluppatori umani** che integrano Velora in un'app: qui trovano un riassunto pratico
@@ -25,6 +25,8 @@ Convenzioni:
 - [`velora_feedback` — alert, label, toast_messages](#velora_feedback)
 - [`velora_navigation` — breadcrumb, submenu, progress (v0.2)](#velora_navigation)
 - [`velora_overlays` — tooltip (v0.2)](#velora_overlays)
+- [`velora_chart` — Chart.js da tabella HTML (v0.4, Fase 12)](#velora_chart)
+- [Componenti aggiuntivi v0.4 (Fase 12) — logo, satisfaction, Ionicons, dark, i18n](#componenti-aggiuntivi-v04-fase-12)
 - [Settings di pacchetto](#settings-di-pacchetto)
 - [JS API pubblica `window.Velora`](#js-api-pubblica)
 
@@ -844,6 +846,103 @@ Library v0.2 per tooltip e helper di overlay (dialog viene da `velora_links` com
 | `delay` | `int` | `200` | ms; valori `<0` clampati a 0 |
 
 Il tag emette **solo** la stringa di attributi `data-velora-component="tooltip" data-tooltip-text="..." data-tooltip-placement="..." data-tooltip-delay="..."`: niente wrapper, da iniettare in elementi esistenti. Il componente JS `tooltip.js` mostra/nasconde un balloon globale singolo riusato fra tutti i trigger.
+
+---
+
+## `velora_chart`
+
+Library **v0.4 (Fase 12.1)**: grafici [Chart.js](https://www.chartjs.org/) costruiti a partire da una tabella HTML nel DOM. Il bundle `velora.js` include Chart.js (aumenta sensibilmente la dimensione del file ~da 56 KB a ~480 KB in v0.4 — accettabile per admin panel; in futuro si puo` valutare code-splitting).
+
+Python: il modulo `velora_ui.chartutils` espone `VALID_CHART_TYPES` e `normalize_chart_type()`.
+
+### `velora_chart_from_table`
+
+```django
+{% load velora_chart %}
+<table id="demo-sales">
+  <thead>
+    <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Italia</td><td>10</td><td>20</td><td>15</td></tr>
+    <tr><td>Germania</td><td>5</td><td>8</td><td>12</td></tr>
+  </tbody>
+</table>
+{% velora_chart_from_table table_selector="#demo-sales" chart_type="line" canvas_id="chart-sales" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `table_selector` | `str` | `""` | required; selettore CSS della tabella; se vuoto il tag non emette nulla |
+| `chart_type` | `"line" \| "bar" \| "pie"` | `"line"` | sconosciuto → `line` |
+| `canvas_id` | `str` | `"velora-chart-canvas"` | id del `<canvas>` (**usare id unici** se piu` grafici in pagina) |
+| `height` | `int \| str` | `280` | altezza del box in px (clamp minimo 80) |
+| `extra_class` | `str` | `""` | classi sul wrapper `.velora-chart` |
+
+**Convenzione dati — `line` e `bar`:** prima riga in `<thead>`: primo `<th>` opzionale, i successivi sono le etichette asse X. Ogni `<tr>` in `<tbody>`: primo `<td>` = nome serie, i successivi = valori numerici (supporta virgola come decimale, spazi e simboli euro ignorati solo parzialmente — preferire numeri plain).
+
+**Convenzione dati — `pie`:** ogni riga del `<tbody>` ha due celle: etichetta fetta, valore numerico.
+
+Richiede `{% velora_assets %}` (o equivalente) cosi` Chart.js e` caricato. Il componente `chart-from-table` distrugge un'istanza Chart precedente sullo stesso wrapper prima di ricreare il grafico (re-init sicuro).
+
+---
+
+## Componenti aggiuntivi v0.4 (Fase 12)
+
+### `velora_logo` (library `velora_layout`)
+
+Marchio standalone (non l’intero header). Almeno uno fra `image_url` e `label` (dopo strip) deve essere valorizzato; altrimenti il tag non emette markup.
+
+```django
+{% load velora_layout %}
+{% velora_logo image_url="/static/acme.svg" label="Acme" url="/" size="md" alt="" extra_class="" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `image_url` | `str` | `""` | |
+| `label` | `str` | `""` | |
+| `url` | `str` | `"/"` | |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | invalido → `md` |
+| `alt` | `str` | `""` | default → `label` |
+| `extra_class` | `str` | `""` | |
+
+### `velora_satisfaction_bar` (library `velora_feedback`)
+
+Barra a segmenti orizzontali (stile KPI / soddisfazione).
+
+```django
+{% load velora_feedback %}
+{% velora_satisfaction_bar value=3 max_value=5 label="NPS" variant="default" aria_label="" extra_class="" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `value` | `int`-like | `0` | clamp `>= 0`, riempimento max `max_value` |
+| `max_value` | `int`-like | `5` | se `<=0` fallback a `5` |
+| `label` | `str` | `""` | |
+| `variant` | `"default" \| "success" \| "danger"` | `"default"` | sconosciuto → `default` |
+| `aria_label` | `str` | `""` | default → `label` |
+
+### `velora_ionicons_gallery` (library `velora_icons`)
+
+Galleria filtrabile che carica `static/velora_ui/icons/ionicons-manifest.json` e mostra le SVG in `static/velora_ui/icons/ionicons/`. **Sincronizzazione asset:** dopo `npm install`, eseguire `npm run sync:icons` (wrapper su `tools/sync_ionicons.sh`). Dipendenza npm: `ionicons` (dev).
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `search_input_id` | `str` | `"velora-ionicons-search"` | id dell’`<input type="search">` |
+| `search_placeholder` | `str` | _(tradotto)_ | stringa vuota → default traducibile |
+| `search_label` | `str` | _(tradotto)_ | per `<label>` accessibile |
+
+Il componente JS registrato e` `ionicons-gallery`.
+
+### Tema dark (CSS)
+
+Attivazione: `data-velora-theme="dark"` su `<html>`. Il template `velora_ui/base.html` esegue uno script inline in `<head>` che legge `localStorage["velora-theme"]` per evitare il flash del tema sbagliato. Il componente JS `theme-toggle` ( `data-velora-component="theme-toggle"`) commuta tema e scrive `localStorage`. Stili in `scss/_theme-dark.scss`.
+
+### i18n (progetto host + showcase)
+
+Il progetto host deve abilitare `LocaleMiddleware`, `LANGUAGES`, `LOCALE_PATHS` e la view `django.views.i18n.set_language` (nell’esempio `velora_project`: `path("i18n/setlang/", ...)`). Cataloghi `.po/.mo` in `showcase/locale/` (showcase) e opzionalmente sotto `src/velora_ui/locale/` per stringhe del pacchetto marcate con `gettext_lazy`. Dopo aver modificato i `.po`, eseguire `django-admin compilemessages`.
 
 ---
 

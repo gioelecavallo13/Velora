@@ -1,0 +1,78 @@
+// Galleria Ionicons (showcase / Fase 12.2)
+
+.velora-ionicons-gallery {
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--velora-space-3);
+    margin-bottom: var(--velora-space-4);
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+    padding: 8px 12px;
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-sm);
+    font: inherit;
+    color: var(--velora-c-text);
+    background: #fff;
+
+    &::placeholder {
+      color: var(--velora-gray-400);
+    }
+
+    &:focus {
+      outline: 2px solid var(--velora-c-orange);
+      outline-offset: 1px;
+    }
+  }
+
+  &__count {
+    font-size: var(--velora-fs-sm);
+    color: var(--velora-gray-500);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--velora-space-2);
+    max-height: 520px;
+    overflow-y: auto;
+    padding: var(--velora-space-2);
+    border: 1px solid var(--velora-border-color);
+    border-radius: var(--velora-radius-md);
+    background: var(--velora-gray-50);
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--velora-space-2);
+    border-radius: var(--velora-radius-sm);
+    background: #fff;
+    border: 1px solid var(--velora-border-color);
+    text-align: center;
+
+    &:hover {
+      border-color: var(--velora-c-orange);
+    }
+
+    img {
+      flex-shrink: 0;
+    }
+  }
+
+  &__caption {
+    font-size: var(--velora-fs-xs);
+    color: var(--velora-gray-700);
+    word-break: break-all;
+    line-height: var(--velora-lh-tight);
+    max-height: 3.2em;
+    overflow: hidden;
+  }
+}

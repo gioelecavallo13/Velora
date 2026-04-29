@@ -1,6 +1,6 @@
 """Template tag di layout per Velora UI.
 
-Espone i tag {% velora_header %} e {% velora_title_bar %}.
+Espone i tag {% velora_header %}, {% velora_title_bar %} e {% velora_logo %}.
 
 Schema dei dati (header v0.2):
 
@@ -342,4 +342,49 @@ def velora_title_bar(
     return {
         "title": title,
         "actions": normalized_actions,
+    }
+
+
+_VALID_LOGO_SIZES = frozenset({"sm", "md", "lg"})
+
+
+@register.inclusion_tag("velora_ui/components/layout/_velora_logo.html")
+def velora_logo(
+    image_url: str = "",
+    label: str = "",
+    url: str = "/",
+    size: str = "md",
+    alt: str = "",
+    extra_class: str = "",
+) -> dict[str, Any]:
+    """Marchio standalone (immagine e/o testo). Richiede almeno uno dei due.
+
+    Se sia `image_url` sia `label` sono vuoti dopo lo strip, il tag non emette
+    markup (`show=False`).
+    """
+
+    img = (image_url or "").strip()
+    lbl = (label or "").strip()
+    if not img and not lbl:
+        return {
+            "show": False,
+            "image_url": "",
+            "label": "",
+            "url": url or "/",
+            "size": "md",
+            "alt": "",
+            "extra_class": extra_class or "",
+        }
+    sz = (size or "md").lower()
+    if sz not in _VALID_LOGO_SIZES:
+        sz = "md"
+    alt_text = (alt or lbl).strip()
+    return {
+        "show": True,
+        "image_url": img,
+        "label": lbl,
+        "url": url or "/",
+        "size": sz,
+        "alt": alt_text,
+        "extra_class": extra_class or "",
     }

@@ -1,0 +1,119 @@
+# English translations for Velora UI showcase + velora_ui (Fase 12.6).
+# Copyright (C) 2026 Velora UI contributors
+# This file is distributed under the same license as the Velora UI package.
+msgid ""
+msgstr ""
+"Project-Id-Version: velora-ui 0.4.0\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Panoramica"
+msgstr "Overview"
+
+msgid "Layout"
+msgstr "Layout"
+
+msgid "Form"
+msgstr "Form"
+
+msgid "Tabelle"
+msgstr "Tables"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "Navigazione"
+msgstr "Navigation"
+
+msgid "Overlay"
+msgstr "Overlays"
+
+msgid "Avanzamento"
+msgstr "Progress"
+
+msgid "Form avanzati"
+msgstr "Advanced forms"
+
+msgid "Tabelle interattive"
+msgstr "Interactive tables"
+
+msgid "Checkbox"
+msgstr "Checkbox"
+
+msgid "Grafici"
+msgstr "Charts"
+
+msgid "Ionicons"
+msgstr "Ionicons"
+
+msgid "Tema e marchio"
+msgstr "Theme & brand"
+
+msgid "Documentazione"
+msgstr "Documentation"
+
+msgid "Nuovo elemento"
+msgstr "New item"
+
+msgid "Velora UI — Living styleguide"
+msgstr "Velora UI — Living styleguide"
+
+msgid "Velora UI — Showcase"
+msgstr "Velora UI — Showcase"
+
+msgid "Velora UI"
+msgstr "Velora UI"
+
+msgid "Framework Django per pannelli admin: template tag riusabili, design system SCSS, JavaScript vanilla a moduli ES. Questa pagina mostra i componenti documentati nello styleguide con snippet copia-incollabili."
+msgstr "A Django framework for admin panels: reusable template tags, SCSS design system, vanilla ES modules JavaScript. This page shows the documented components in the styleguide with copy-paste snippets."
+
+msgid "Lingua"
+msgstr "Language"
+
+msgid "Naviga le sezioni dalla sidebar a sinistra. Aggiungere"
+msgstr "Browse sections from the left sidebar. Append"
+
+msgid "alla URL nasconde la sidebar (utile per modali / iframe)."
+msgstr "to the URL to hide the sidebar (useful for modals / iframes)."
+
+msgid "Grafici da tabella (Chart.js)"
+msgstr "Charts from HTML table (Chart.js)"
+
+msgid "Il tag <code>velora_chart_from_table</code> legge una tabella HTML e disegna un grafico <code>line</code>, <code>bar</code> o <code>pie</code> sul canvas (bundle Chart.js incluso in <code>velora.js</code>)."
+msgstr "The <code>velora_chart_from_table</code> tag reads an HTML table and draws a <code>line</code>, <code>bar</code>, or <code>pie</code> chart on the canvas (Chart.js bundle included in <code>velora.js</code>)."
+
+msgid "Italia"
+msgstr "Italy"
+
+msgid "Germania"
+msgstr "Germany"
+
+msgid "Spagna"
+msgstr "Spain"
+
+msgid "Set SVG sincronizzato da <code>npm</code> (<code>sh tools/sync_ionicons.sh</code>): manifest statico <code>ionicons-manifest.json</code> e ricerca client-side nella galleria."
+msgstr "SVG set synced from <code>npm</code> (<code>sh tools/sync_ionicons.sh</code>): static <code>ionicons-manifest.json</code> manifest and client-side search in the gallery."
+
+msgid "Tema scuro e marchio"
+msgstr "Dark theme & brand"
+
+msgid "Attributo <code>data-velora-theme=\"dark\"</code> su <code>&lt;html&gt;</code>, preferenze in <code>localStorage</code> (chiave <code>velora-theme</code>). Più il tag standalone <code>velora_logo</code> e la barra segmenti <code>velora_satisfaction_bar</code>."
+msgstr "<code>data-velora-theme=\"dark\"</code> on <code>&lt;html&gt;</code>, preference in <code>localStorage</code> (key <code>velora-theme</code>). Plus the standalone <code>velora_logo</code> tag and the <code>velora_satisfaction_bar</code> segments."
+
+msgid "Attiva tema scuro"
+msgstr "Enable dark theme"
+
+msgid "Attiva tema chiaro"
+msgstr "Enable light theme"
+
+msgid "Cerca icona…"
+msgstr "Search icon…"
+
+msgid "Cerca nelle Ionicons"
+msgstr "Search Ionicons"

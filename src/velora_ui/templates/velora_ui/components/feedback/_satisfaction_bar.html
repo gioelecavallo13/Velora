@@ -1,0 +1,13 @@
+{% comment %}
+  Barra di soddisfazione: N segmenti orizzontali, i primi `value` riempiti.
+{% endcomment %}
+<div class="velora-satisfaction{% if variant != 'default' %} velora-satisfaction--{{ variant }}{% endif %} {{ extra_class }}"
+     role="img"
+     {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}>
+    {% if label %}<p class="velora-satisfaction__label">{{ label }}</p>{% endif %}
+    <div class="velora-satisfaction__track">
+        {% for _ in segments %}
+        <span class="velora-satisfaction__seg{% if forloop.counter0 < filled %} is-filled{% endif %}" aria-hidden="true"></span>
+        {% endfor %}
+    </div>
+</div>

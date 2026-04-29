@@ -1,0 +1,51 @@
+// Logo standalone (velora_logo) — non confondere con il brand dell'header.
+
+.velora-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--velora-space-2);
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    opacity: 0.92;
+  }
+
+  &__img {
+    display: block;
+    object-fit: contain;
+  }
+
+  &__text {
+    font-weight: var(--velora-fw-medium);
+    color: var(--velora-gray-900);
+    line-height: 1.2;
+  }
+
+  &--sm &__img {
+    max-height: 28px;
+    max-width: 120px;
+  }
+
+  &--md &__img {
+    max-height: 40px;
+    max-width: 180px;
+  }
+
+  &--lg &__img {
+    max-height: 56px;
+    max-width: 240px;
+  }
+
+  &--sm &__text {
+    font-size: var(--velora-fs-sm);
+  }
+
+  &--md &__text {
+    font-size: var(--velora-fs-md);
+  }
+
+  &--lg &__text {
+    font-size: var(--velora-fs-lg);
+  }
+}

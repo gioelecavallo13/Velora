@@ -551,6 +551,44 @@ def test_velora_title_bar_defaults_action_variant_to_secondary():
     assert "velora-btn--secondary" in html
 
 
+# -- velora_logo -----------------------------------------------------------
+
+
+def test_velora_logo_renders_label_only():
+    html = render(
+        "{% load velora_layout %}{% velora_logo label='Acme' url='/a/' %}",
+    )
+    assert "velora-logo" in html
+    assert "Acme" in html
+    assert 'href="/a/"' in html
+    assert "<img" not in html
+
+
+def test_velora_logo_renders_image_and_label():
+    html = render(
+        "{% load velora_layout %}"
+        "{% velora_logo image_url='/x.svg' label='Co' url='/' alt='Logo' %}",
+    )
+    assert 'src="/x.svg"' in html
+    assert "Co" in html
+    assert 'alt="Logo"' in html
+
+
+def test_velora_logo_empty_when_no_image_and_no_label():
+    html = render(
+        "{% load velora_layout %}{% velora_logo image_url='' label='' %}",
+    )
+    assert "velora-logo" not in html
+
+
+def test_velora_logo_invalid_size_falls_back_to_md():
+    html = render(
+        "{% load velora_layout %}{% velora_logo label='X' size='huge' %}",
+    )
+    assert "velora-logo--md" in html
+    assert "velora-logo--huge" not in html
+
+
 # -- context processor ----------------------------------------------------
 
 

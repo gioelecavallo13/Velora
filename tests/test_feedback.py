@@ -236,3 +236,50 @@ def test_toast_messages_marks_storage_used():
         {"request": request},
     )
     assert storage.used is True
+
+
+# -- velora_satisfaction_bar ---------------------------------------------
+
+
+def test_velora_satisfaction_bar_renders_segments():
+    html = render(
+        "{% load velora_feedback %}"
+        "{% velora_satisfaction_bar value=2 max_value=5 label='NPS' %}",
+    )
+    assert "velora-satisfaction__track" in html
+    assert 'role="img"' in html
+    assert "NPS" in html
+    assert html.count("velora-satisfaction__seg") == 5
+
+
+def test_velora_satisfaction_bar_clamps_value_to_max():
+    html = render(
+        "{% load velora_feedback %}"
+        "{% velora_satisfaction_bar value=99 max_value=3 %}",
+    )
+    assert html.count("is-filled") == 3
+
+
+def test_velora_satisfaction_bar_variant_success():
+    html = render(
+        "{% load velora_feedback %}"
+        "{% velora_satisfaction_bar value=1 max_value=4 variant='success' %}",
+    )
+    assert "velora-satisfaction--success" in html
+
+
+def test_velora_satisfaction_bar_unknown_variant_falls_back():
+    html = render(
+        "{% load velora_feedback %}"
+        "{% velora_satisfaction_bar value=1 max_value=3 variant='alien' %}",
+    )
+    assert "velora-satisfaction--success" not in html
+    assert "velora-satisfaction--danger" not in html
+
+
+def test_velora_satisfaction_bar_invalid_max_falls_back():
+    html = render(
+        "{% load velora_feedback %}"
+        "{% velora_satisfaction_bar value=1 max_value=0 %}",
+    )
+    assert html.count("velora-satisfaction__seg") == 5

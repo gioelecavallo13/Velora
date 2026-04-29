@@ -19,6 +19,7 @@ MANIFEST
 
 # Virtualenv
 .venv/
+.venv-ci/
 venv/
 env/
 ENV/

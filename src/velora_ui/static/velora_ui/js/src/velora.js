@@ -16,7 +16,7 @@
  * l'infrastruttura runtime e importa i componenti registrati di default.
  */
 
-const VELORA_VERSION = "0.3.0";
+const VELORA_VERSION = "0.4.0";
 const ATTR = "data-velora-component";
 const INIT_FLAG = "__veloraInitialized";
 
@@ -136,6 +136,9 @@ import timerField from "./components/timer.js";
 import redactor from "./components/redactor.js";
 import tableCell from "./components/table_cell.js";
 import selectAllTable from "./components/select_all_table.js";
+import chartFromTable from "./components/chart_from_table.js";
+import ioniconsGallery from "./components/ionicons_gallery.js";
+import themeToggle from "./components/theme_toggle.js";
 
 register(sidebarToggle);
 register(confirmComponent);
@@ -154,6 +157,9 @@ register(timerField);
 register(redactor);
 register(tableCell);
 register(selectAllTable);
+register(chartFromTable);
+register(ioniconsGallery);
+register(themeToggle);
 
 // `toast` non e` un componente DOM (non si attacca via data-velora-component):
 // e` un manager singleton con API imperativa (Velora.toast.success(...)).

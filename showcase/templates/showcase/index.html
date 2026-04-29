@@ -1,5 +1,5 @@
 {% extends "velora_ui/base.html" %}
-{% load velora_layout velora_forms velora_data velora_links velora_feedback velora_navigation velora_overlays %}
+{% load i18n velora_layout velora_forms velora_data velora_links velora_feedback velora_navigation velora_overlays velora_chart velora_icons %}
 
 {% comment %}
   Showcase v0.1 — living styleguide di Velora UI.
@@ -17,7 +17,7 @@
   con id corrispondente.
 {% endcomment %}
 
-{% block title %}Velora UI - Showcase v{{ velora_version }}{% endblock %}
+{% block title %}{% trans "Velora UI — Showcase" %} v{{ velora_version }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -108,7 +108,7 @@
 {% endblock %}
 
 {% block title_bar %}
-{% velora_title_bar title="Velora UI - Living Styleguide" actions=showcase_title_actions %}
+{% velora_title_bar title=showcase_title_bar_title actions=showcase_title_actions %}
 {% endblock %}
 
 {% block content %}
@@ -118,18 +118,27 @@
 <section class="showcase-section" id="overview">
     <div class="showcase-section__hero">
         <h1 class="showcase-section__title">
-            Velora UI
+            {% trans "Velora UI" %}
             {% velora_label variant="warning" text="v"|add:velora_version %}
         </h1>
         <p class="showcase-section__intro">
+            {% blocktrans trimmed %}
             Framework Django per pannelli admin: template tag riusabili, design
             system SCSS, JavaScript vanilla a moduli ES. Questa pagina mostra
-            tutti i componenti della release v0.1 con snippet copia-incollabili.
+            i componenti documentati nello styleguide con snippet copia-incollabili.
+            {% endblocktrans %}
         </p>
     </div>
-    <p>Naviga le sezioni dalla sidebar a sinistra. Aggiungere
-        <code>?no_sidebar=1</code> alla URL nasconde la sidebar (utile per modali
-        / iframe).</p>
+    <p>
+        <form action="{% url 'set_language' %}" method="post" style="display:inline-flex;gap:var(--velora-space-2);align-items:center;margin:0 0 var(--velora-space-3);flex-wrap:wrap;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <span style="font-size:var(--velora-fs-sm);color:var(--velora-gray-500);">{% trans "Lingua" %}:</span>
+            <button type="submit" name="language" value="it" class="velora-btn velora-btn--secondary">Italiano</button>
+            <button type="submit" name="language" value="en" class="velora-btn velora-btn--secondary">English</button>
+        </form>
+    </p>
+    <p>{% trans "Naviga le sezioni dalla sidebar a sinistra. Aggiungere" %} <code>?no_sidebar=1</code> {% trans "alla URL nasconde la sidebar (utile per modali / iframe)." %}</p>
 </section>
 
 {# ---------------------------------------------------------------- #}
@@ -840,6 +849,89 @@ def save_view(request):
         <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_checkbox_tag name="plan" label="Free" value="free" radio=True %}
 {% velora_checkbox_tag name="plan" label="Pro"  value="pro"  radio=True checked=True %}
 {% velora_checkbox_tag name="plan" label="Enterprise" value="enterprise" radio=True %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+{# ===================== v0.4 — Chart, Ionicons, tema / brand (Fase 12) ===================== #}
+<section id="chart" class="showcase-section">
+    <h2 class="showcase-section__title">{% trans "Grafici da tabella (Chart.js)" %}</h2>
+    <p class="showcase-section__lead">
+        {% blocktrans trimmed %}
+        Il tag <code>velora_chart_from_table</code> legge una tabella HTML e disegna un grafico
+        <code>line</code>, <code>bar</code> o <code>pie</code> sul canvas (bundle Chart.js incluso in <code>velora.js</code>).
+        {% endblocktrans %}
+    </p>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <table id="showcase-chart-sales" class="velora-table">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Q1</th>
+                        <th scope="col">Q2</th>
+                        <th scope="col">Q3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>{% trans "Italia" %}</td><td>10</td><td>20</td><td>15</td></tr>
+                    <tr><td>{% trans "Germania" %}</td><td>5</td><td>8</td><td>12</td></tr>
+                    <tr><td>{% trans "Spagna" %}</td><td>8</td><td>7</td><td>9</td></tr>
+                </tbody>
+            </table>
+            {% velora_chart_from_table table_selector="#showcase-chart-sales" chart_type="line" canvas_id="showcase-chart-line" height=260 %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% load velora_chart %}
+&lt;table id="vendite"&gt;...&lt;/table&gt;
+{% velora_chart_from_table table_selector="#vendite" chart_type="line" canvas_id="ch1" %}{% endverbatim %}</code></pre>
+    </div>
+</section>
+
+<section id="ionicons" class="showcase-section">
+    <h2 class="showcase-section__title">Ionicons</h2>
+    <p class="showcase-section__lead">
+        {% blocktrans trimmed %}
+        Set SVG sincronizzato da <code>npm</code> (<code>sh tools/sync_ionicons.sh</code>): manifest statico
+        <code>ionicons-manifest.json</code> e ricerca client-side nella galleria.
+        {% endblocktrans %}
+    </p>
+    {% velora_ionicons_gallery search_input_id="showcase-ionicons-search" %}
+    <pre class="showcase-demo__code"><code>{% verbatim %}{% load velora_icons %}
+{% velora_ionicons_gallery search_input_id="icon-search" %}{% endverbatim %}</code></pre>
+</section>
+
+<section id="theme-brand" class="showcase-section">
+    <h2 class="showcase-section__title">{% trans "Tema scuro e marchio" %}</h2>
+    <p class="showcase-section__lead">
+        {% blocktrans trimmed %}
+        Attributo <code>data-velora-theme="dark"</code> su <code>&lt;html&gt;</code>, preferenze in
+        <code>localStorage</code> (chiave <code>velora-theme</code>). Più il tag standalone
+        <code>velora_logo</code> e la barra segmenti <code>velora_satisfaction_bar</code>.
+        {% endblocktrans %}
+    </p>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <p style="margin:0 0 var(--velora-space-3);">
+                <button type="button"
+                        class="velora-btn velora-btn--secondary"
+                        data-velora-component="theme-toggle"
+                        data-label-dark="{% trans 'Attiva tema scuro' %}"
+                        data-label-light="{% trans 'Attiva tema chiaro' %}"
+                        aria-pressed="false"></button>
+            </p>
+            <div style="margin-bottom:var(--velora-space-4);">
+                <p class="showcase-section__subtitle" style="margin-top:0;">velora_logo</p>
+                {% velora_logo label="Velora" url="/" size="md" %}
+                {% velora_logo image_url="https://www.djangoproject.com/s/img/logomark.svg" label="Partner" url="#" size="sm" alt="Django" %}
+            </div>
+            <div>
+                <p class="showcase-section__subtitle" style="margin-top:0;">velora_satisfaction_bar</p>
+                {% velora_satisfaction_bar value=4 max_value=5 label="Soddisfazione cliente (default)" %}
+                {% velora_satisfaction_bar value=2 max_value=5 label="Obiettivo raggiunto" variant="success" %}
+                {% velora_satisfaction_bar value=4 max_value=5 label="Criticità" variant="danger" %}
+            </div>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_logo label="Acme" url="/" size="md" %}
+{% velora_satisfaction_bar value=3 max_value=5 label="NPS" variant="success" %}{% endverbatim %}</code></pre>
     </div>
 </section>
 {% endblock %}

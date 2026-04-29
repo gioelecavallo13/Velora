@@ -1,0 +1,11 @@
+// Chart.js wrapper (Fase 12.1)
+.velora-chart {
+  width: 100%;
+  max-width: 100%;
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

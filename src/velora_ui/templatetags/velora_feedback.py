@@ -16,6 +16,10 @@ Espone:
         DOMContentLoaded dal componente JS `toast.js` (vedi 7.2).
         Cosi` la view non deve sapere nulla di JS: basta fare
         ``messages.success(request, "...")``.
+
+  - {% velora_satisfaction_bar value=3 max_value=5 label="..." variant="default" %}
+        Barra a segmenti orizzontali per KPI o soddisfazione (varianti
+        default / success / danger).
 """
 
 from __future__ import annotations
@@ -31,8 +35,17 @@ from django.utils.safestring import SafeString, mark_safe
 register = template.Library()
 
 
+def _coerce_nonneg_int(val: Any, default: int) -> int:
+    try:
+        i = int(val)
+    except (TypeError, ValueError):
+        return default
+    return max(0, i)
+
+
 _ALERT_VARIANTS = {"success", "error", "warning", "info"}
 _LABEL_VARIANTS = {"success", "error", "warning", "info", "neutral"}
+_SATISFACTION_VARIANTS = frozenset({"default", "success", "danger"})
 
 
 # Mappatura dei livelli `messages` Django alle varianti Velora.
@@ -167,3 +180,35 @@ def velora_toast_messages(context: template.Context) -> SafeString:
             f'<script type="application/json" data-velora-toast>{payload}</script>'
         )
     return mark_safe("\n".join(chunks))
+
+
+@register.inclusion_tag("velora_ui/components/feedback/_satisfaction_bar.html")
+def velora_satisfaction_bar(
+    value: Any = 0,
+    max_value: Any = 5,
+    label: str = "",
+    variant: str = "default",
+    aria_label: str = "",
+    extra_class: str = "",
+) -> dict[str, Any]:
+    """Segmenti orizzontali: i primi `value` su `max_value` sono \"riempiti\"."""
+
+    mx = _coerce_nonneg_int(max_value, 5)
+    if mx <= 0:
+        mx = 5
+    v = _coerce_nonneg_int(value, 0)
+    filled = min(v, mx)
+    var = variant if variant in _SATISFACTION_VARIANTS else "default"
+    segments = list(range(mx))
+    aria = (aria_label or "").strip()
+    if not aria and label:
+        aria = str(label)
+    return {
+        "show": True,
+        "filled": filled,
+        "segments": segments,
+        "label": label,
+        "variant": var,
+        "extra_class": extra_class or "",
+        "aria_label": aria,
+    }

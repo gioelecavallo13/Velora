@@ -1,0 +1,19 @@
+{% comment %}
+  Shell galleria Ionicons: manifest JSON via static; ricerca id collegato da data-search-id.
+{% endcomment %}
+<div class="velora-ionicons-gallery"
+     data-velora-component="ionicons-gallery"
+     data-manifest-url="{{ manifest_url }}"
+     data-icons-base="{{ icons_base_url }}"
+     data-search-id="{{ search_input_id }}">
+    <div class="velora-ionicons-gallery__toolbar">
+        <label for="{{ search_input_id }}" class="velora-visually-hidden">{{ search_label }}</label>
+        <input type="search"
+               id="{{ search_input_id }}"
+               class="velora-ionicons-gallery__search"
+               placeholder="{{ search_placeholder }}"
+               autocomplete="off">
+        <span class="velora-ionicons-gallery__count" aria-live="polite"></span>
+    </div>
+    <div class="velora-ionicons-gallery__grid" role="list"></div>
+</div>

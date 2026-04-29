@@ -1,0 +1,42 @@
+// Tema dark (Fase 12.5) — attivazione: attributo `data-velora-theme="dark"` su <html>.
+
+:root[data-velora-theme="dark"] {
+  --velora-c-text: #d4d4d4;
+  --velora-c-menu-gray: #9aa8bc;
+  --velora-c-orange: #ffb84d;
+  --velora-c-orange-dark: #f5a000;
+  --velora-c-red: #e85d63;
+  --velora-c-green: #8ec77a;
+  --velora-c-menu-bg: #1a1f24;
+  --velora-c-menu-dark: #12161a;
+
+  --velora-gray-50: #1e2428;
+  --velora-gray-100: #2a3238;
+  --velora-gray-200: #3d464e;
+  --velora-gray-400: #8a939c;
+  --velora-gray-500: #b0b8c0;
+  --velora-gray-700: #e4e8ec;
+  --velora-gray-900: #f4f6f8;
+
+  --velora-border-color: var(--velora-gray-200);
+  --velora-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --velora-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+// Testo e superfici principali (body/sidebar/header ricevono sfondo scuro)
+:root[data-velora-theme="dark"] body.velora-app {
+  background: #12161a;
+  color: var(--velora-c-text);
+}
+
+:root[data-velora-theme="dark"] .velora-app__main {
+  background: #162026;
+}
+
+:root[data-velora-theme="dark"] .velora-form-row__input,
+:root[data-velora-theme="dark"] .velora-form-row__select,
+:root[data-velora-theme="dark"] .velora-form-row__textarea {
+  background: var(--velora-gray-50);
+  color: var(--velora-gray-700);
+  border-color: var(--velora-gray-200);
+}

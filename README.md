@@ -69,7 +69,7 @@ A primo accesso lo showcase risponde su <http://velora.local> entro ~30 secondi 
 Velora UI e` distribuito come pacchetto Python via Git privato. Per integrarlo in un progetto esistente:
 
 ```bash
-pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.3.0"
+pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.4.0"
 ```
 
 Poi nel `settings.py`:
@@ -178,7 +178,9 @@ docker compose -f docker-compose.dev.yml --profile test run --rm playwright-test
   bash -lc "pip install --quiet --ignore-requires-python -e .[dev] && pytest tests/visual --update-snapshots"
 ```
 
-Stato attuale: 87 test unitari + 7 visual snapshot, tutti verdi.
+Stato attuale: **236** test unitari + **17** snapshot Playwright (16 sezioni + 1 full page), tutti verdi dopo aggiornamento baseline quando necessario.
+
+Prima di generare gli asset Ionicons nello showcase: `npm install` e `npm run sync:icons` (copia le SVG da `ionicons` e rigenera `ionicons-manifest.json`).
 
 ---
 
@@ -201,9 +203,8 @@ Lo stack di sviluppo e` documentato per esteso in [`docs/INFRASTRUCTURE.md`](doc
 |---|---|---|
 | v0.1.0 | rilasciato | Layout, form 7 tipi base, tabella + paginazione, 4 link, feedback, showcase, Docker dev+prod |
 | v0.2.0 | rilasciato | Header multi-menu/apps-menu/notifications, breadcrumb, tooltip, submenu, dropdown, dialog, copy/toggle/settings link, progress bar (3 varianti) |
-| **v0.3.0** | in release | Form avanzati (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), tabelle interattive con form-in-cell AJAX e bulk-actions, checkbox tag con 5 varianti colore |
-| v0.3.0 | pianificato | Form avanzati (datepicker, multiselect, autocomplete, redactor, image preview, rating, timer), tabella form-in-cell AJAX + bulk actions |
-| v0.4+ | pianificato | Chartutils da tabella HTML, Ionicons completo, satisfaction bar, tema dark, i18n |
+| **v0.3.0** | rilasciato | Form avanzati (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), tabelle interattive con form-in-cell AJAX e bulk-actions, checkbox tag con 5 varianti colore |
+| **v0.4.0** | in release | Chart.js da tabella, sync Ionicons + galleria showcase, `velora_logo`, `velora_satisfaction_bar`, tema dark CSS, i18n (IT/EN showcase) |
 
 Dettagli e milestone in [`velora-ui_django_framework_61f8855e.plan.md`](.cursor/plans/velora-ui_django_framework_61f8855e.plan.md) (cartella piani locale).
 
@@ -211,7 +212,7 @@ Dettagli e milestone in [`velora-ui_django_framework_61f8855e.plan.md`](.cursor/
 
 ## Stato progetto
 
-Versione corrente: vedi [`pyproject.toml`](pyproject.toml). Le release alpha (`v0.1.0-alpha.x`) hanno chiuso le milestone M1 → M5 di v0.1; la release candidate `v0.1.0-rc.1` ha chiuso M6. La v0.1.0 stabile ha chiuso M7. La v0.2.0 ha chiuso la Fase 10 del piano (navigation e feedback ricchi). La v0.3.0 (questa release) chiude la Fase 11 del piano: form avanzati & tabelle interattive (9 nuovi field type, form-in-cell AJAX, bulk-actions, checkbox tag con varianti colore). Il progetto e` distribuito via Git privato, non e` ancora pubblicato su PyPI.
+Versione corrente: vedi [`pyproject.toml`](pyproject.toml). Le release alpha (`v0.1.0-alpha.x`) hanno chiuso le milestone M1 → M5 di v0.1; la release candidate `v0.1.0-rc.1` ha chiuso M6. La v0.1.0 stabile ha chiuso M7. La v0.2.0 ha chiuso la Fase 10 del piano (navigation e feedback ricchi). La v0.3.0 chiude la Fase 11: form avanzati & tabelle interattive. La v0.4.0 chiude la Fase 12 del piano: chart da tabella, Ionicons, logo/satisfaction, tema dark, i18n. Il progetto e` distribuito via Git privato, non e` ancora pubblicato su PyPI.
 
 Le decisioni di prodotto (target, distribuzione, criteri di successo) sono tracciate in [`VISION.md`](VISION.md).
 

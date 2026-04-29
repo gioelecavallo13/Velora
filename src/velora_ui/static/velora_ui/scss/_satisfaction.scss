@@ -1,0 +1,40 @@
+// Barra di soddisfazione (segmenti stile rating orizzontale)
+
+.velora-satisfaction {
+  display: flex;
+  align-items: center;
+  gap: var(--velora-space-4);
+  flex-wrap: wrap;
+
+  &__label {
+    font-size: var(--velora-fs-sm);
+    color: var(--velora-gray-700);
+    margin: 0;
+  }
+
+  &__track {
+    display: inline-flex;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  &__seg {
+    width: 28px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--velora-gray-200);
+    transition: background 0.15s ease;
+
+    &.is-filled {
+      background: var(--velora-c-orange);
+    }
+  }
+
+  &--success .velora-satisfaction__seg.is-filled {
+    background: var(--velora-c-green);
+  }
+
+  &--danger .velora-satisfaction__seg.is-filled {
+    background: var(--velora-c-red);
+  }
+}

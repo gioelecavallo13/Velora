@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
 from velora_ui import __version__ as velora_version
 
@@ -139,8 +140,8 @@ def index(request: HttpRequest) -> HttpResponse:
     ]
 
     title_actions = [
-        {"label": "Documentazione", "url": "#", "variant": "secondary"},
-        {"label": "Nuovo elemento", "url": "#", "variant": "primary"},
+        {"label": _("Documentazione"), "url": "#", "variant": "secondary"},
+        {"label": _("Nuovo elemento"), "url": "#", "variant": "primary"},
     ]
 
     role_choices = [
@@ -369,6 +370,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "velora_version": velora_version,
             "showcase_header_items": header_items,
             "showcase_sidebar_items": sidebar_items,
+            "showcase_title_bar_title": _("Velora UI — Living styleguide"),
             "showcase_title_actions": title_actions,
             "showcase_role_choices": role_choices,
             "showcase_plan_choices": plan_choices,

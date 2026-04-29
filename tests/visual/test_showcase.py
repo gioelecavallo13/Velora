@@ -42,6 +42,10 @@ SECTIONS = [
     ("form-advanced", "#form-advanced", "Form avanzati v0.3"),
     ("tables-advanced", "#tables-advanced", "Tabelle interattive v0.3"),
     ("checkbox", "#checkbox", "Checkbox tag v0.3"),
+    # v0.4 — Fase 12
+    ("chart", "#chart", "Chart da tabella"),
+    ("ionicons", "#ionicons", "Galleria Ionicons"),
+    ("theme-brand", "#theme-brand", "Tema dark e brand"),
 ]
 
 
