@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!--
+    Bottoni stile Velora: vedere title_bar/_title_bar.html (azioni come <a>),
+    form_row/_search_box.html (submit button).
+    Link header: header/_header.html (velora-header__item--link).
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — bottoni e link</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <div class="velora-app__content" style="padding: 1rem">
+      <div class="velora-title-bar">
+        <h1 class="velora-title-bar__title">Titolo pagina</h1>
+        <div class="velora-title-bar__actions">
+          <a href="/create" class="velora-btn velora-btn--primary">Nuovo</a>
+          <a href="/list" class="velora-btn velora-btn--secondary">Elenco</a>
+        </div>
+      </div>
+
+      <p>
+        <a href="/elenco" class="velora-header__item velora-header__item--link">Esempio classe link header</a>
+      </p>
+
+      <form action="#" method="get" style="max-width: 24rem; margin-top: 1rem">
+        <label class="velora-visually-hidden" for="demo-q">Cerca</label>
+        <div style="display: flex; gap: 0.5rem; align-items: center">
+          <input id="demo-q" type="search" name="q" class="velora-form-row__input" placeholder="Cerca…" />
+          <button type="submit" class="velora-search-box__submit velora-btn velora-btn--secondary">Cerca</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

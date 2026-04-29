@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!-- Allineato a velora_ui/components/form_row/text.html + _label + _help_error -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — form row testo</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <div class="velora-app__content" style="padding: 1rem; max-width: 32rem">
+      <form method="post" action="#">
+        <div class="velora-form-row velora-form-row--text">
+          <label for="field-email" class="velora-form-row__label">
+            Email <span class="velora-form-row__required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="field-email"
+            class="velora-form-row__control velora-form-row__input"
+            value=""
+            placeholder="nome@esempio.it"
+            required
+          />
+          <p class="velora-form-row__help">Riceverai la conferma a questo indirizzo.</p>
+        </div>
+
+        <div class="velora-form-row velora-form-row--text velora-form-row--error">
+          <label for="field-code" class="velora-form-row__label">Codice</label>
+          <input
+            type="text"
+            name="code"
+            id="field-code"
+            class="velora-form-row__control velora-form-row__input"
+            value="abc"
+            aria-invalid="true"
+          />
+          <p class="velora-form-row__error" role="alert">Il codice non è valido.</p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,64 +1,258 @@
-// Velora UI - sidebar (M2)
-//
-// La sidebar mostra una lista verticale di voci di menu. Lo stato
-// "collapsed" e` gestito a livello di body via la classe
-// `velora-app--sidebar-collapsed` (vedi _layout.scss): in quello stato la
-// larghezza della colonna si riduce a `--velora-sidebar-width-collapsed` e
-// noi nascondiamo le label tenendo visibili solo le icone.
+// Velora UI - sidebar (collapsible, Ionicons, sottomenu accordion / flyout)
 
 .velora-sidebar {
-  padding: var(--velora-space-2) 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  font-family: var(--velora-font-base);
   font-size: var(--velora-fs-sm);
+  background: var(--velora-c-menu-bg);
+  color: rgba(255, 255, 255, 0.92);
+  position: relative;
+}
+
+// --- Brand -----------------------------------------------------------------
+.velora-sidebar__masthead {
+  flex-shrink: 0;
+  padding: var(--velora-space-3) var(--velora-space-3);
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.12);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.velora-sidebar__brand {
+  font-size: var(--velora-fs-base);
+  letter-spacing: 0.06em;
+  font-weight: var(--velora-fw-medium);
+  text-transform: uppercase;
+}
+
+.velora-sidebar__brand--short {
+  display: none;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__brand--full {
+  display: none;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__brand--short {
+  display: block;
+}
+
+// --- Search ----------------------------------------------------------------
+.velora-sidebar__search {
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: var(--velora-space-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.velora-sidebar__search-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 0;
+  border-radius: var(--velora-radius-sm) 0 0 var(--velora-radius-sm);
+  padding: 8px 10px;
+  font: inherit;
+  font-size: var(--velora-fs-sm);
+  background: #fff;
+  color: var(--velora-gray-900);
+
+  &::placeholder {
+    color: var(--velora-gray-400);
+  }
+
+  &:focus {
+    outline: 2px solid var(--velora-c-orange);
+    outline-offset: -1px;
+    z-index: 1;
+  }
+}
+
+.velora-sidebar__search-submit {
+  flex-shrink: 0;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0 var(--velora-radius-sm) var(--velora-radius-sm) 0;
+  background: var(--velora-c-green);
+  color: #fff;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    filter: brightness(1.06);
+  }
+
+  .velora-sidebar__search-icon {
+    --velora-icon-color: #fff;
+    display: block;
+  }
+}
+
+.velora-sidebar__search-submit .velora-sidebar__icon-wrap {
+  position: relative;
+}
+
+.velora-sidebar__search-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.velora-sidebar__search-glyph--collapsed {
+  display: none;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__search-submit .velora-sidebar__search-glyph--expanded {
+  display: none;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__search-submit .velora-sidebar__search-glyph--collapsed {
+  display: flex;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__search {
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--velora-space-2);
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__search-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__search-submit {
+  width: 100%;
+  min-height: 0;
+  padding: 10px var(--velora-space-2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 0;
+
+  .velora-sidebar__search-icon {
+    --velora-icon-color: rgba(255, 255, 255, 0.92);
+  }
+
+  &:hover {
+    filter: none;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:hover .velora-sidebar__ion {
+    --velora-icon-color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+// --- Nav list --------------------------------------------------------------
+.velora-sidebar__nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .velora-sidebar__list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--velora-space-2) 0;
   display: flex;
   flex-direction: column;
-}
-
-.velora-sidebar__item {
-  display: block;
-
-  &.is-active > .velora-sidebar__link {
-    background-color: rgba(255, 255, 255, 0.06);
-    color: #fff;
-    border-left-color: var(--velora-c-orange);
-  }
+  gap: 1px;
 }
 
 .velora-sidebar__item--empty {
-  color: var(--velora-gray-400);
-  padding: var(--velora-space-2) var(--velora-space-4);
+  color: rgba(255, 255, 255, 0.45);
+  padding: var(--velora-space-3) var(--velora-space-4);
   font-style: italic;
 }
 
-.velora-sidebar__link {
+.velora-sidebar__row {
   display: flex;
   align-items: center;
   gap: var(--velora-space-3);
-  padding: var(--velora-space-2) var(--velora-space-4);
-  color: var(--velora-gray-100);
-  text-decoration: none;
+  width: 100%;
+  padding: 10px var(--velora-space-4);
+  margin: 0;
+  border: none;
   border-left: 3px solid transparent;
-  transition: background-color 0.15s ease, color 0.15s ease,
-    border-color 0.15s ease;
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease;
   white-space: nowrap;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(255, 255, 255, 0.06);
     color: #fff;
+
+    .velora-sidebar__ion {
+      --velora-icon-color: rgba(255, 255, 255, 0.95);
+    }
   }
 }
 
-.velora-sidebar__icon {
+.velora-sidebar__item.is-active > .velora-sidebar__row--link,
+.velora-sidebar__item--branch.is-active > .velora-sidebar__row--branch {
+  background-color: rgba(0, 0, 0, 0.28);
+  border-left-color: var(--velora-c-orange);
+  color: #fff;
+}
+
+.velora-sidebar__icon-wrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
+}
+
+// Spessore tratto Ionicons outline allineato in tutta la sidebar (default tema 32px).
+.velora-sidebar .velora-icon {
+  --ionicon-stroke-width: 38px;
+}
+
+.velora-sidebar__ion {
+  --velora-icon-color: rgba(255, 255, 255, 0.82);
+  display: block;
+}
+
+.velora-sidebar__item.is-active .velora-sidebar__ion,
+.velora-sidebar__item--branch.is-active .velora-sidebar__ion {
+  --velora-icon-color: var(--velora-c-orange);
+}
+
+.velora-sidebar__icon-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  opacity: 0.85;
 }
 
 .velora-sidebar__label {
@@ -66,17 +260,246 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: opacity 0.18s ease;
 }
 
-// Stato collapsed: nascondi le label e centra le icone
-.velora-app--sidebar-collapsed {
-  .velora-sidebar__label {
-    display: none;
+.velora-sidebar__chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+
+  &::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid rgba(255, 255, 255, 0.55);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.55);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+    display: block;
+  }
+}
+
+.velora-sidebar__item--branch.is-open > .velora-sidebar__row--branch .velora-sidebar__chevron::before {
+  transform: rotate(45deg);
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__chevron {
+  display: none;
+}
+
+// Accordion sublists (solo sidebar espansa)
+.velora-sidebar__sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.28s ease;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.velora-sidebar__item--branch.is-open > .velora-sidebar__sublist {
+  max-height: 70vh;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__sublist {
+  display: none !important;
+}
+
+.velora-sidebar__subitem {
+  margin: 0;
+}
+
+.velora-sidebar__sublink {
+  display: block;
+  padding: 8px var(--velora-space-4) 8px calc(var(--velora-space-4) + 31px);
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: var(--velora-fs-xs);
+  border-left: 3px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
   }
 
-  .velora-sidebar__link {
+  &.is-active {
+    background: rgba(0, 0, 0, 0.22);
+    border-left-color: var(--velora-c-orange);
+    color: #fff;
+  }
+}
+
+// --- Footer toggle (allineato al reference: verde + testo) ---------------
+.velora-sidebar__footer {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: var(--velora-space-2);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.velora-sidebar__footer-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--velora-space-2);
+  width: 100%;
+  padding: var(--velora-space-2) var(--velora-space-3);
+  border: none;
+  border-radius: var(--velora-radius-sm);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.velora-sidebar__footer-chevron::before {
+  content: "‹";
+  color: var(--velora-c-green);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: var(--velora-fw-medium);
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__footer-chevron::before {
+  content: "›";
+}
+
+.velora-sidebar__footer-text {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__footer-text {
+  display: none;
+}
+
+.velora-app--sidebar-collapsed .velora-sidebar__footer-toggle {
+  justify-content: center;
+  padding: var(--velora-space-3) var(--velora-space-2);
+}
+
+// Collapsed: solo icone principali, label nascoste
+.velora-app--sidebar-collapsed {
+  .velora-sidebar__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .velora-sidebar__row {
     justify-content: center;
     padding-left: var(--velora-space-2);
     padding-right: var(--velora-space-2);
+  }
+
+  .velora-sidebar__icon-wrap {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// --- Flyout (modalità collassata) ------------------------------------------
+.velora-sidebar__flyout-layer[hidden] {
+  display: none !important;
+}
+
+.velora-sidebar__flyout-layer {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--velora-z-sidebar) + 6);
+  pointer-events: none;
+}
+
+.velora-sidebar__flyout-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.14);
+  pointer-events: auto;
+}
+
+.velora-sidebar__flyout-panel {
+  position: absolute;
+  top: var(--velora-header-height);
+  left: var(--velora-sidebar-width-collapsed);
+  width: min(284px, calc(100vw - var(--velora-sidebar-width-collapsed) - 8px));
+  bottom: 0;
+  background: #2c323b;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: var(--velora-space-4) var(--velora-space-4) var(--velora-space-6);
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.velora-sidebar__flyout-panel[hidden] {
+  display: none !important;
+}
+
+.velora-sidebar__flyout-heading {
+  margin: 0 0 var(--velora-space-4);
+  font-size: var(--velora-fs-xs);
+  font-weight: var(--velora-fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.velora-sidebar__flyout-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.velora-sidebar__flyout-list li {
+  margin: 0;
+}
+
+.velora-sidebar__flyout-link {
+  display: block;
+  padding: 10px 0;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  font-size: var(--velora-fs-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: color 0.12s ease;
+
+  &:hover {
+    color: #fff;
+  }
+
+  &.is-active {
+    color: var(--velora-c-orange);
+  }
+}
+
+.velora-sidebar__flyout-back {
+  margin-top: var(--velora-space-5);
+  padding: var(--velora-space-2) 0;
+  border: none;
+  background: none;
+  color: var(--velora-c-green);
+  font: inherit;
+  font-style: italic;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    text-decoration: underline;
   }
 }

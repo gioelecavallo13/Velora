@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!-- Allineato a velora_ui/components/feedback/_alert.html -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — alert</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <div class="velora-app__content" style="padding: 1rem">
+      <div class="velora-alert velora-alert--success" role="alert">
+        <div class="velora-alert__body">
+          <p class="velora-alert__title">Operazione riuscita</p>
+          <p class="velora-alert__message">Messaggio di conferma.</p>
+        </div>
+      </div>
+
+      <div class="velora-alert velora-alert--error" role="alert">
+        <div class="velora-alert__body">
+          <p class="velora-alert__message">Errore senza titolo.</p>
+        </div>
+      </div>
+
+      <div class="velora-alert velora-alert--warning" role="alert">
+        <button
+          type="button"
+          class="velora-alert__close"
+          aria-label="Chiudi"
+          onclick="this.closest('.velora-alert').remove();"
+        >
+          &times;
+        </button>
+        <div class="velora-alert__body">
+          <p class="velora-alert__title">Attenzione</p>
+          <p class="velora-alert__message">Alert chiudibile (dismissible).</p>
+        </div>
+      </div>
+
+      <div class="velora-alert velora-alert--info" role="alert">
+        <div class="velora-alert__body">
+          <p class="velora-alert__message">Solo testo informativo.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

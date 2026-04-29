@@ -15,6 +15,10 @@
   Per allargare l'inventario in futuro: aggiungere la voce nella sidebar (in
   views.py -> SHOWCASE_SECTIONS) e una <section class="showcase-section">
   con id corrispondente.
+
+  Nota bundle JS: la sezione Chart richiede il bundle **full** (Chart.js). In dev,
+  `{% velora_assets %}` carica `static/velora_ui/js/velora.js` generato da
+  `tools/build_js.sh` dall'entry full `js/src/velora.js`.
 {% endcomment %}
 
 {% block title %}{% trans "Velora UI — Showcase" %} v{{ velora_version }}{% endblock %}
@@ -81,6 +85,25 @@
     }
     .showcase-demo__code code { color: inherit; background: transparent; padding: 0; }
 
+    /* Anteprima header / title bar nella sezione Layout */
+    .showcase-demo--layout-header {
+        margin-top: var(--velora-space-2);
+    }
+    .showcase-demo--layout-header .showcase-demo__live--header {
+        padding: 0;
+        background: var(--velora-c-menu-bg);
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-sm);
+        box-shadow: var(--velora-shadow-sm);
+    }
+    .showcase-demo--layout-header .showcase-demo__live--title-bar {
+        padding: 0;
+        background: #fff;
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-sm);
+        box-shadow: var(--velora-shadow-sm);
+    }
+
     .showcase-grid--two-col {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -89,6 +112,94 @@
     @media (max-width: 600px) {
         .showcase-grid--two-col { grid-template-columns: 1fr; }
     }
+
+    .showcase-icon-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--velora-space-4);
+    }
+    .showcase-icon-row--muted {
+        color: var(--velora-gray-500);
+    }
+    .showcase-icon-row--muted .velora-icon:hover {
+        --velora-icon-color: var(--velora-c-orange);
+        color: var(--velora-c-orange);
+    }
+    .showcase-icon-card {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--velora-space-3);
+        max-width: 320px;
+        padding: var(--velora-space-4);
+        border: 1px solid var(--velora-border-color);
+        border-radius: var(--velora-radius-md);
+        background: #fff;
+    }
+    .showcase-icon-card__body { min-width: 0; }
+    .showcase-icon-card__title { margin: 0 0 4px; font-size: var(--velora-fs-sm); font-weight: var(--velora-fw-medium); }
+    .showcase-icon-card__text { margin: 0; font-size: var(--velora-fs-xs); color: var(--velora-gray-600); line-height: var(--velora-lh-normal); }
+    .showcase-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--velora-space-2);
+        padding: 8px 14px;
+        border: none;
+        border-radius: var(--velora-radius-sm);
+        font: inherit;
+        cursor: pointer;
+        background: var(--velora-c-orange);
+        color: #fff;
+        --velora-icon-color: #fff;
+    }
+    .showcase-icon-btn:hover {
+        filter: brightness(1.05);
+    }
+    .showcase-icon-btn:focus-visible {
+        outline: 2px solid var(--velora-c-orange-dark);
+        outline-offset: 2px;
+    }
+
+    /* Sezione scelte tipografiche (solo showcase) */
+    .showcase-tokens p {
+        margin: 0 0 var(--velora-space-3);
+        font-size: var(--velora-fs-sm);
+        color: var(--velora-gray-800);
+        line-height: 1.55;
+    }
+    .showcase-tokens__mono {
+        display: block;
+        margin-top: var(--velora-space-1);
+        padding: var(--velora-space-2) var(--velora-space-3);
+        background: var(--velora-gray-50);
+        border-radius: var(--velora-radius-sm);
+        font-family: var(--velora-font-mono);
+        font-size: 12px;
+        color: var(--velora-gray-900);
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .showcase-swatch-row {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--velora-space-3);
+        padding: var(--velora-space-2) 0;
+        border-bottom: 1px solid var(--velora-border-color);
+        font-size: var(--velora-fs-sm);
+    }
+    .showcase-swatch-row:last-child { border-bottom: 0; }
+    .showcase-swatch {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--velora-radius-sm);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        box-sizing: border-box;
+    }
+    .showcase-swatch-meta { min-width: 0; flex: 1; }
+    .showcase-swatch-meta strong { display: block; margin-bottom: 2px; font-size: var(--velora-fs-xs); text-transform: uppercase; letter-spacing: .04em; color: var(--velora-gray-500); font-weight: var(--velora-fw-medium); }
+    .showcase-swatch-grid .showcase-swatch-row { flex-wrap: wrap; align-items: center; }
 </style>
 {% endblock %}
 
@@ -104,7 +215,7 @@
 
 {% block sidebar %}
     {# La sidebar dello showcase agisce come TOC: link alle sezioni della pagina. #}
-    {% include "velora_ui/components/sidebar/_sidebar.html" with velora_sidebar_items=showcase_sidebar_items %}
+    {% include "velora_ui/components/sidebar/_sidebar.html" with velora_sidebar_items=showcase_sidebar_items velora_sidebar_brand_full=showcase_sidebar_brand_full velora_sidebar_brand_short=showcase_sidebar_brand_short velora_sidebar_show_search=showcase_sidebar_show_search %}
 {% endblock %}
 
 {% block title_bar %}
@@ -142,6 +253,134 @@
 </section>
 
 {# ---------------------------------------------------------------- #}
+{# Scelte tipografiche                                                 #}
+{# ---------------------------------------------------------------- #}
+<section class="showcase-section showcase-tokens" id="typography">
+    <div class="showcase-section__hero">
+        <h2 class="showcase-section__title">{% trans "Scelte tipografiche" %}</h2>
+        <p class="showcase-section__intro">
+            {% trans "Font stack, gerarchie Proxima Nova e palette colori di riferimento." %}
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">{% trans "Tipografia" %}</h3>
+    <div class="showcase-tokens">
+        <p>
+            <strong>{% trans "Font di stack di base" %}</strong>
+            <code class="showcase-tokens__mono">-apple-system, BlinkMacSystemFont, &quot;San Francisco&quot;, Roboto, &quot;Segoe UI&quot;, &quot;Helvetica Neue&quot;, sans-serif</code>
+        </p>
+        <p>
+            <strong>Proxima Nova Light</strong> — {% trans "menu, pulsanti, titoli leggeri (fallback: stack di base)." %}
+        </p>
+        <p>
+            <strong>Proxima Nova Regular</strong> — {% trans "testo corpo, tooltip, elementi enfatizzati (fallback: stack di base)." %}
+        </p>
+        <p>
+            <strong>{% trans "Dimensioni" %}</strong> — 12px, 13px, 14px ({% trans "base" %}), 18px, 20px, 22px, 24px.
+        </p>
+        <p>
+            <strong>{% trans "Peso" %}</strong> — {% trans "font-weight normale (Light/Regular). Nessun grassetto predefinito nelle UI standard." %}
+        </p>
+    </div>
+
+    <h3 class="showcase-section__subtitle">{% trans "Colori principali" %}</h3>
+    <div class="showcase-swatch-grid">
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#4b4b4b" title="#4b4b4b"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Grigio extra scuro" %}</strong>
+                <code>#4b4b4b</code> — {% trans "testo" %}
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#4F5D72" title="#4F5D72"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Menu gray" %}</strong>
+                <code>#4F5D72</code>
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#F5A000" title="#F5A000"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Arancio" %}</strong>
+                <code>#F5A000</code> — {% trans "CTA, attivo" %}
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#E58D00" title="#E58D00"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Arancio scuro" %}</strong>
+                <code>#E58D00</code> — {% trans "hover" %}
+            </div>
+        </div>
+    </div>
+
+    <h3 class="showcase-section__subtitle">{% trans "Semantici" %}</h3>
+    <div class="showcase-swatch-grid">
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#c1282e" title="#c1282e"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Rosso" %}</strong>
+                <code>#c1282e</code> — {% trans "errore, elimina" %}
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#7AB55C" title="#7AB55C"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Verde" %}</strong>
+                <code>#7AB55C</code> — {% trans "successo, menu" %}
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#333A3F" title="#333A3F"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Sfondo menu" %}</strong>
+                <code>#333A3F</code>
+            </div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#1D2328" title="#1D2328"></span>
+            <div class="showcase-swatch-meta">
+                <strong>{% trans "Menu scuro" %}</strong>
+                <code>#1D2328</code>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="showcase-section__subtitle">{% trans "Grigi" %}</h3>
+    <div class="showcase-swatch-grid">
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#FAFBFC;border-color:rgba(0,0,0,.08)" title="#FAFBFC"></span>
+            <div class="showcase-swatch-meta"><code>#FAFBFC</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#EBEEF0" title="#EBEEF0"></span>
+            <div class="showcase-swatch-meta"><code>#EBEEF0</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#D3DBE2" title="#D3DBE2"></span>
+            <div class="showcase-swatch-meta"><code>#D3DBE2</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#868686" title="#868686"></span>
+            <div class="showcase-swatch-meta"><code>#868686</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#666666" title="#666666"></span>
+            <div class="showcase-swatch-meta"><code>#666666</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#333333" title="#333333"></span>
+            <div class="showcase-swatch-meta"><code>#333333</code></div>
+        </div>
+        <div class="showcase-swatch-row">
+            <span class="showcase-swatch" style="background:#262626" title="#262626"></span>
+            <div class="showcase-swatch-meta"><code>#262626</code></div>
+        </div>
+    </div>
+</section>
+
+{# ---------------------------------------------------------------- #}
 {# Layout core (M2)                                                 #}
 {# ---------------------------------------------------------------- #}
 <section class="showcase-section" id="layout">
@@ -158,14 +397,23 @@
     </div>
 
     <h3 class="showcase-section__subtitle">Header v0.1: link + user-menu</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v01 %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "link", "label": "Dashboard", "url": "/", "active": True},
     {"type": "link", "label": "Documentazione", "url": "/docs/"},
     {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Header v0.2: single-menu (dropdown semplice)</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v02_single %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "single-menu", "label": "Account",
      "items": [
          {"label": "Profilo",     "url": "/profile/"},
@@ -173,9 +421,14 @@
          {"label": "Esci",         "url": "/logout/"},
      ]},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Header v0.2: multi-menu (mega-menu a colonne)</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v02_multi %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "multi-menu", "label": "Risorse",
      "sections": [
          {"label": "Sviluppo",
@@ -185,9 +438,14 @@
           "items": [{"label": "Repo", "url": "https://github.com/..."}]},
      ]},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Header v0.2: apps-menu (griglia di app launcher)</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v02_apps %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "apps-menu", "label": "App",
      "apps": [
          {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
@@ -195,37 +453,50 @@
          {"label": "Mail",       "url": "/mail/", "color": "#ea4335"},
      ]},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Header v0.2: notifications (campanella + lista)</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v02_notifications %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
     {"type": "notifications", "label": "Notifiche", "unread_count": 3,
      "items": [
-         {"title": "Nuovo cliente", "body": "Mario Rossi si e` registrato.",
+         {"title": "Nuovo cliente", "body": "Mario Rossi si è registrato.",
           "url": "/n/1/", "timestamp": "2 minuti fa", "unread": True},
          {"title": "Backup completato", "url": "/n/2/", "timestamp": "1 ora fa"},
      ],
      "footer_label": "Vedi tutte", "footer_url": "/notifications/"},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Header v0.2: logo (marchio aggiuntivo inline)</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
-    {"type": "logo", "image_url": "/static/tenant.svg",
-     "label": "AcmeCorp", "url": "/acme/"},
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--header">
+            {% velora_header items=showcase_header_demo_v02_logo %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_header items=[
+    {"type": "logo", "label": "AcmeCorp", "url": "/acme/"},
 ] %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Title bar con azioni</h3>
-    <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_title_bar
+    <div class="showcase-demo showcase-demo--stacked showcase-demo--layout-header">
+        <div class="showcase-demo__live showcase-demo__live--title-bar">
+            {% velora_title_bar title="Dashboard" actions=showcase_title_bar_demo_actions %}
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% velora_title_bar
     title="Dashboard"
     actions=[
         {"label": "Annulla", "url": "/cancel/", "variant": "secondary"},
         {"label": "Salva", "url": "/save/", "variant": "primary"},
     ]
 %}{% endverbatim %}</code></pre>
+    </div>
 
     <h3 class="showcase-section__subtitle">Sidebar collassabile</h3>
-    <p>Cliccando l'icona &#9776; nell'header in alto si commuta la classe
-        <code>velora-app--sidebar-collapsed</code> sul body; lo stato e`
-        persistito in <code>localStorage</code>.</p>
+    <p>{% blocktrans trimmed %}Cliccando <strong>Più spazio</strong> in fondo alla sidebar si commuta la classe <code>velora-app--sidebar-collapsed</code> sul <code>body</code>; lo stato è persistito in <code>localStorage</code>.{% endblocktrans %}</p>
 
     <h3 class="showcase-section__subtitle">Interazione dei dropdown header</h3>
     <p>I tipi <code>single-menu</code>, <code>multi-menu</code>, <code>apps-menu</code>
@@ -890,13 +1161,53 @@ def save_view(request):
     <h2 class="showcase-section__title">Ionicons</h2>
     <p class="showcase-section__lead">
         {% blocktrans trimmed %}
-        Set SVG sincronizzato da <code>npm</code> (<code>sh tools/sync_ionicons.sh</code>): manifest statico
-        <code>ionicons-manifest.json</code> e ricerca client-side nella galleria.
+        Libreria <strong>Ionicons</strong> (npm <code>ionicons</code>): sincronizza le SVG con
+        <code>npm run sync:icons</code>. Il tag <code>velora_icon</code> usa SVG inline e
+        <code>currentColor</code>. La galleria catalogo replica lo stile del content-showcase:
+        ogni scheda mostra il nome stile <code>ion-…</code> (prefisso + slug) e un esempio
+        <code>velora_icon</code>; la ricerca è <strong>AJAX</strong> sull’endpoint
+        <code>/api/ionicons/</code> (digita <strong>tutte</strong> per caricare l’intero set, fino al limite richiesto).
         {% endblocktrans %}
     </p>
-    {% velora_ionicons_gallery search_input_id="showcase-ionicons-search" %}
+
+    <h3 class="showcase-section__subtitle">velora_icon</h3>
+    <div class="showcase-demo showcase-demo--stacked">
+        <div class="showcase-demo__live">
+            <p class="showcase-section__intro" style="margin-bottom: var(--velora-space-3);">{% trans "Dimensioni (size) e hover tramite CSS" %}</p>
+            <div class="showcase-icon-row showcase-icon-row--muted">
+                {% velora_icon "home-outline" size="sm" %}
+                {% velora_icon "calendar-outline" size="md" %}
+                {% velora_icon "stats-chart-outline" size="lg" %}
+                {% velora_icon "person-outline" size="xl" %}
+            </div>
+            <p class="showcase-section__intro" style="margin: var(--velora-space-4) 0 var(--velora-space-3);">{% trans "Pulsante e card" %}</p>
+            <div class="showcase-icon-row">
+                <button type="button" class="showcase-icon-btn">
+                    {% velora_icon "add-outline" size="sm" %}
+                    {% trans "Azione primaria" %}
+                </button>
+                <span class="showcase-icon-card">
+                    {% velora_icon "notifications-outline" size="lg" %}
+                    <span class="showcase-icon-card__body">
+                        <span class="showcase-icon-card__title">{% trans "Notifiche" %}</span>
+                        <span class="showcase-icon-card__text">{% trans "Esempio di blocco testuale affiancato a un'icona tematica." %}</span>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <pre class="showcase-demo__code"><code>{% verbatim %}{% load velora_icons %}
+{% velora_icon "home-outline" size="md" extra_class="my-class" %}
+{% velora_icon "warning-outline" alt="Avviso importante" size="sm" %}
+{# Solo se serve <img> lazy (es. liste lunghe): #}
+{% velora_icon "star-outline" as_img=True width=24 height=24 alt="" %}{% endverbatim %}</code></pre>
+    </div>
+
+    <h3 class="showcase-section__subtitle">{% trans "Galleria catalogo (ricerca AJAX)" %}</h3>
+    {% velora_ionicons_gallery search_input_id="showcase-ionicons-search" search_url=showcase_ionicons_search_url %}
     <pre class="showcase-demo__code"><code>{% verbatim %}{% load velora_icons %}
-{% velora_ionicons_gallery search_input_id="icon-search" %}{% endverbatim %}</code></pre>
+{# URL della view JSON (es. reverse nell'app showcase) #}
+{% velora_ionicons_gallery search_input_id="icon-search" search_url="/api/ionicons/" %}
+{% endverbatim %}</code></pre>
 </section>
 
 <section id="theme-brand" class="showcase-section">

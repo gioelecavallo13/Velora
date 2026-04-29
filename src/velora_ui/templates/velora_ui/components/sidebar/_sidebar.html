@@ -1,32 +1,94 @@
+{% load i18n velora_icons velora_overlays %}
 {% comment %}
-  Partial della sidebar collassabile.
+  Sidebar navigazione: stato collapsed/expanded su body (`velora-app--sidebar-collapsed`).
+  Voci: link semplice oppure `children` per sottomenu (accordion se expanded,
+  pannello flyout se collapsed). Ionicons: `icon_slug` es. `home-outline`.
 
-  Per v0.1 espone solo lo scheletro: il contenuto reale (lista voci di menu)
-  viene popolato dalle pagine via {% block sidebar %} oppure passando una
-  variabile `velora_sidebar_items` nel contesto.
-
-  Lo stato collapsed/expanded e` gestito dal componente JS `sidebar-toggle`
-  (vedi js/src/components/sidebar.js): commuta la classe modificatore
-  `velora-app--sidebar-collapsed` sul body e persiste lo stato in localStorage
-  con chiave `velora.sidebar.collapsed`.
-
-  Per nascondere completamente la sidebar (es. in modali, embed, stampa) si
-  passa `?no_sidebar=1` in querystring: la condizione e` valutata in
-  `base.html` ed evita proprio il rendering di questo partial.
+  Contesto opzionale:
+    velora_sidebar_items (required)
+    velora_sidebar_brand_full (default "Velora")
+    velora_sidebar_brand_short (default primi 2 caratteri del brand)
+    velora_sidebar_show_search (default False)
 {% endcomment %}
-<nav class="velora-sidebar" aria-label="Navigazione laterale">
-    <ul class="velora-sidebar__list">
+{% with brand=velora_sidebar_brand_full|default:"Velora" short=velora_sidebar_brand_short|default:"" %}
+<div class="velora-sidebar"
+     data-velora-component="velora-sidebar"
+     data-search-expanded-label="{% trans 'Comprimi ricerca' %}"
+     data-search-collapsed-label="{% trans 'Cerca nella sidebar' %}">
+    <header class="velora-sidebar__masthead">
+        <span class="velora-sidebar__brand velora-sidebar__brand--full">{{ brand }}</span>
+        <span class="velora-sidebar__brand velora-sidebar__brand--short">{% firstof short brand|slice:":2"|upper %}</span>
+    </header>
+    {% if velora_sidebar_show_search %}
+    {% trans "Cerca" as sidebar_search_tooltip %}
+    <div class="velora-sidebar__search" role="search">
+        <label class="velora-visually-hidden" for="velora-sidebar-search-input">{% trans "Cerca" %}</label>
+        <input type="search"
+               id="velora-sidebar-search-input"
+               class="velora-sidebar__search-input"
+               placeholder="{% trans 'Cerca…' %}"
+               autocomplete="off"
+               data-velora-sidebar-search-input>
+        <button type="button"
+                class="velora-sidebar__search-submit"
+                aria-label="{% trans 'Cerca' %}"
+                data-velora-sidebar-search-btn
+                {% velora_tooltip sidebar_search_tooltip placement="right" %}>
+            <span class="velora-sidebar__icon-wrap" aria-hidden="true">
+                <span class="velora-sidebar__search-glyph velora-sidebar__search-glyph--expanded">
+                    {% velora_icon "search-outline" extra_class="velora-sidebar__search-icon velora-sidebar__ion" alt="" %}
+                </span>
+                <span class="velora-sidebar__search-glyph velora-sidebar__search-glyph--collapsed">
+                    {% velora_icon "search" extra_class="velora-sidebar__search-icon velora-sidebar__ion" alt="" %}
+                </span>
+            </span>
+        </button>
+    </div>
+    {% endif %}
+    <nav class="velora-sidebar__nav" aria-label="{% trans 'Sezioni principali' %}">
+        <ul class="velora-sidebar__list" data-velora-sidebar-list>
+            {% for item in velora_sidebar_items %}
+                {% include "velora_ui/components/sidebar/_sidebar_item.html" with item=item branch_index=forloop.counter0 %}
+            {% empty %}
+            <li class="velora-sidebar__item velora-sidebar__item--empty">
+                <span class="velora-sidebar__label">{% trans "Nessuna voce di menu" %}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <footer class="velora-sidebar__footer">
+        <button type="button"
+                class="velora-sidebar__footer-toggle"
+                data-velora-component="sidebar-toggle"
+                aria-label="{% trans 'Mostra o nascondi le etichette del menu laterale' %}">
+            <span class="velora-sidebar__footer-chevron" aria-hidden="true"></span>
+            <span class="velora-sidebar__footer-text">{% trans "Più spazio" %}</span>
+        </button>
+    </footer>
+    {# Pannelli flyout (solo modalità collapsed): stesso markup ripetuto per ogni branch #}
+    <div class="velora-sidebar__flyout-layer" data-velora-sidebar-flyout-layer hidden aria-hidden="true">
+        <div class="velora-sidebar__flyout-backdrop" data-velora-sidebar-flyout-backdrop tabindex="-1"></div>
         {% for item in velora_sidebar_items %}
-        <li class="velora-sidebar__item{% if item.active %} is-active{% endif %}">
-            <a href="{{ item.url }}" class="velora-sidebar__link">
-                {% if item.icon %}<span class="velora-sidebar__icon" aria-hidden="true">{{ item.icon }}</span>{% endif %}
-                <span class="velora-sidebar__label">{{ item.label }}</span>
-            </a>
-        </li>
-        {% empty %}
-        <li class="velora-sidebar__item velora-sidebar__item--empty">
-            <span class="velora-sidebar__label">Nessuna voce di menu</span>
-        </li>
+            {% if item.children %}
+            <div class="velora-sidebar__flyout-panel"
+                 id="velora-sidebar-flyout-{{ forloop.counter0 }}"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-label="{{ item.label }}"
+                 hidden
+                 data-velora-sidebar-flyout-panel>
+                <p class="velora-sidebar__flyout-heading">{{ item.label }}</p>
+                <ul class="velora-sidebar__flyout-list">
+                    {% for child in item.children %}
+                    <li><a href="{{ child.url }}" class="velora-sidebar__flyout-link{% if child.active %} is-active{% endif %}">{{ child.label }}</a></li>
+                    {% endfor %}
+                </ul>
+                <button type="button" class="velora-sidebar__flyout-back" data-velora-sidebar-flyout-back>
+                    {% trans "Indietro" %}
+                </button>
+            </div>
+            {% endif %}
         {% endfor %}
-    </ul>
-</nav>
+    </div>
+</div>
+{% endwith %}

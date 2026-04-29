@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!--
+    Estratto minimo da header/_header.html: single-menu con data-velora-component="header-menu".
+    Richiede il bundle Velora (core o full) per l'init del componente.
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — header menu dropdown</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <header class="velora-app__header">
+      <div class="velora-header">
+        <a href="/" class="velora-header__brand">
+          <span class="velora-header__brand-name">Demo</span>
+        </a>
+        <nav class="velora-header__nav" aria-label="Menu principale">
+          <div
+            class="velora-header__item velora-header__item--menu velora-header__item--single-menu"
+            data-velora-component="header-menu"
+            data-velora-menu-align="left"
+          >
+            <button type="button" class="velora-header__menu-trigger" aria-haspopup="true" aria-expanded="false">
+              <span class="velora-header__menu-label">Apri menu</span>
+              <span class="velora-header__menu-caret" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="velora-header__menu-panel velora-header__menu-panel--single" role="menu">
+              <ul class="velora-header__menu-list">
+                <li role="none">
+                  <a role="menuitem" href="/uno" class="velora-header__menu-link"><span>Voce uno</span></a>
+                </li>
+                <li role="none">
+                  <a role="menuitem" href="/due" class="velora-header__menu-link"><span>Voce due</span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="velora-header__user"></div>
+      </div>
+    </header>
+    <main class="velora-app__main">
+      <div class="velora-app__content" style="padding: 1rem">
+        <p>Contenuto sotto l’header.</p>
+      </div>
+    </main>
+  </body>
+</html>

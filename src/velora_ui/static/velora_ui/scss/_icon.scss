@@ -1,0 +1,34 @@
+// Velora UI — sistema icone (Ionicons inline SVG)
+//
+// Il tag {% velora_icon %} emette un wrapper .velora-icon con SVG che usa
+// currentColor come nel web component ufficiale Ionicons.
+//
+// Colore: eredita da color del genitore, oppure --velora-icon-color sul wrapper.
+
+.velora-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  color: var(--velora-icon-color, currentColor);
+  line-height: 0;
+}
+
+.velora-icon__svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.velora-icon__svg.ionicon {
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.velora-icon__svg .ionicon-fill-none {
+  fill: none;
+}
+
+.velora-icon__svg .ionicon-stroke-width {
+  stroke-width: var(--ionicon-stroke-width, 32px);
+}

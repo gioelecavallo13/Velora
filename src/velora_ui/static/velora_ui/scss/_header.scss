@@ -1,8 +1,8 @@
 // Velora UI - header globale (M2 + estensioni v0.2)
 //
 // L'header e` una barra orizzontale fissa in alto, su fondo scuro
-// (var(--velora-c-menu-bg)). Layout: brand a sx, toggle sidebar, nav, user
-// menu allineato a destra (margin-left:auto).
+// (var(--velora-c-menu-bg)). Layout: brand a sx, nav item, user-menu a destra
+// (margin-left:auto).
 //
 // In v0.2 sono stati aggiunti i tipi item:
 //   - single-menu, multi-menu, apps-menu, notifications  -> trigger + panel
@@ -42,27 +42,6 @@
 
 .velora-header__brand-name {
   white-space: nowrap;
-}
-
-.velora-header__sidebar-toggle {
-  background: transparent;
-  border: 0;
-  color: #fff;
-  cursor: pointer;
-  padding: 0 var(--velora-space-2);
-  font-size: var(--velora-fs-md);
-  line-height: 1;
-  height: var(--velora-header-height);
-  transition: background-color 0.15s ease;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--velora-c-orange);
-    outline-offset: -2px;
-  }
 }
 
 .velora-header__nav {

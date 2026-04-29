@@ -1,9 +1,99 @@
+import json
+from pathlib import Path
+
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
+from django.contrib.staticfiles import finders
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from velora_ui import __version__ as velora_version
+
+
+_IONICONS_INITIAL = 96
+_IONICONS_LIMIT_MAX = 2000
+_IONICONS_MANIFEST_REL = "velora_ui/icons/ionicons-manifest.json"
+
+_manifest_mtime: float | None = None
+_manifest_slugs: list[str] | None = None
+
+
+def _ionicons_manifest_slugs() -> list[str]:
+    """Slug ordinati dal manifest statico; cache invalidata se il file cambia."""
+
+    global _manifest_mtime, _manifest_slugs
+    path = finders.find(_IONICONS_MANIFEST_REL)
+    if not path:
+        return []
+    p = Path(path)
+    try:
+        mtime = p.stat().st_mtime
+    except OSError:
+        return []
+    if _manifest_slugs is not None and _manifest_mtime == mtime:
+        return _manifest_slugs
+    try:
+        raw = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        _manifest_slugs = []
+        _manifest_mtime = mtime
+        return _manifest_slugs
+    _manifest_slugs = raw if isinstance(raw, list) else []
+    _manifest_mtime = mtime
+    return _manifest_slugs
+
+
+def ionicons_search(request: HttpRequest) -> JsonResponse:
+    """Ricerca AJAX sul catalogo Ionicons (slug kebab-case, Ionicons 7)."""
+
+    if request.method != "GET":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    q = (request.GET.get("q") or "").strip().lower()
+    if len(q) > 80:
+        q = q[:80]
+
+    try:
+        limit = int(request.GET.get("limit", "240"))
+    except ValueError:
+        limit = 240
+    limit = max(1, min(limit, _IONICONS_LIMIT_MAX))
+
+    slugs = _ionicons_manifest_slugs()
+    total_icons = len(slugs)
+    if total_icons == 0:
+        return JsonResponse(
+            {
+                "icons": [],
+                "total_icons": 0,
+                "matched": 0,
+                "returned": 0,
+                "truncated": False,
+                "error": "manifest_missing",
+            }
+        )
+
+    tutte_keys = {"tutte", "all", "*"}
+    if q in tutte_keys:
+        filtered = slugs
+    elif q:
+        filtered = [s for s in slugs if q in s.lower()]
+    else:
+        filtered = slugs[:_IONICONS_INITIAL]
+
+    matched = len(filtered)
+    out = filtered[:limit]
+    return JsonResponse(
+        {
+            "icons": out,
+            "total_icons": total_icons,
+            "matched": matched,
+            "returned": len(out),
+            "truncated": matched > len(out),
+            "is_initial": not q,
+        }
+    )
 
 
 _TOAST_DEMO_LEVELS = {
@@ -122,21 +212,35 @@ def index(request: HttpRequest) -> HttpResponse:
     # Sidebar dello showcase = indice cliccabile delle sezioni della pagina.
     # Aggiungere una sezione qui ed in showcase/index.html mantiene la TOC
     # in sync con il contenuto.
+    # Sidebar: Ionicons + link semplici + ramo con sottomenu (accordion / flyout).
     sidebar_items = [
-        {"label": "Overview", "url": "#overview", "icon": "·"},
-        {"label": "Layout", "url": "#layout", "icon": "L"},
-        {"label": "Form", "url": "#form", "icon": "F"},
-        {"label": "Tabelle", "url": "#tables", "icon": "T"},
-        {"label": "Link", "url": "#links", "icon": "→"},
-        {"label": "Feedback", "url": "#feedback", "icon": "!"},
-        # v0.2 — Fase 10
-        {"label": "Navigation", "url": "#navigation", "icon": "N"},
-        {"label": "Overlays", "url": "#overlays", "icon": "O"},
-        {"label": "Progress", "url": "#progress", "icon": "%"},
-        # v0.3 — Fase 11
-        {"label": "Form avanzati", "url": "#form-advanced", "icon": "★"},
-        {"label": "Tabelle interattive", "url": "#tables-advanced", "icon": "≡"},
-        {"label": "Checkbox", "url": "#checkbox", "icon": "☑"},
+        {
+            "label": _("Panoramica"),
+            "url": "#overview",
+            "icon_slug": "home-outline",
+            "active": True,
+        },
+        {
+            "label": _("Contenuti showcase"),
+            "icon_slug": "library-outline",
+            "children": [
+                {"label": _("Scelte tipografiche"), "url": "#typography"},
+                {"label": _("Layout"), "url": "#layout"},
+                {"label": _("Form"), "url": "#form"},
+                {"label": _("Tabelle"), "url": "#tables"},
+                {"label": _("Link"), "url": "#links"},
+                {"label": _("Feedback"), "url": "#feedback"},
+                {"label": _("Navigazione"), "url": "#navigation"},
+                {"label": _("Overlay"), "url": "#overlays"},
+                {"label": _("Avanzamento"), "url": "#progress"},
+                {"label": _("Form avanzati"), "url": "#form-advanced"},
+                {"label": _("Tabelle interattive"), "url": "#tables-advanced"},
+                {"label": _("Checkbox"), "url": "#checkbox"},
+                {"label": _("Grafici"), "url": "#chart"},
+                {"label": _("Ionicons"), "url": "#ionicons"},
+                {"label": _("Tema e marchio"), "url": "#theme-brand"},
+            ],
+        },
     ]
 
     title_actions = [
@@ -354,6 +458,88 @@ def index(request: HttpRequest) -> HttpResponse:
         },
     ]
 
+    # Esempi `velora_header` / `velora_title_bar` per anteprima live (sezione Layout showcase).
+    showcase_header_demo_v01 = [
+        {"type": "link", "label": "Dashboard", "url": "/", "active": True},
+        {"type": "link", "label": "Documentazione", "url": "/docs/"},
+        {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
+    ]
+    showcase_header_demo_v02_single = [
+        {
+            "type": "single-menu",
+            "label": "Account",
+            "items": [
+                {"label": "Profilo", "url": "/profile/"},
+                {"label": "Impostazioni", "url": "/settings/"},
+                {"label": "Esci", "url": "/logout/"},
+            ],
+        },
+    ]
+    showcase_header_demo_v02_multi = [
+        {
+            "type": "multi-menu",
+            "label": "Risorse",
+            "sections": [
+                {
+                    "label": "Sviluppo",
+                    "items": [
+                        {"label": "Form", "url": "/form/"},
+                        {"label": "Tabelle", "url": "/tab/"},
+                    ],
+                },
+                {
+                    "label": "Community",
+                    "items": [{"label": "Repo", "url": "https://github.com/..."}],
+                },
+            ],
+        },
+    ]
+    showcase_header_demo_v02_apps = [
+        {
+            "type": "apps-menu",
+            "label": "App",
+            "apps": [
+                {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
+                {"label": "Drive", "url": "/drive/", "color": "#34a853"},
+                {"label": "Mail", "url": "/mail/", "color": "#ea4335"},
+            ],
+        },
+    ]
+    showcase_header_demo_v02_notifications = [
+        {
+            "type": "notifications",
+            "label": "Notifiche",
+            "unread_count": 3,
+            "items": [
+                {
+                    "title": "Nuovo cliente",
+                    "body": "Mario Rossi si è registrato.",
+                    "url": "/n/1/",
+                    "timestamp": "2 minuti fa",
+                    "unread": True,
+                },
+                {
+                    "title": "Backup completato",
+                    "url": "/n/2/",
+                    "timestamp": "1 ora fa",
+                },
+            ],
+            "footer_label": "Vedi tutte",
+            "footer_url": "/notifications/",
+        },
+    ]
+    showcase_header_demo_v02_logo = [
+        {
+            "type": "logo",
+            "label": "AcmeCorp",
+            "url": "/acme/",
+        },
+    ]
+    showcase_title_bar_demo_actions = [
+        {"label": "Annulla", "url": "/cancel/", "variant": "secondary"},
+        {"label": "Salva", "url": "/save/", "variant": "primary"},
+    ]
+
     # Demo del pattern django messages -> velora_toast_messages.
     # Aggiungere ?toast=success|error|warning|info alla URL emette un
     # messaggio del livello corrispondente; il template base.html lo
@@ -368,8 +554,12 @@ def index(request: HttpRequest) -> HttpResponse:
         "showcase/index.html",
         context={
             "velora_version": velora_version,
+            "showcase_ionicons_search_url": reverse("showcase:ionicons_search"),
             "showcase_header_items": header_items,
             "showcase_sidebar_items": sidebar_items,
+            "showcase_sidebar_brand_full": "APP",
+            "showcase_sidebar_brand_short": "AP",
+            "showcase_sidebar_show_search": True,
             "showcase_title_bar_title": _("Velora UI — Living styleguide"),
             "showcase_title_actions": title_actions,
             "showcase_role_choices": role_choices,
@@ -386,5 +576,12 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_advanced_table_headers": advanced_table_headers,
             "showcase_advanced_table_rows": advanced_table_rows,
             "showcase_bulk_actions": bulk_actions,
+            "showcase_header_demo_v01": showcase_header_demo_v01,
+            "showcase_header_demo_v02_single": showcase_header_demo_v02_single,
+            "showcase_header_demo_v02_multi": showcase_header_demo_v02_multi,
+            "showcase_header_demo_v02_apps": showcase_header_demo_v02_apps,
+            "showcase_header_demo_v02_notifications": showcase_header_demo_v02_notifications,
+            "showcase_header_demo_v02_logo": showcase_header_demo_v02_logo,
+            "showcase_title_bar_demo_actions": showcase_title_bar_demo_actions,
         },
     )

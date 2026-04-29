@@ -29,14 +29,6 @@
         <span class="velora-header__brand-name">{{ app_name }}</span>
     </a>
 
-    <button
-        type="button"
-        class="velora-header__sidebar-toggle"
-        data-velora-component="sidebar-toggle"
-        aria-label="Mostra/nascondi sidebar">
-        <span aria-hidden="true">&#9776;</span>
-    </button>
-
     <nav class="velora-header__nav" aria-label="Menu principale">
         {% for item in items %}
         {% if item.type == "link" %}

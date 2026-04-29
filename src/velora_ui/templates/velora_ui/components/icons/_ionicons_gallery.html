@@ -1,18 +1,29 @@
 {% comment %}
-  Shell galleria Ionicons: manifest JSON via static; ricerca id collegato da data-search-id.
+  Galleria Ionicons (showcase): titolo, ricerca con hint «tutte», griglia con
+  etichetta ion-<slug> + esempio velora_icon. Con search_url le richieste sono AJAX.
 {% endcomment %}
 <div class="velora-ionicons-gallery"
      data-velora-component="ionicons-gallery"
      data-manifest-url="{{ manifest_url }}"
      data-icons-base="{{ icons_base_url }}"
-     data-search-id="{{ search_input_id }}">
-    <div class="velora-ionicons-gallery__toolbar">
-        <label for="{{ search_input_id }}" class="velora-visually-hidden">{{ search_label }}</label>
-        <input type="search"
-               id="{{ search_input_id }}"
-               class="velora-ionicons-gallery__search"
-               placeholder="{{ search_placeholder }}"
-               autocomplete="off">
+     data-search-id="{{ search_input_id }}"
+     {% if search_url %}data-search-url="{{ search_url }}"{% endif %}
+     data-copy-hint="{{ copy_hint|default:''|escape }}">
+    <div class="velora-ionicons-gallery__head">
+        <h3 class="velora-ionicons-gallery__title">{{ section_title }}</h3>
+        <div class="velora-ionicons-gallery__toolbar">
+            <label for="{{ search_input_id }}" class="velora-visually-hidden">{{ search_label }}</label>
+            <input type="search"
+                   id="{{ search_input_id }}"
+                   class="velora-ionicons-gallery__search"
+                   placeholder="{{ search_placeholder }}"
+                   autocomplete="off"
+                   spellcheck="false">
+        </div>
+        <p class="velora-ionicons-gallery__hint">{{ hint }}</p>
+    </div>
+    <div class="velora-ionicons-gallery__status">
+        <span class="velora-ionicons-gallery__loader" hidden aria-hidden="true"></span>
         <span class="velora-ionicons-gallery__count" aria-live="polite"></span>
     </div>
     <div class="velora-ionicons-gallery__grid" role="list"></div>

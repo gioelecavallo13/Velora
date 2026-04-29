@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!--
+    Snippet: layout admin minimo (header + sidebar + main), allineato a
+    velora_ui/base.html e components/sidebar/_sidebar.html, header/_header.html.
+
+    Sostituisci owner/repo e vX.Y.Z con la release pinnata (solo URL GitHub Releases).
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("velora-theme") === "dark") {
+            document.documentElement.setAttribute("data-velora-theme", "dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — shell minima</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <header class="velora-app__header">
+      <div class="velora-header">
+        <a href="/" class="velora-header__brand">
+          <span class="velora-header__brand-name">La mia app</span>
+        </a>
+        <nav class="velora-header__nav" aria-label="Menu principale">
+          <a href="/sezione" class="velora-header__item velora-header__item--link">Voce</a>
+        </nav>
+        <div class="velora-header__user"></div>
+      </div>
+    </header>
+
+    <aside class="velora-app__sidebar">
+      <div
+        class="velora-sidebar"
+        data-velora-component="velora-sidebar"
+        data-search-expanded-label="Comprimi ricerca"
+        data-search-collapsed-label="Cerca nella sidebar"
+      >
+        <header class="velora-sidebar__masthead">
+          <span class="velora-sidebar__brand velora-sidebar__brand--full">Velora</span>
+          <span class="velora-sidebar__brand velora-sidebar__brand--short">VE</span>
+        </header>
+        <nav class="velora-sidebar__nav" aria-label="Sezioni principali">
+          <ul class="velora-sidebar__list" data-velora-sidebar-list>
+            <li class="velora-sidebar__item is-active">
+              <a href="/" class="velora-sidebar__row velora-sidebar__row--link">
+                <span class="velora-sidebar__icon-wrap" aria-hidden="true">
+                  <span class="velora-sidebar__icon-fallback">⌂</span>
+                </span>
+                <span class="velora-sidebar__label">Dashboard</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <footer class="velora-sidebar__footer">
+          <button
+            type="button"
+            class="velora-sidebar__footer-toggle"
+            data-velora-component="sidebar-toggle"
+            aria-label="Mostra o nascondi le etichette del menu laterale"
+          >
+            <span class="velora-sidebar__footer-chevron" aria-hidden="true"></span>
+            <span class="velora-sidebar__footer-text">Più spazio</span>
+          </button>
+        </footer>
+        <div
+          class="velora-sidebar__flyout-layer"
+          data-velora-sidebar-flyout-layer
+          hidden
+          aria-hidden="true"
+        >
+          <div class="velora-sidebar__flyout-backdrop" data-velora-sidebar-flyout-backdrop tabindex="-1"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="velora-app__main">
+      <div class="velora-app__content">
+        <p>Area contenuti.</p>
+      </div>
+    </main>
+  </body>
+</html>

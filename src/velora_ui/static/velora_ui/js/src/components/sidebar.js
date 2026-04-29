@@ -19,6 +19,24 @@
 
 const STORAGE_KEY = "velora.sidebar.collapsed";
 const COLLAPSED_CLASS = "velora-app--sidebar-collapsed";
+/** Emesso dopo ogni cambio classe sul body cosi` la sidebar chiude overlay/flyout. */
+export const SIDEBAR_COLLAPSED_EVENT = "velora:sidebar-collapsed";
+
+function emitCollapsed(collapsed) {
+    document.dispatchEvent(
+        new CustomEvent(SIDEBAR_COLLAPSED_EVENT, {
+            bubbles: false,
+            detail: { collapsed },
+        }),
+    );
+}
+
+/** Sincronizza aria-pressed su tutti i trigger (header + footer). */
+function syncAllToggleAria(collapsed) {
+    document.querySelectorAll('[data-velora-component="sidebar-toggle"]').forEach((btn) => {
+        btn.setAttribute("aria-pressed", collapsed ? "true" : "false");
+    });
+}
 
 function readPersistedState() {
     try {
@@ -41,6 +59,8 @@ function applyState(collapsed) {
         return;
     }
     document.body.classList.toggle(COLLAPSED_CLASS, collapsed);
+    emitCollapsed(collapsed);
+    syncAllToggleAria(collapsed);
 }
 
 function restoreInitialState() {
@@ -61,12 +81,8 @@ const sidebarToggle = {
             const next = !document.body.classList.contains(COLLAPSED_CLASS);
             applyState(next);
             writePersistedState(next);
-            el.setAttribute("aria-pressed", next ? "true" : "false");
         });
-        el.setAttribute(
-            "aria-pressed",
-            document.body.classList.contains(COLLAPSED_CLASS) ? "true" : "false",
-        );
+        syncAllToggleAria(document.body.classList.contains(COLLAPSED_CLASS));
     },
 };
 

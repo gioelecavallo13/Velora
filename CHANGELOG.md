@@ -4,6 +4,22 @@ Tutte le modifiche significative a Velora UI sono documentate in questo file.
 
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il versionamento segue [Semantic Versioning](https://semver.org/) — pre-1.0 ogni `0.x.0` puo` introdurre breaking change documentati qui.
 
+## [Unreleased]
+
+## [0.5.0] — 2026-04-29
+
+### Web (artifact GitHub Releases)
+
+- Due bundle JS in `dist/`: `velora-X.Y.Z.min.js` (**core**, senza Chart.js) e `velora-X.Y.Z.full.min.js` (**full**, con `chart-from-table` e Chart.js). Stesso CSS `velora-X.Y.Z.min.css` per entrambi.
+- **Breaking** per integrazioni statiche che usavano solo `velora-X.Y.Z.min.js` dalla prima pubblicazione release: quel nome ora indica il bundle **core** (~ordine 40 KB minified); per comportamento precedente (con grafici da tabella) usare `velora-X.Y.Z.full.min.js`.
+- Refactor JS: `velora_runtime.js`, `velora_register_core_only.js`, entry `velora_core_entry.js` (build release core) e `velora.js` (full, invariato come entry per `tools/build_js.sh` / showcase Django).
+
+### Aggiunto
+
+- Documentazione integrazione statica `docs/INTEGRATION_STATIC.md`, snippet `docs/examples/`, workflow CI, `tools/build_web_dist.sh`, `tools/sync_ui_registry.py` e registro markup `ui_registry/`.
+- Setting `VELORA_ASSETS_BASE_URL` / `VELORA_ASSETS_JS_FULL` e validazione URL GitHub Release in `{% velora_assets %}`.
+- GitHub Actions: release allegati `dist/*` + wheel/sdist; CI su `main` con pytest e check `ui_registry`.
+
 ## [0.4.0] — 2026-04-29
 
 Quarta release: **Chart.js** (già in 12.1), **set Ionicons** con galleria ricercabile nello showcase, **`velora_logo`** e **`velora_satisfaction_bar`**, **tema scuro** (`data-velora-theme` + `localStorage`), **i18n** (catalogo inglese parallelo all’italiano per showcase + stringhe traducibili nei tag icone).

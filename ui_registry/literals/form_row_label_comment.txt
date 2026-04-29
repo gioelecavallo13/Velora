@@ -1,0 +1,4 @@
+{% comment %}
+  Partial label condivisa fra tutti i tipi di form_row.
+  Aspetta: id, label, required.
+{% endcomment %}

@@ -15,6 +15,7 @@ L'obiettivo e` consegnare componenti consistenti — header, sidebar, form, tabe
 
 - [Caratteristiche v0.1](#caratteristiche-v01)
 - [Quickstart sviluppo](#quickstart-sviluppo)
+- [Consumo solo asset Web (HTML / CSS / JS)](#consumo-solo-asset-web-html--css--js)
 - [Installazione in un progetto Django](#installazione-in-un-progetto-django)
 - [Componenti disponibili](#componenti-disponibili)
 - [Showcase / living styleguide](#showcase--living-styleguide)
@@ -64,13 +65,30 @@ A primo accesso lo showcase risponde su <http://velora.local> entro ~30 secondi 
 
 ---
 
+## Consumo solo asset Web (HTML / CSS / JS)
+
+Per siti o applicazioni **senza** Django, gli asset ufficiali sono pubblicati **solo** come allegati delle **GitHub Releases** (tag `vX.Y.Z`):
+
+- **CSS:** `velora-X.Y.Z.min.css`
+- **JS core** (leggero, senza Chart.js): `velora-X.Y.Z.min.js`
+- **JS full** (con grafici da tabella / Chart.js): `velora-X.Y.Z.full.min.js`
+
+Esempio base:  
+`https://github.com/gioelecavallo13/Velora/releases/download/vX.Y.Z/velora-X.Y.Z.min.css`
+
+Istruzioni dettagliate, auth per repository privati, pinning e note su ESM sono in [`docs/INTEGRATION_STATIC.md`](docs/INTEGRATION_STATIC.md). Non usare il branch `main` come sorgente di produzione per questi file.
+
+---
+
 ## Installazione in un progetto Django
 
 Velora UI e` distribuito come pacchetto Python via Git privato. Per integrarlo in un progetto esistente:
 
 ```bash
-pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.4.0"
+pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.5.0"
 ```
+
+Gli stessi tag `v0.5.0` pubblicano anche gli **asset Web** (`.min.css` / `.min.js`) sulla relativa GitHub Release: vedi [`docs/INTEGRATION_STATIC.md`](docs/INTEGRATION_STATIC.md) se ti servono solo i file statici.
 
 Poi nel `settings.py`:
 
@@ -95,6 +113,10 @@ TEMPLATES = [
 # Personalizzazione opzionale di brand
 VELORA_HEADER_APP_NAME = "Il mio gestionale"
 VELORA_HEADER_APP_ICON_URL = "/static/img/logo.svg"
+
+# Opzionale: carica CSS/JS dalla stessa GitHub Release (prefisso download, solo https + github.com)
+# VELORA_ASSETS_BASE_URL = "https://github.com/TUO_ORG/Velora/releases/download/v0.5.0/"
+# VELORA_ASSETS_JS_FULL = True   # False per bundle core senza Chart.js
 ```
 
 In un template:
@@ -204,7 +226,8 @@ Lo stack di sviluppo e` documentato per esteso in [`docs/INFRASTRUCTURE.md`](doc
 | v0.1.0 | rilasciato | Layout, form 7 tipi base, tabella + paginazione, 4 link, feedback, showcase, Docker dev+prod |
 | v0.2.0 | rilasciato | Header multi-menu/apps-menu/notifications, breadcrumb, tooltip, submenu, dropdown, dialog, copy/toggle/settings link, progress bar (3 varianti) |
 | **v0.3.0** | rilasciato | Form avanzati (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), tabelle interattive con form-in-cell AJAX e bulk-actions, checkbox tag con 5 varianti colore |
-| **v0.4.0** | in release | Chart.js da tabella, sync Ionicons + galleria showcase, `velora_logo`, `velora_satisfaction_bar`, tema dark CSS, i18n (IT/EN showcase) |
+| **v0.4.0** | rilasciato | Chart.js da tabella, sync Ionicons + galleria showcase, `velora_logo`, `velora_satisfaction_bar`, tema dark CSS, i18n (IT/EN showcase) |
+| **v0.5.0** | in release | Asset Web su GitHub Releases (core/full), `INTEGRATION_STATIC` + snippet, CI release + pytest, `ui_registry` SSoT, opzionale `VELORA_ASSETS_BASE_URL` |
 
 Dettagli e milestone in [`velora-ui_django_framework_61f8855e.plan.md`](.cursor/plans/velora-ui_django_framework_61f8855e.plan.md) (cartella piani locale).
 
@@ -212,7 +235,7 @@ Dettagli e milestone in [`velora-ui_django_framework_61f8855e.plan.md`](.cursor/
 
 ## Stato progetto
 
-Versione corrente: vedi [`pyproject.toml`](pyproject.toml). Le release alpha (`v0.1.0-alpha.x`) hanno chiuso le milestone M1 → M5 di v0.1; la release candidate `v0.1.0-rc.1` ha chiuso M6. La v0.1.0 stabile ha chiuso M7. La v0.2.0 ha chiuso la Fase 10 del piano (navigation e feedback ricchi). La v0.3.0 chiude la Fase 11: form avanzati & tabelle interattive. La v0.4.0 chiude la Fase 12 del piano: chart da tabella, Ionicons, logo/satisfaction, tema dark, i18n. Il progetto e` distribuito via Git privato, non e` ancora pubblicato su PyPI.
+Versione corrente: vedi [`pyproject.toml`](pyproject.toml). Le release alpha (`v0.1.0-alpha.x`) hanno chiuso le milestone M1 → M5 di v0.1; la release candidate `v0.1.0-rc.1` ha chiuso M6. La v0.1.0 stabile ha chiuso M7. La v0.2.0 ha chiuso la Fase 10 del piano (navigation e feedback ricchi). La v0.3.0 chiude la Fase 11: form avanzati & tabelle interattive. La v0.4.0 chiude la Fase 12 del piano: chart da tabella, Ionicons, logo/satisfaction, tema dark, i18n. La v0.5.0 aggiunge distribuzione asset Web via GitHub Releases, documentazione statica e integrazione Django opzionale sugli stessi URL. Il progetto e` distribuito via Git privato, non e` ancora pubblicato su PyPI.
 
 Le decisioni di prodotto (target, distribuzione, criteri di successo) sono tracciate in [`VISION.md`](VISION.md).
 

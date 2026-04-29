@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "builds": [
+    {
+      "output": "src/velora_ui/templates/velora_ui/components/feedback/_label.html",
+      "static_example": {
+        "output": "docs/examples/_generated/label-badge-fragment.html",
+        "substitutions": {
+          "variant": "success",
+          "text": "Attivo",
+          "extra_class": ""
+        }
+      },
+      "segments": [
+        { "literal_file": "ui_registry/literals/feedback_label_comment.txt" },
+        { "part": "ui_registry/parts/feedback/label.html" }
+      ]
+    },
+    {
+      "output": "src/velora_ui/templates/velora_ui/components/feedback/_alert.html",
+      "segments": [
+        { "literal_file": "ui_registry/literals/feedback_alert_comment.txt" },
+        {
+          "django": "<div class=\"velora-alert velora-alert--{{ variant }} {{ extra_class }}\" role=\"alert\">\n"
+        },
+        { "django": "    {% if dismissible %}\n" },
+        { "part": "ui_registry/parts/feedback/alert_close_button.html" },
+        { "django": "    {% endif %}\n" },
+        { "django": "    <div class=\"velora-alert__body\">\n" },
+        { "django": "        {% if title %}<p class=\"velora-alert__title\">{{ title }}</p>{% endif %}\n" },
+        {
+          "django": "        {% if message %}<p class=\"velora-alert__message\">{{ message }}</p>{% endif %}\n"
+        },
+        { "django": "    </div>\n" },
+        { "django": "</div>\n" }
+      ]
+    },
+    {
+      "output": "src/velora_ui/templates/velora_ui/components/form_row/_label.html",
+      "segments": [
+        { "literal_file": "ui_registry/literals/form_row_label_comment.txt" },
+        { "django": "{% if label %}\n" },
+        {
+          "django": "<label for=\"{{ id }}\" class=\"velora-form-row__label\">\n    {{ label }}"
+        },
+        { "django": "{% if required %} <span class=\"velora-form-row__required\" aria-hidden=\"true\">*</span>{% endif %}\n" },
+        { "django": "</label>\n" },
+        { "django": "{% endif %}\n" }
+      ]
+    },
+    {
+      "output": "src/velora_ui/templates/velora_ui/components/form_row/_help_error.html",
+      "segments": [
+        { "literal_file": "ui_registry/literals/form_row_help_error_comment.txt" },
+        { "django": "{% if error %}\n" },
+        {
+          "django": "<p class=\"velora-form-row__error\" role=\"alert\">{{ error }}</p>\n"
+        },
+        { "django": "{% endif %}\n" },
+        { "django": "{% if help_text %}\n" },
+        { "django": "<p class=\"velora-form-row__help\">{{ help_text }}</p>\n" },
+        { "django": "{% endif %}\n" }
+      ]
+    }
+  ]
+}

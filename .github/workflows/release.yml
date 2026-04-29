@@ -1,0 +1,50 @@
+# Pubblica una GitHub Release su push dei tag v* allegando wheel/sdist Python
+# e asset Web (CSS/JS minificati + source map) generati da build:web.
+# Distribuzione ufficiale degli asset Web: solo queste Release (nessun altro canale).
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Build Web dist (CSS + JS core + JS full, source maps)
+        run: npm run build:web
+
+      - name: Install build (Python)
+        run: pip install --upgrade pip build
+
+      - name: Build Python wheel and sdist
+        run: python -m build
+
+      - name: Create GitHub Release with assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

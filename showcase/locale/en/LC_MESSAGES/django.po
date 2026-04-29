@@ -117,3 +117,132 @@ msgstr "Search icon…"
 
 msgid "Cerca nelle Ionicons"
 msgstr "Search Ionicons"
+
+msgid "Comprimi ricerca"
+msgstr "Collapse search"
+
+msgid "Cerca nella sidebar"
+msgstr "Search in sidebar"
+
+msgid "Cerca"
+msgstr "Search"
+
+msgid "Cerca…"
+msgstr "Search…"
+
+msgid "Più spazio"
+msgstr "More space"
+
+msgid "Indietro"
+msgstr "Back"
+
+msgid "Sezioni principali"
+msgstr "Main sections"
+
+msgid "Mostra o nascondi le etichette del menu laterale"
+msgstr "Show or hide sidebar labels"
+
+msgid "Nessuna voce di menu"
+msgstr "No menu items"
+
+msgid "Associazione (demo)"
+msgstr "Association (demo)"
+
+msgid "Atleti"
+msgstr "Athletes"
+
+msgid "Corsi"
+msgstr "Courses"
+
+msgid "Iscrizioni"
+msgstr "Registrations"
+
+msgid "Statistiche iscrizioni"
+msgstr "Registration stats"
+
+msgid "Statistiche atleti"
+msgstr "Athlete stats"
+
+msgid "Contenuti showcase"
+msgstr "Showcase contents"
+
+msgid "Scelte tipografiche"
+msgstr "Typography guidelines"
+
+msgid "Font stack, gerarchie Proxima Nova e palette colori di riferimento."
+msgstr "Font stack, Proxima Nova hierarchy, and reference color palette."
+
+msgid "Tipografia"
+msgstr "Typography"
+
+msgid "Font di stack di base"
+msgstr "Base font stack"
+
+msgid "menu, pulsanti, titoli leggeri (fallback: stack di base)."
+msgstr "menus, buttons, light titles (fallback: base stack)."
+
+msgid "testo corpo, tooltip, elementi enfatizzati (fallback: stack di base)."
+msgstr "body text, tooltips, emphasized elements (fallback: base stack)."
+
+msgid "Dimensioni"
+msgstr "Sizes"
+
+msgid "base"
+msgstr "base"
+
+msgid "Peso"
+msgstr "Weight"
+
+msgid "font-weight normale (Light/Regular). Nessun grassetto predefinito nelle UI standard."
+msgstr "normal font-weight (Light/Regular). No bold by default in standard UI."
+
+msgid "Colori principali"
+msgstr "Main colors"
+
+msgid "Grigio extra scuro"
+msgstr "Extra-dark gray"
+
+msgid "testo"
+msgstr "text"
+
+msgid "Menu gray"
+msgstr "Menu gray"
+
+msgid "Arancio"
+msgstr "Orange"
+
+msgid "CTA, attivo"
+msgstr "CTAs, active state"
+
+msgid "Arancio scuro"
+msgstr "Dark orange"
+
+msgid "hover"
+msgstr "hover"
+
+msgid "Semantici"
+msgstr "Semantic colors"
+
+msgid "Rosso"
+msgstr "Red"
+
+msgid "errore, elimina"
+msgstr "errors, delete"
+
+msgid "Verde"
+msgstr "Green"
+
+msgid "successo, menu"
+msgstr "success, menu"
+
+msgid "Sfondo menu"
+msgstr "Menu background"
+
+msgid "Menu scuro"
+msgstr "Dark menu"
+
+msgid "Grigi"
+msgstr "Grayscale ramp"
+
+msgid "Cliccando <strong>Più spazio</strong> in fondo alla sidebar si commuta la classe <code>velora-app--sidebar-collapsed</code> sul <code>body</code>; lo stato è persistito in <code>localStorage</code>."
+msgstr "Click <strong>More space</strong> at the bottom of the sidebar to toggle the <code>velora-app--sidebar-collapsed</code> class on <code>body</code>; the setting persists in <code>localStorage</code>."

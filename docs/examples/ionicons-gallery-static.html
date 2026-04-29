@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!--
+    Allineato a velora_ui/components/icons/_ionicons_gallery.html.
+
+    `data-manifest-url` e `data-icons-base` devono puntare a file serviti dal TUO host
+    (stessa versione degli asset Velora): il manifest elenca le icone; la base è il path
+    delle SVG Ionicons copiate da `velora_ui/static/` del wheel o dalla tua build.
+    Non sono inclusi nell’URL unica della GitHub Release del CSS/JS.
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — galleria Ionicons</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <div class="velora-app__content" style="padding: 1rem">
+      <div
+        class="velora-ionicons-gallery"
+        data-velora-component="ionicons-gallery"
+        data-manifest-url="/static/velora_ui/icons/ionicons-manifest.json"
+        data-icons-base="/static/velora_ui/icons/svg/"
+        data-search-id="ionicons-search"
+        data-copy-hint=""
+      >
+        <div class="velora-ionicons-gallery__head">
+          <h3 class="velora-ionicons-gallery__title">Ionicons</h3>
+          <div class="velora-ionicons-gallery__toolbar">
+            <label for="ionicons-search" class="velora-visually-hidden">Cerca icone</label>
+            <input
+              type="search"
+              id="ionicons-search"
+              class="velora-ionicons-gallery__search"
+              placeholder="Cerca per nome…"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <p class="velora-ionicons-gallery__hint">Esempio path: adatta a dove servi il manifest e le SVG.</p>
+        </div>
+        <div class="velora-ionicons-gallery__status">
+          <span class="velora-ionicons-gallery__loader" hidden aria-hidden="true"></span>
+          <span class="velora-ionicons-gallery__count" aria-live="polite"></span>
+        </div>
+        <div class="velora-ionicons-gallery__grid" role="list"></div>
+      </div>
+    </div>
+  </body>
+</html>

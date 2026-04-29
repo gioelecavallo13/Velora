@@ -85,3 +85,9 @@ Non sono trattate in v0.1 e verranno affrontate solo se/quando emergera` un'esig
 | 1.5 Licenza | Apache 2.0 | Completato |
 
 Si puo` procedere con Fase 2 (M0 Bootstrap).
+
+## 8. Markup SSoT e consumo Web statico (piano web-first)
+
+**Criterio go/no-go (Fase 4, baby step 4.1 del piano *Velora web-first assets*):** introdurre in repo un registro markup + gate CI quando esiste consumo documentato senza Django (`docs/INTEGRATION_STATIC.md`, `docs/examples/`) e si vuole impedire il drift tra snippet e partial Django senza una fonte unica.
+
+**Decisione:** go — attivata la cartella [`ui_registry/`](ui_registry/) con `registry.json`, frammenti neutri in `ui_registry/parts/` e lo script [`tools/sync_ui_registry.py`](tools/sync_ui_registry.py) (`--check` in CI). La scelta resta revocabile se il team non riceve adozione del consumo Web; in tal caso si può lasciare aperta una PR senza merge del gate o documentare qui un “no-go” datato.

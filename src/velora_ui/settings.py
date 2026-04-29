@@ -20,6 +20,13 @@ Le voci dichiarate qui in v0.1 (M2):
   - ``VELORA_HEADER_APP_ICON_URL`` (str | None): URL del logo dell'app
     visualizzato nell'header. Se ``None`` (default), il brand mostra solo il
     nome.
+  - ``VELORA_ASSETS_BASE_URL`` (str): se non vuota, ``{% velora_assets %}`` emette
+    URL assolute verso file della **stessa** GitHub Release (prefisso HTTPS
+    ``https://…github.com/…/releases/download/vX.Y.Z/``). Default ``""`` = uso di
+    ``static()`` come oggi.
+  - ``VELORA_ASSETS_JS_FULL`` (bool): con base Release, se ``True`` (default)
+    carica ``velora-X.Y.Z.full.min.js``; se ``False``, il bundle core
+    ``velora-X.Y.Z.min.js``. Ignorato se la base è vuota.
 """
 
 from __future__ import annotations
@@ -32,6 +39,8 @@ from django.conf import settings as django_settings
 DEFAULTS: dict[str, Any] = {
     "VELORA_HEADER_APP_NAME": "Velora UI",
     "VELORA_HEADER_APP_ICON_URL": None,
+    "VELORA_ASSETS_BASE_URL": "",
+    "VELORA_ASSETS_JS_FULL": True,
 }
 
 

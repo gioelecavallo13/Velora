@@ -1,0 +1,44 @@
+{% load i18n velora_icons velora_overlays %}
+{% if item.children %}
+<li class="velora-sidebar__item velora-sidebar__item--branch{% if item.active %} is-active{% endif %}"
+    data-velora-sidebar-branch
+    data-velora-flyout-id="velora-sidebar-flyout-{{ branch_index }}">
+    <button type="button"
+            class="velora-sidebar__row velora-sidebar__row--branch"
+            aria-expanded="false"
+            data-velora-sidebar-branch-btn
+            {% velora_tooltip item.label placement="right" %}>
+        <span class="velora-sidebar__icon-wrap" aria-hidden="true">
+            {% if item.icon_slug %}
+                {% velora_icon item.icon_slug extra_class="velora-sidebar__ion" alt="" %}
+            {% elif item.icon %}
+                <span class="velora-sidebar__icon-fallback">{{ item.icon }}</span>
+            {% endif %}
+        </span>
+        <span class="velora-sidebar__label">{{ item.label }}</span>
+        <span class="velora-sidebar__chevron" aria-hidden="true"></span>
+    </button>
+    <ul class="velora-sidebar__sublist">
+        {% for child in item.children %}
+        <li class="velora-sidebar__subitem">
+            <a href="{{ child.url }}" class="velora-sidebar__sublink{% if child.active %} is-active{% endif %}">{{ child.label }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
+{% else %}
+<li class="velora-sidebar__item{% if item.active %} is-active{% endif %}">
+    <a href="{{ item.url }}"
+       class="velora-sidebar__row velora-sidebar__row--link"
+       {% velora_tooltip item.label placement="right" %}>
+        <span class="velora-sidebar__icon-wrap" aria-hidden="true">
+            {% if item.icon_slug %}
+                {% velora_icon item.icon_slug extra_class="velora-sidebar__ion" alt="" %}
+            {% elif item.icon %}
+                <span class="velora-sidebar__icon-fallback">{{ item.icon }}</span>
+            {% endif %}
+        </span>
+        <span class="velora-sidebar__label">{{ item.label }}</span>
+    </a>
+</li>
+{% endif %}

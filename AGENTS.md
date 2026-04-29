@@ -27,6 +27,8 @@ Convenzioni:
 - [`velora_overlays` — tooltip (v0.2)](#velora_overlays)
 - [`velora_chart` — Chart.js da tabella HTML (v0.4, Fase 12)](#velora_chart)
 - [Componenti aggiuntivi v0.4 (Fase 12) — logo, satisfaction, Ionicons, dark, i18n](#componenti-aggiuntivi-v04-fase-12)
+  - [`velora_icon`](#velora_icon-library-velora_icons)
+  - [`velora_ionicons_gallery`](#velora_ionicons_gallery-library-velora_icons)
 - [Settings di pacchetto](#settings-di-pacchetto)
 - [JS API pubblica `window.Velora`](#js-api-pubblica)
 
@@ -40,6 +42,8 @@ Convenzioni:
 ```
 
 Inietta nel `<head>` il `<link rel="stylesheet">` per `velora.css` e lo `<script type="module">` per `velora.js`. Gli asset compilati hanno cache busting via `staticfiles`.
+
+Con `VELORA_ASSETS_BASE_URL` valorizzata (vedi sezione *Settings di pacchetto*), le URL puntano alla **stessa** GitHub Release (`velora-{version}.min.css` e JS core/full); il valore è validato (`https`, host `github.com`, path `releases/download/v…`).
 
 Nessun parametro. Tag senza body.
 
@@ -924,15 +928,48 @@ Barra a segmenti orizzontali (stile KPI / soddisfazione).
 | `variant` | `"default" \| "success" \| "danger"` | `"default"` | sconosciuto → `default` |
 | `aria_label` | `str` | `""` | default → `label` |
 
+### `velora_icon` (library `velora_icons`)
+
+Icona **Ionicons** come SVG **inline** (consigliato) con `currentColor`, oppure come `<img lazy>` per casi isolati. Asset in `static/velora_ui/icons/ionicons/` dopo `npm run sync:icons`.
+
+```django
+{% load velora_icons %}
+{% velora_icon "home-outline" %}
+{% velora_icon "settings-outline" size="lg" extra_class="my-toolbar-icon" %}
+{% velora_icon "warning-outline" alt="Avviso" size="sm" %}
+{% velora_icon "logo-ionitron" as_img=True width=24 height=24 alt="" %}
+```
+
+| Param | Tipo | Default | Note |
+|---|---|---|---|
+| `name` | `str` | `""` | slug file senza `.svg`; vuoto o non valido → stringa vuota |
+| `extra_class` | `str` | `""` | classi sul wrapper `.velora-icon` (o su `<img>` se `as_img`) |
+| `alt` | `str` | `""` | se non vuoto: `role="img"` + `aria-label`; altrimenti `aria-hidden="true"` |
+| `width` | `int` | `22` | ignorato se `size` è uno fra sm/md/lg/xl |
+| `height` | `int` | stesso di `width` | |
+| `size` | `str` | `""` | `sm`→18px, `md`→22px, `lg`→28px, `xl`→36px |
+| `as_img` | bool | `False` | `True` → `<img>` lazy (gallerie dense o email); niente tema via `color` |
+
+**CSS:** wrapper `.velora-icon`; variabile opzionale `--velora-icon-color` per forzare il colore ereditato dall’SVG. Regole in `scss/_icon.scss`.
+
 ### `velora_ionicons_gallery` (library `velora_icons`)
 
-Galleria filtrabile che carica `static/velora_ui/icons/ionicons-manifest.json` e mostra le SVG in `static/velora_ui/icons/ionicons/`. **Sincronizzazione asset:** dopo `npm install`, eseguire `npm run sync:icons` (wrapper su `tools/sync_ionicons.sh`). Dipendenza npm: `ionicons` (dev).
+Galleria a griglia con titolo, campo ricerca, hint (default: invito a scrivere «tutte»). Ogni scheda mostra l’icona, l’etichetta **`ion-` + slug** (stile naming simile al Teamartist content-showcase) e un snippet `{% velora_icon 'slug' %}`. Click sulla scheda copia lo **slug** negli appunti.
+
+Con **`search_url`** valorizzato (URL di una view JSON che risponda come l’endpoint showcase `GET /api/ionicons/?q=&limit=`), il componente JS interroga il server a ogni ricerca (debounce ~200 ms): ricerca AJAX. Senza `search_url`, carica `ionicons-manifest.json` e filtra in client (fallback).
+
+**Showcase:** `showcase.views.ionicons_search` + `path("api/ionicons/", ...)`; nel context della pagina passare `search_url` risolto con `reverse`.
 
 | Param | Tipo | Default | Note |
 |---|---|---|---|
 | `search_input_id` | `str` | `"velora-ionicons-search"` | id dell’`<input type="search">` |
-| `search_placeholder` | `str` | _(tradotto)_ | stringa vuota → default traducibile |
+| `search_placeholder` | `str` | _(tradotto)_ | |
 | `search_label` | `str` | _(tradotto)_ | per `<label>` accessibile |
+| `search_url` | `str` | `""` | se non vuoto → ricerche `fetch` verso questa URL (querystring `q`, `limit`) |
+| `section_title` | `str` | `Ionicons` | titolo sopra al campo ricerca |
+| `hint` | `str` | _(testo «tutte»)_ | sottotesto esplicativo |
+
+Risposta JSON attesa da `search_url`: `{ "icons": [...], "total_icons": N, "matched": M, "returned": R, "truncated": bool, "is_initial": bool }`.
 
 Il componente JS registrato e` `ionicons-gallery`.
 
@@ -954,6 +991,8 @@ In `settings.py` di un progetto host:
 |---|---|---|---|
 | `VELORA_HEADER_APP_NAME` | `str` | `"Velora UI"` | Brand mostrato nell'header |
 | `VELORA_HEADER_APP_ICON_URL` | `str \| None` | `None` | URL dell'icona; se `None` non viene reso il `<img>` |
+| `VELORA_ASSETS_BASE_URL` | `str` | `""` | Se non vuota, prefisso HTTPS `…github.com/…/releases/download/vX.Y.Z/` per `{% velora_assets %}`; altrimenti `static()`. Vietati host diversi da GitHub (nessun CDN terzo). |
+| `VELORA_ASSETS_JS_FULL` | `bool` | `True` | Con base Release: carica `velora-X.Y.Z.full.min.js`; se `False`, bundle core `velora-X.Y.Z.min.js`. |
 
 Per essere applicati serve aggiungere il context processor:
 

@@ -7,12 +7,15 @@ __pycache__/
 *.egg-info/
 .Python
 build/
+# dist/: wheel/sdist (`python -m build`) + artefatti Web release (`npm run build:web`);
+# generato in CI e in locale, non versionato
 dist/
+
 wheels/
 .eggs/
 .installed.cfg
 develop-eggs/
-parts/
+/parts/
 sdist/
 var/
 MANIFEST

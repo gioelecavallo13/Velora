@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+  <!--
+    Toast: stesso runtime del tag {% velora_toast_messages %} — vedi velora_feedback.py
+    (script type="application/json" data-velora-toast) e js/src/components/toast.js.
+
+    API programmatica dopo il load del modulo: Velora.toast.success|error|warning|info(messaggio, opzioni).
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velora — toast programmati</title>
+    <link
+      rel="stylesheet"
+      href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+    />
+    <script
+      type="module"
+      src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+    ></script>
+  </head>
+  <body class="velora-app">
+    <div class="velora-app__content" style="padding: 1rem">
+      <p>Payload come emesso da Django (JSON non eseguibile):</p>
+      <script type="application/json" data-velora-toast>
+        {"variant": "success", "message": "Salvato dal server (esempio statico)", "tags": ""}
+      </script>
+
+      <p>
+        <button type="button" id="btn-toast">Mostra toast da JS</button>
+      </p>
+    </div>
+    <script type="module">
+      document.getElementById("btn-toast")?.addEventListener("click", () => {
+        window.Velora?.toast?.info("Messaggio da Velora.toast.info()");
+      });
+    </script>
+  </body>
+</html>

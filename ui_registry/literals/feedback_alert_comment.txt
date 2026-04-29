@@ -1,0 +1,4 @@
+{% comment %}
+  Alert inline.
+  Aspetta: variant (success|error|warning|info), title, message, dismissible, extra_class.
+{% endcomment %}
