@@ -1,7 +1,5 @@
 {% comment %}
-  Form row: datetimepicker (date + ora).
-  Variante del datepicker con due campi sincronizzati (data + ora). Il valore
-  submitted e` un'unica stringa nel formato `<format> <time_format>`.
+CSS: .velora-form-row.velora-form-row--datetimepicker, .velora-datepicker.velora-datepicker--datetime, .velora-form-row__input, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--datetimepicker{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

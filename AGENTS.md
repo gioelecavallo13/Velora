@@ -218,14 +218,15 @@ Almeno uno fra `image_url`, `label` e `icon_slug` deve essere presente, altrimen
 ### `velora_title_bar`
 
 ```django
-{% velora_title_bar title="Clienti" actions=actions %}
+{% velora_title_bar title="Clienti" subtitle="Amministrazione" actions=actions %}
 ```
 
 **Parametri:**
 
 | Param | Tipo | Default | Note |
 |---|---|---|---|
-| `title` | `str` | `""` | testo della barra titolo |
+| `title` | `str` | `""` | titolo principale della pagina (h1) |
+| `subtitle` | `str` | `""` | riga opzionale sopra il titolo (contesto / sezione); se vuota non viene renderizzata |
 | `actions` | `list[dict]` | `None` | lista di azioni a destra |
 
 **Schema action:**
@@ -630,7 +631,7 @@ JS `toggle.js` applica `is-toggled-hidden` (CSS `display: none !important`) sul 
 ### `velora_copy_link` (v0.2) — copy-to-clipboard
 
 ```django
-{% velora_copy_link value="velora-ui@0.2.0" label="Copia versione" %}
+{% velora_copy_link value="velora-ui@0.8.0" label="Copia versione" %}
 {% velora_copy_link target="#input-share" label="Copia link" %}
 ```
 

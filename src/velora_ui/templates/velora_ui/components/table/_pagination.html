@@ -1,11 +1,5 @@
 {% comment %}
-  Paginazione.
-  Aspetta:
-    meta         : {number, num_pages, has_previous, has_next, ...}
-    pages        : list[{is_gap, number, url, is_current}]
-    previous_url : str
-    next_url     : str
-    extra_class  : str
+CSS: .velora-pagination, .velora-pagination__step, .velora-pagination__pages, .velora-pagination__page, .velora-pagination__gap, .is-disabled, .is-current
 {% endcomment %}
 {% if meta.num_pages > 1 %}
 <nav class="velora-pagination {{ extra_class }}" aria-label="Paginazione">

@@ -1,9 +1,4 @@
-{% comment %}
-  Form row: gruppo di radio buttons.
-  Tutte le radio condividono lo stesso `name` (per costruzione del gruppo);
-  ognuna ha id `<id>__<value>` per evitare collisioni con altre form sulla
-  stessa pagina.
-{% endcomment %}
+{% comment %}CSS: .velora-form-row.velora-form-row--radio, .velora-form-row__radio-list, .velora-form-row__inline-label, .velora-form-row__radio, .velora-form-row__label--group, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error{% endcomment %}
 <div class="velora-form-row velora-form-row--radio{% if error %} velora-form-row--error{% endif %} {{ extra_class }}"
      role="radiogroup"
      {% if label %}aria-label="{{ label }}"{% endif %}>

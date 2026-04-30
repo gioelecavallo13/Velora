@@ -1,28 +1,6 @@
 {% load velora_icons %}
 {% comment %}
-  Partial dell'header globale (v0.2).
-
-  Aspettativa di contesto (set dal tag velora_header):
-    app_name      : str  -> nome dell'app, mostrato accanto al logo brand
-    app_icon_url  : str? -> URL del logo brand opzionale
-    items         : list -> elenco normalizzato di item (vedi velora_layout.py)
-    request       : HttpRequest? -> usato per evidenziare item attivo
-
-  Tipi item supportati:
-    - "link"          (v0.1) voce di navigazione semplice
-    - "user-menu"     (v0.1) voce utente a destra: link semplice oppure, con
-      chiave `items`, trigger + menu; opzionale `icon_slug` (Ionicons) sul trigger
-    - "single-menu"   (v0.2) trigger + dropdown panel con lista di link
-    - "multi-menu"    (v0.2) trigger + mega-menu a colonne
-    - "apps-menu"     (v0.2) trigger + griglia di app launcher
-    - "notifications" (v0.2) trigger campanella con contatore + lista notifiche
-    - "logo"          (v0.2) marchio aggiuntivo (es. tenant): immagine e/o
-      etichetta e/o icona Ionicons (`icon_slug`)
-
-  Posizionamento:
-    - link, single-menu, multi-menu, apps-menu, logo  -> allineati a sinistra
-      (dentro <nav>)
-    - user-menu, notifications -> allineati a destra (dentro .__user)
+CSS: .velora-header (.velora-header__brand, __nav, __user, __item, __menu-trigger, __menu-panel, __menu-link, __multi-grid, __apps-grid, __notif-*, __logo-*)
 {% endcomment %}
 <div class="velora-header">
     <a href="/" class="velora-header__brand">

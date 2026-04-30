@@ -6,6 +6,7 @@ Coperti:
   - velora_header: scarto silenzioso di item malformati
   - velora_header: app_name proviene dal context (context processor)
   - velora_title_bar: titolo presente
+  - velora_title_bar: sottotitolo / meta opzionale
   - velora_title_bar: render delle azioni con varianti
   - velora_title_bar: nessun blocco azioni se actions vuoto
 
@@ -595,6 +596,24 @@ def test_velora_title_bar_renders_title():
     )
     assert "Dashboard" in html
     assert "velora-title-bar__title" in html
+
+
+def test_velora_title_bar_renders_subtitle():
+    html = render(
+        "{% load velora_layout %}"
+        "{% velora_title_bar title=t subtitle=s %}",
+        {"t": "Clienti", "s": "Amministrazione"},
+    )
+    assert "Clienti" in html
+    assert "Amministrazione" in html
+    assert "velora-title-bar__meta" in html
+
+
+def test_velora_title_bar_omits_meta_when_subtitle_empty():
+    html = render(
+        "{% load velora_layout %}{% velora_title_bar title='X' subtitle='' %}",
+    )
+    assert "velora-title-bar__meta" not in html
 
 
 def test_velora_title_bar_renders_actions_with_variants():

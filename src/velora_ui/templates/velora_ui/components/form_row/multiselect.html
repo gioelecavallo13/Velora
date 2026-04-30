@@ -1,9 +1,5 @@
 {% comment %}
-  Form row: multiselect.
-  Sotto al cofano un <select multiple> reale: in caso di JS disattivato
-  l'utente vede comunque la lista nativa multipla (Ctrl/Cmd+click). Con JS
-  attivo il componente `multiselect` lo nasconde e mostra una pillola UI con
-  chip rimuovibili e dropdown di selezione.
+CSS: .velora-form-row.velora-form-row--multiselect, .velora-multiselect, .velora-multiselect__native, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--multiselect{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

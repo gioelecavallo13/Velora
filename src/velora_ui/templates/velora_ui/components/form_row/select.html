@@ -1,7 +1,4 @@
-{% comment %}
-  Form row: select singolo.
-  Multiple e` rinviato a v0.2 (vedi piano "Cosa NON entra in v0.1").
-{% endcomment %}
+{% comment %}CSS: .velora-form-row.velora-form-row--select, .velora-form-row__select, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error{% endcomment %}
 <div class="velora-form-row velora-form-row--select{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}
     <select

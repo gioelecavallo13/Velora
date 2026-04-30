@@ -1,7 +1,7 @@
 {
   "name": "velora-ui-build",
   "private": true,
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Pipeline di build degli asset (CSS/JS) di Velora UI. Non e` un pacchetto pubblicato: vive solo per dare un punto unico in cui dichiarare le devDependency frontend (sass, esbuild) usate dai tools/build_*.sh e dal container assets di docker-compose.dev.yml.",
   "license": "Apache-2.0",
   "scripts": {

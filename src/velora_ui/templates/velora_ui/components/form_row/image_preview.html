@@ -1,8 +1,5 @@
 {% comment %}
-  Form row: image_preview.
-  <input type=file accept=image/*> con preview immagine sotto. Se `value`
-  contiene gia` un URL (es. l'immagine corrente da edit form) viene mostrata
-  come preview iniziale.
+CSS: .velora-form-row.velora-form-row--image-preview, .velora-image-preview, .velora-image-preview__thumb, .velora-image-preview__clear, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--image-preview{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

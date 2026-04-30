@@ -1,16 +1,13 @@
 {% comment %}
-  Partial della title bar di pagina (rendering del tag {% velora_title_bar %}).
-
-  Aspettativa di contesto:
-    title    : str       -> testo della title bar
-    actions  : list[dict]-> [{label, url, variant, extra_class}], variant in
-                            {"primary", "secondary"}; "secondary" se omesso
-
-  Layout: titolo centrato (margin auto sui lati) e azioni allineate a destra.
-  Le azioni sono <a> stilizzati come button per coerenza visiva.
+CSS: .velora-title-bar, .velora-title-bar__text, .velora-title-bar__meta, .velora-title-bar__title, .velora-title-bar__actions, .velora-btn, .velora-btn--primary, .velora-btn--secondary
 {% endcomment %}
 <div class="velora-title-bar">
-    <h1 class="velora-title-bar__title">{{ title }}</h1>
+    <div class="velora-title-bar__text">
+        {% if subtitle %}
+        <p class="velora-title-bar__meta">{{ subtitle }}</p>
+        {% endif %}
+        <h1 class="velora-title-bar__title">{{ title }}</h1>
+    </div>
     {% if actions %}
     <div class="velora-title-bar__actions">
         {% for action in actions %}

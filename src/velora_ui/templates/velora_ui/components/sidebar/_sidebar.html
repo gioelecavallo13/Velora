@@ -1,16 +1,6 @@
 {% load i18n velora_icons velora_overlays %}
 {% comment %}
-  Sidebar navigazione: stato collapsed/expanded su body (`velora-app--sidebar-collapsed`).
-  Voci: link semplice oppure `children` per sottomenu (stesso pannello flyout
-  con sidebar espansa o collassata). Ionicons: `icon_slug` es. `home-outline`.
-
-  Contesto opzionale:
-    velora_sidebar_items (required) — dict per voce: label, url, icon_slug,
-        icon, children[]. La chiave `active` non è usata per gli stili: lo stato
-        attivo (is-active) è impostato al click dal JS `velora-sidebar`.
-    velora_sidebar_brand_full (default "Velora")
-    velora_sidebar_brand_short (default primi 2 caratteri del brand)
-    velora_sidebar_show_search (default False)
+CSS: .velora-sidebar (.velora-sidebar__masthead, __brand, __search-*, __nav, __list, __item, __row, __label, __ion, __footer, __flyout-*)
 {% endcomment %}
 {% with brand=velora_sidebar_brand_full|default:"Velora" short=velora_sidebar_brand_short|default:"" %}
 <div class="velora-sidebar"

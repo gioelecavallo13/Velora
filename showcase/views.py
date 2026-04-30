@@ -254,8 +254,8 @@ def index(request: HttpRequest) -> HttpResponse:
     ]
 
     title_actions = [
-        {"label": _("Documentazione"), "url": "#", "variant": "secondary"},
-        {"label": _("Nuovo elemento"), "url": "#", "variant": "primary"},
+        {"label": _("Guida rapida"), "url": "#overview", "variant": "secondary"},
+        {"label": _("Nuova bozza"), "url": "#form", "variant": "primary"},
     ]
 
     role_choices = [
@@ -284,6 +284,19 @@ def index(request: HttpRequest) -> HttpResponse:
         {"id": 4, "name": "Anna Neri", "email": "anna@example.com", "role": "Editor", "amount": "€ 2.100,75"},
     ]
     table_page = {"number": 2, "num_pages": 12}
+
+    # Dati tabella per {% velora_chart_from_table %}: stesso schema thead/tbody del parser JS.
+    chart_table_headers = [
+        {"key": "country", "label": ""},
+        {"key": "q1", "label": "Q1"},
+        {"key": "q2", "label": "Q2"},
+        {"key": "q3", "label": "Q3"},
+    ]
+    chart_table_rows = [
+        {"country": _("Italia"), "q1": 10, "q2": 20, "q3": 15},
+        {"country": _("Germania"), "q1": 5, "q2": 8, "q3": 12},
+        {"country": _("Spagna"), "q1": 8, "q2": 7, "q3": 9},
+    ]
 
     # ---- v0.2 - Fase 10 ------------------------------------------------
 
@@ -468,90 +481,6 @@ def index(request: HttpRequest) -> HttpResponse:
         },
     ]
 
-    # Esempi `velora_header` / `velora_title_bar` per anteprima live (sezione Layout showcase).
-    showcase_header_demo_v01 = [
-        {"type": "link", "label": "Dashboard", "url": "/", "active": True},
-        {"type": "link", "label": "Documentazione", "url": "/docs/"},
-        {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
-    ]
-    showcase_header_demo_v02_single = [
-        {
-            "type": "single-menu",
-            "label": "Account",
-            "items": [
-                {"label": "Profilo", "url": "/profile/"},
-                {"label": "Impostazioni", "url": "/settings/"},
-                {"label": "Esci", "url": "/logout/"},
-            ],
-        },
-    ]
-    showcase_header_demo_v02_multi = [
-        {
-            "type": "multi-menu",
-            "label": "Risorse",
-            "sections": [
-                {
-                    "label": "Sviluppo",
-                    "items": [
-                        {"label": "Form", "url": "/form/"},
-                        {"label": "Tabelle", "url": "/tab/"},
-                    ],
-                },
-                {
-                    "label": "Community",
-                    "items": [{"label": "Repo", "url": "https://github.com/..."}],
-                },
-            ],
-        },
-    ]
-    showcase_header_demo_v02_apps = [
-        {
-            "type": "apps-menu",
-            "label": "App",
-            "icon_slug": "apps-sharp",
-            "apps": [
-                {"label": "Calendario", "url": "/cal/", "color": "#4285f4"},
-                {"label": "Drive", "url": "/drive/", "color": "#34a853"},
-                {"label": "Mail", "url": "/mail/", "color": "#ea4335"},
-            ],
-        },
-    ]
-    showcase_header_demo_v02_notifications = [
-        {
-            "type": "notifications",
-            "label": "Notifiche",
-            "unread_count": 3,
-            "icon_slug": "notifications-sharp",
-            "items": [
-                {
-                    "title": "Nuovo cliente",
-                    "body": "Mario Rossi si è registrato.",
-                    "url": "/n/1/",
-                    "timestamp": "2 minuti fa",
-                    "unread": True,
-                },
-                {
-                    "title": "Backup completato",
-                    "url": "/n/2/",
-                    "timestamp": "1 ora fa",
-                },
-            ],
-            "footer_label": "Vedi tutte",
-            "footer_url": "/notifications/",
-        },
-    ]
-    showcase_header_demo_v02_logo = [
-        {
-            "type": "logo",
-            "label": "AcmeCorp",
-            "url": "/acme/",
-        },
-    ]
-    showcase_title_bar_demo_actions = [
-        {"label": "Annulla", "url": "/cancel/", "variant": "secondary"},
-        {"label": "Salva", "url": "/save/", "variant": "primary"},
-    ]
-
     # Demo del pattern django messages -> velora_toast_messages.
     # Aggiungere ?toast=success|error|warning|info alla URL emette un
     # messaggio del livello corrispondente; il template base.html lo
@@ -572,13 +501,15 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_sidebar_brand_full": "APP",
             "showcase_sidebar_brand_short": "AP",
             "showcase_sidebar_show_search": True,
-            "showcase_title_bar_title": _("Velora UI — Living styleguide"),
+            "showcase_title_bar_title": _("Velora UI Showcase"),
             "showcase_title_actions": title_actions,
             "showcase_role_choices": role_choices,
             "showcase_plan_choices": plan_choices,
             "showcase_table_headers": table_headers,
             "showcase_table_rows": table_rows,
             "showcase_table_page": table_page,
+            "showcase_chart_table_headers": chart_table_headers,
+            "showcase_chart_table_rows": chart_table_rows,
             "showcase_breadcrumb_items": breadcrumb_items,
             "showcase_submenu_items": submenu_items,
             "showcase_dropdown_items": dropdown_items,
@@ -588,12 +519,5 @@ def index(request: HttpRequest) -> HttpResponse:
             "showcase_advanced_table_headers": advanced_table_headers,
             "showcase_advanced_table_rows": advanced_table_rows,
             "showcase_bulk_actions": bulk_actions,
-            "showcase_header_demo_v01": showcase_header_demo_v01,
-            "showcase_header_demo_v02_single": showcase_header_demo_v02_single,
-            "showcase_header_demo_v02_multi": showcase_header_demo_v02_multi,
-            "showcase_header_demo_v02_apps": showcase_header_demo_v02_apps,
-            "showcase_header_demo_v02_notifications": showcase_header_demo_v02_notifications,
-            "showcase_header_demo_v02_logo": showcase_header_demo_v02_logo,
-            "showcase_title_bar_demo_actions": showcase_title_bar_demo_actions,
         },
     )

@@ -1,36 +1,46 @@
 // Velora UI - title bar (M2)
 //
-// Barra titolo: titolo centrato + slot azioni a destra. Usata sotto l'header
-// per separare visivamente il chrome (header globale) dal contenuto della
-// pagina. La barra non e` sticky (per ora) per non confliggere con i panel
-// scrollabili interni.
-//
-// Include anche gli stili minimi per `velora-btn` (varianti primary /
-// secondary) usati dalle azioni; un componente bottone piu` completo arrivera`
-// in M5 (feedback) o in una sezione dedicata. Qui ci basta avere coerenza
-// visiva fra le azioni della title bar.
+// Intestazione di pagina: titolo leggibile come vero page heading, allineato
+// a sinistra, con eventuale riga di contesto sopra. Azioni a destra.
+// Separazione visiva dall'header globale tramite bordo inferiore.
 
 .velora-title-bar {
   display: flex;
-  align-items: center;
-  gap: var(--velora-space-3);
-  padding: var(--velora-space-3) var(--velora-space-6);
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--velora-space-4) var(--velora-space-6);
+  padding: var(--velora-space-5) var(--velora-space-6) var(--velora-space-4);
   background: #fff;
   border-bottom: var(--velora-border-width) solid var(--velora-border-color);
-  min-height: 48px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+
+.velora-title-bar__text {
+  flex: 1;
+  min-width: min(100%, 12rem);
+}
+
+.velora-title-bar__meta {
+  margin: 0 0 var(--velora-space-1);
+  font-size: var(--velora-fs-xs);
+  font-weight: var(--velora-fw-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--velora-gray-400);
+  line-height: var(--velora-lh-tight);
 }
 
 .velora-title-bar__title {
   margin: 0;
-  flex: 1;
-  text-align: center;
-  font-size: var(--velora-fs-md);
+  max-width: 42rem;
+  font-size: var(--velora-fs-xxl);
   font-weight: var(--velora-fw-medium);
+  line-height: var(--velora-lh-tight);
+  letter-spacing: -0.02em;
   color: var(--velora-gray-900);
-
-  // Quando ci sono azioni, il titolo e` centrato visivamente: per evitare
-  // che si sposti se le azioni hanno larghezza diversa dallo spazio di
-  // sinistra, usiamo un trucco: nessuno per v0.1 - va bene approssimare.
+  border-left: 3px solid var(--velora-c-orange);
+  padding-left: var(--velora-space-3);
 }
 
 .velora-title-bar__actions {
@@ -38,6 +48,7 @@
   align-items: center;
   gap: var(--velora-space-2);
   flex-shrink: 0;
+  padding-bottom: 2px;
 }
 
 // Bottoni base usati dalle azioni della title bar.

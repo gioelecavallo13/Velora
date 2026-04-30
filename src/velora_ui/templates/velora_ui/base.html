@@ -1,28 +1,6 @@
 {% load velora_assets %}<!doctype html>
 {% comment %}
-  Template base di Velora UI per pagine con layout admin (header + sidebar +
-  area contenuti).
-
-  Blocchi a disposizione:
-    title          -> contenuto del <title> (default: "Velora UI")
-    extra_head     -> tag aggiuntivi nel <head> (es. CSS specifico della view)
-    body_class     -> classi extra sul <body>, oltre a velora-app
-    header         -> override completo dell'header; default: {% velora_header %}
-                      con items dal contesto
-    sidebar        -> override completo della sidebar
-    title_bar      -> contenuto della barra titolo (di solito usa
-                      {% velora_title_bar %})
-    content        -> area contenuti principale
-    extra_js       -> tag <script> aggiuntivi prima della chiusura del body
-
-  La sidebar puo` essere nascosta passando ?no_sidebar=1 in querystring: utile
-  per modali/iframe che riusano lo stesso template ma hanno bisogno di tutta la
-  larghezza disponibile.
-
-  In coda al body emettiamo {% velora_toast_messages %}: i messaggi del
-  framework `django.contrib.messages` aggiunti dalle view (messages.success,
-  messages.error, ...) vengono trasformati automaticamente in toast Velora
-  senza che la view sappia nulla del JS.
+CSS: .velora-app, .velora-app__header, .velora-app__sidebar, .velora-app__main, .velora-app__content
 {% endcomment %}
 {% load velora_layout velora_feedback %}
 <html lang="{{ LANGUAGE_CODE|default:'it' }}">

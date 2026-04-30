@@ -406,7 +406,8 @@ def _render_dropdown(
         format_html(
             '<div class="{}" data-velora-component="dropdown" data-velora-dropdown-align="{}">'
             '<button type="button" class="{}" aria-haspopup="true" aria-expanded="false"{}>'
-            "{}<span class=\"velora-dropdown__caret\" aria-hidden=\"true\">&#9662;</span>"
+            '<span class="velora-dropdown__label">{}</span>'
+            '<span class="velora-dropdown__caret" aria-hidden="true">&#9660;</span>'
             "</button>"
             '<ul class="velora-dropdown__panel" role="menu">{}</ul>'
             "</div>",
@@ -414,7 +415,7 @@ def _render_dropdown(
             align,
             base_class,
             mark_safe(_attr("title", title)),
-            conditional_escape(label),
+            label,
             items_html,
         )
     )

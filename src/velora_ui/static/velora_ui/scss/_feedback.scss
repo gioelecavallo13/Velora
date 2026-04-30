@@ -124,11 +124,9 @@
   align-items: flex-start;
   gap: var(--velora-space-3);
   padding: var(--velora-space-3) var(--velora-space-4);
-  background-color: #fff;
-  color: var(--velora-c-text);
   border-left: 3px solid currentColor;
   border-radius: var(--velora-radius-sm);
-  box-shadow: var(--velora-shadow-md);
+  box-shadow: var(--velora-shadow-sm);
   font-size: var(--velora-fs-sm);
   opacity: 1;
   transform: translateX(0);
@@ -165,15 +163,20 @@
   }
 }
 
+// Stesso schema cromatico di .velora-alert--* (sfondo tinta + barra sinistra)
 .velora-toast--success {
   color: var(--velora-c-green);
+  background-color: #f1f9ed;
 }
 .velora-toast--error {
   color: var(--velora-c-red);
+  background-color: #fbeeef;
 }
 .velora-toast--warning {
   color: var(--velora-c-orange-dark);
+  background-color: #fdf3e1;
 }
 .velora-toast--info {
   color: var(--velora-c-menu-gray);
+  background-color: var(--velora-gray-50);
 }

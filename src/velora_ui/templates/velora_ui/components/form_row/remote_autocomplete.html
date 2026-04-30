@@ -1,9 +1,5 @@
 {% comment %}
-  Form row: remote_autocomplete (AJAX).
-  L'endpoint deve rispondere con JSON nella forma:
-      [{"value": "1", "label": "Mario Rossi"}, ...]
-  oppure un dict {"results": [...]}. Il client manda `?q=<term>` (configurabile
-  via `query_param`) e attende una lista di max `limit` risultati.
+CSS: .velora-form-row.velora-form-row--autocomplete.velora-form-row--autocomplete-remote, .velora-autocomplete.velora-autocomplete--remote, .velora-autocomplete__input, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--autocomplete velora-form-row--autocomplete-remote{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

@@ -9,17 +9,21 @@
  * line / bar: thead prima riga -> th[0] ignorato/label; th[1..] = categorie X.
  *   tbody -> td[0] = nome serie; td[1..] = numeri.
  * pie: tbody righe a 2 colonne (etichetta, valore). thead ignorato.
+ *
+ * Estetica cartesiane ispirata ai grafici lineari di Highcharts (linee pulite,
+ * griglia orizzontale, marker con alone) restando su Chart.js (licenza MIT).
  */
 
 import Chart from "chart.js/auto";
 
+/** Palette vicina ai default Highcharts (Core), adatta a serie multiple. */
 const DATASET_COLORS = [
-    "rgb(245, 160, 0)", // brand orange
-    "rgb(47, 111, 237)",
-    "rgb(108, 181, 86)",
-    "rgb(193, 40, 46)",
-    "rgb(54, 163, 214)",
-    "rgb(79, 93, 114)",
+    "#f28f43",
+    "#7cb5ec",
+    "#90ed7d",
+    "#f15c80",
+    "#8085e9",
+    "#e4d354",
 ];
 
 function parseNumber(text) {
@@ -35,10 +39,111 @@ function collectRows(table) {
     const tbody = table.querySelector("tbody");
     if (!tbody) {
         return Array.from(table.querySelectorAll("tr")).filter(
-            (tr) => !tr.closest("thead")
+            (tr) => !tr.closest("thead"),
         );
     }
     return Array.from(tbody.querySelectorAll("tr"));
+}
+
+function datasetStyleForRow(rowIdx, chartType) {
+    const c = DATASET_COLORS[rowIdx % DATASET_COLORS.length];
+    if (chartType === "bar") {
+        return {
+            backgroundColor: c,
+            borderColor: c,
+            borderWidth: 0,
+            borderRadius: 3,
+            borderSkipped: false,
+        };
+    }
+    return {
+        borderColor: c,
+        backgroundColor: "transparent",
+        borderWidth: 2.5,
+        tension: 0,
+        fill: false,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: c,
+        pointBorderWidth: 2,
+        pointHitRadius: 10,
+    };
+}
+
+function cartesianOptions() {
+    const axisFont = {
+        size: 11,
+        family:
+            'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    };
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: "index",
+            intersect: false,
+        },
+        plugins: {
+            legend: {
+                position: "bottom",
+                align: "center",
+                labels: {
+                    boxWidth: 14,
+                    boxHeight: 10,
+                    padding: 18,
+                    usePointStyle: false,
+                    color: "#333333",
+                    font: axisFont,
+                },
+            },
+            tooltip: {
+                backgroundColor: "rgba(255, 255, 255, 0.97)",
+                titleColor: "#333333",
+                bodyColor: "#333333",
+                borderColor: "#c9d2df",
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 2,
+                titleFont: { ...axisFont, size: 12, weight: "600" },
+                bodyFont: { ...axisFont, size: 12 },
+                displayColors: true,
+                boxPadding: 6,
+            },
+        },
+        scales: {
+            x: {
+                offset: true,
+                grid: {
+                    display: false,
+                },
+                ticks: {
+                    color: "#666666",
+                    font: axisFont,
+                },
+                border: {
+                    display: true,
+                    color: "#c9d2df",
+                },
+            },
+            y: {
+                grace: "8%",
+                grid: {
+                    color: "rgba(193, 200, 208, 0.65)",
+                    lineWidth: 1,
+                    drawTicks: false,
+                },
+                ticks: {
+                    color: "#666666",
+                    font: axisFont,
+                    padding: 8,
+                },
+                border: {
+                    display: false,
+                },
+            },
+        },
+    };
 }
 
 function parseLineBar(table, chartType) {
@@ -80,31 +185,21 @@ function parseLineBar(table, chartType) {
         if (data.length > xLabels.length) {
             xLabels = xLabels.concat(
                 Array.from({ length: data.length - xLabels.length }, (_, j) =>
-                    String(j + xLabels.length + 1)
-                )
+                    String(j + xLabels.length + 1),
+                ),
             );
         }
         datasets.push({
             label,
             data,
-            backgroundColor:
-                chartType === "bar"
-                    ? DATASET_COLORS[rowIdx % DATASET_COLORS.length]
-                    : undefined,
-            borderColor: DATASET_COLORS[rowIdx % DATASET_COLORS.length],
-            tension: 0.2,
-            fill: false,
+            ...datasetStyleForRow(rowIdx, chartType),
         });
     });
     if (!datasets.length) return null;
     return {
         type: chartType,
         data: { labels: xLabels, datasets: datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: "bottom" } },
-        },
+        options: cartesianOptions(),
     };
 }
 
@@ -121,16 +216,43 @@ function parsePie(table) {
     });
     if (!labels.length) return null;
     const bg = labels.map((_, i) => DATASET_COLORS[i % DATASET_COLORS.length]);
+    const axisFont = {
+        size: 11,
+        family:
+            'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    };
     return {
         type: "pie",
         data: {
             labels,
-            datasets: [{ data, backgroundColor: bg }],
+            datasets: [{ data, backgroundColor: bg, borderWidth: 1, borderColor: "#fff" }],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: "bottom" } },
+            plugins: {
+                legend: {
+                    position: "bottom",
+                    align: "center",
+                    labels: {
+                        boxWidth: 12,
+                        boxHeight: 10,
+                        padding: 16,
+                        color: "#333333",
+                        font: axisFont,
+                    },
+                },
+                tooltip: {
+                    backgroundColor: "rgba(255, 255, 255, 0.97)",
+                    titleColor: "#333333",
+                    bodyColor: "#333333",
+                    borderColor: "#c9d2df",
+                    borderWidth: 1,
+                    padding: 10,
+                    cornerRadius: 2,
+                    bodyFont: { size: 12, ...axisFont },
+                },
+            },
         },
     };
 }

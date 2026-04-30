@@ -1,46 +1,10 @@
 """Template tag di layout per Velora UI.
 
-Espone i tag {% velora_header %}, {% velora_title_bar %} e {% velora_logo %}.
-
-Schema dei dati (header v0.2):
-
-    velora_header items=[
-        {"type": "link", "label": "Dashboard", "url": "/"},
-        {"type": "single-menu", "label": "Account", "items": [
-            {"label": "Profilo", "url": "/profile/"},
-            {"label": "Esci", "url": "/logout/"},
-        ]},
-        {"type": "multi-menu", "label": "Risorse", "sections": [
-            {"label": "Documentazione",
-             "items": [{"label": "Quickstart", "url": "/d/q"}]},
-            {"label": "Supporto",
-             "items": [{"label": "Contatti", "url": "/c"}]},
-        ]},
-        {"type": "apps-menu", "label": "App", "icon_slug": "apps-sharp", "apps": [
-            {"label": "Calendario", "url": "/cal/", "icon": "calendar"},
-        ]},
-        {"type": "notifications", "label": "Notifiche", "unread_count": 3,
-         "icon_slug": "notifications-sharp",
-         "items": [{"title": "...", "body": "...", "url": "/n/1"}]},
-        {"type": "logo", "icon_slug": "apps-sharp",
-         "label": "Tenant", "url": "/"},
-        {"type": "user-menu", "label": "Mario Rossi", "url": "/me/"},
-        {"type": "user-menu", "label": "Account", "icon_slug": "person-sharp",
-         "items": [
-            {"label": "Impostazioni", "url": "/settings/"},
-            {"label": "Esci", "url": "/logout/"},
-        ]},
-    ]
-
-I tipi `link` e `user-menu` sono v0.1 / v0.2: `user-menu` con `items` non vuoti
-diventa dropdown come `single-menu`. I 5 tipi nuovi di
-v0.2 (`single-menu`, `multi-menu`, `apps-menu`, `notifications`, `logo`) sono
-documentati per esteso in AGENTS.md.
-
-Il rendering dei pannelli "ricchi" (single/multi/apps/notifications) e`
-agganciato al componente JS `header-menu`: il pannello e` nascosto via CSS
-finche` il wrapper non riceve la classe `is-open` dal click sul trigger.
-Vedi `js/src/components/header_menu.js`.
+Classi CSS principali (markup in templates/velora_ui/components/):
+  - Header: .velora-header e sottoclassi .velora-header__*
+  - Title bar: .velora-title-bar, .velora-title-bar__text, .velora-title-bar__meta,
+    .velora-title-bar__title, .velora-title-bar__actions, .velora-btn
+  - Logo: .velora-logo, .velora-logo__img, .velora-logo__text
 """
 
 from __future__ import annotations
@@ -358,6 +322,7 @@ def velora_header(context: template.Context, items: Any = None) -> dict[str, Any
 def velora_title_bar(
     context: template.Context,
     title: str = "",
+    subtitle: str = "",
     actions: Any = None,
 ) -> dict[str, Any]:
     """Renderizza la barra titolo della pagina.
@@ -365,7 +330,8 @@ def velora_title_bar(
     Args:
         context: contesto template (non usato direttamente, riservato per
             estensioni v0.2 come breadcrumb dal request path).
-        title: stringa visualizzata centrata.
+        title: titolo principale della pagina (allineato a sinistra).
+        subtitle: riga opzionale sopra il titolo (contesto o sezione).
         actions: lista di dict `{"label", "url", "variant"}` con `variant`
             opzionale fra "primary" e "secondary" (default "secondary").
     """
@@ -385,6 +351,7 @@ def velora_title_bar(
             )
     return {
         "title": title,
+        "subtitle": (subtitle or "").strip(),
         "actions": normalized_actions,
     }
 

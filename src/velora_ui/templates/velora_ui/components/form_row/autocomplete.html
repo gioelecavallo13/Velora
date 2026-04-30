@@ -1,8 +1,5 @@
 {% comment %}
-  Form row: autocomplete (locale).
-  Le opzioni sono passate inline come JSON in un <script type="application/json">
-  associato all'input. Il componente JS `autocomplete` legge questo blob,
-  filtra in memoria al keyup e mostra suggerimenti.
+CSS: .velora-form-row.velora-form-row--autocomplete, .velora-autocomplete, .velora-autocomplete__input, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--autocomplete{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

@@ -6,6 +6,15 @@ Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/) e il vers
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-04-30
+
+### Aggiunto / modificato
+
+- Showcase: campioni con etichette classi CSS; title bar senza sottotitolo “Living styleguide”; overflow e spaziatura per dropdown e form avanzati; grafico da tabella con `{% velora_table %}` per anteprima coerente; stile Chart.js ispirato a grafici lineari tipo Highcharts (senza dipendenza Highcharts).
+- Toast (API JS): sfondo tintato e ombra allineati agli alert.
+- Dropdown link/bottoni: caret ridimensionato, rotazione a pannello aperto, sottolineato solo sul testo del link.
+- Allineamento versione: `__version__`, `pyproject.toml`, `package.json`, `VELORA_VERSION` in `velora_runtime.js` e snippet documentazione al **0.8.0**.
+
 ## [0.6.0] — 2026-04-29
 
 ### Infrastruttura

@@ -16,7 +16,7 @@
  *     persistent=true disattiva l'auto-dismiss (utile per errori critici)
  *
  * Niente dipendenze esterne: ~80 righe di JS vanilla. Lo stile e` tutto
- * in _toast.scss.
+ * in `_feedback.scss` (blocco toast).
  */
 
 const CONTAINER_CLASS = "velora-toast-container";

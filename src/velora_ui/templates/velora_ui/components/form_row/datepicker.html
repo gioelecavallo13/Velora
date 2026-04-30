@@ -1,9 +1,5 @@
 {% comment %}
-  Form row: datepicker (custom, zero deps).
-  L'input nativo type=date e` poco controllabile (look&feel browser specifico,
-  formato locale-dipendente, disabilita range dinamico complesso). Usiamo un
-  input testo + componente JS `datepicker` che apre un calendario popup.
-  Fallback senza JS: l'utente puo` scrivere a mano nel formato `format`.
+CSS: .velora-form-row.velora-form-row--datepicker, .velora-datepicker, .velora-form-row__input, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--datepicker{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

@@ -1,9 +1,5 @@
 {% comment %}
-  Form row: rating_stars.
-  Radio button nativi nascosti (uno per stella) impilati. Il submit invia
-  semplicemente il `value` del radio selezionato (es. 1..5). Lo stile a
-  stelle e` puro CSS (~ pattern :checked + general sibling combinator).
-  Componente JS opzionale per: hover preview + aria-label dinamico.
+CSS: .velora-form-row.velora-form-row--rating, .velora-rating, .velora-rating__star, .velora-rating__input, .velora-rating__icon, .velora-rating__sr, .is-selected, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error
 {% endcomment %}
 <div class="velora-form-row velora-form-row--rating{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}

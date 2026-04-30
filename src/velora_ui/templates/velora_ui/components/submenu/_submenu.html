@@ -1,11 +1,5 @@
 {% comment %}
-  Submenu verticale (v0.2). Lista di link con titolo opzionale, da inserire
-  in pannelli laterali / card / colonne secondarie. Se `items` e` vuoto il
-  componente non emette nulla (no nav vuoto, evita rumore HTML).
-
-  Aspettative di contesto:
-    title      : str   -> titolo opzionale
-    items      : list  -> {label, url, icon?, active?, extra_class?}
+CSS: .velora-submenu, .velora-submenu__title, .velora-submenu__list, .velora-submenu__item, .velora-submenu__link, .velora-submenu__label, .is-active
 {% endcomment %}
 {% if items %}
 <nav class="velora-submenu {{ extra_class }}" aria-label="{% if title %}{{ title }}{% else %}Sotto-menu{% endif %}">

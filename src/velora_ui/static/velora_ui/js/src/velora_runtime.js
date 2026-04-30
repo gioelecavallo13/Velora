@@ -4,7 +4,8 @@
 
 import toast from "./components/toast.js";
 
-const VELORA_VERSION = "0.5.0";
+/** Deve coincidere con `velora_ui.__version__` / `pyproject.toml`. */
+const VELORA_VERSION = "0.8.0";
 const ATTR = "data-velora-component";
 const INIT_FLAG = "__veloraInitialized";
 

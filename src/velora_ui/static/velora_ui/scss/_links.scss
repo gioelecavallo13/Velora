@@ -114,6 +114,10 @@
 
   &:hover {
     color: var(--velora-c-orange);
+    text-decoration: none;
+  }
+
+  &:hover .velora-dropdown__label {
     text-decoration: underline;
   }
 

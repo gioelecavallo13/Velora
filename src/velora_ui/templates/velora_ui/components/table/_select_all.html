@@ -1,12 +1,5 @@
 {% comment %}
-  Toolbar bulk-actions per `velora_select_all_table_rows`.
-  Aspetta:
-    target      : selettore CSS della tabella selectable
-    actions     : list[{label, value, url, method, variant, confirm}]
-    url         : endpoint default
-    name        : nome del campo "ids"
-    label       : prefisso del contatore (es. "Selezionati")
-    extra_class : str
+CSS: .velora-bulk-toolbar, .velora-bulk-toolbar__count, .velora-bulk-toolbar__count-num, .velora-bulk-toolbar__actions, .velora-bulk-toolbar__action
 {% endcomment %}
 <div class="velora-bulk-toolbar {{ extra_class }}"
      data-velora-component="select-all-table"

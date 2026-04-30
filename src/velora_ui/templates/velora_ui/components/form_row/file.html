@@ -1,8 +1,4 @@
-{% comment %}
-  Form row: input file.
-  Niente preview o drag&drop in v0.1: la versione "image_preview" arriva in
-  v0.3 (vedi sezione "Cosa NON entra in v0.1" del piano).
-{% endcomment %}
+{% comment %}CSS: .velora-form-row.velora-form-row--file, .velora-form-row__file, .velora-form-row__label, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error{% endcomment %}
 <div class="velora-form-row velora-form-row--file{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}
     <input

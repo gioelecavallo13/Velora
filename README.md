@@ -85,10 +85,10 @@ Istruzioni dettagliate, auth per repository privati, pinning e note su ESM sono 
 Velora UI e` distribuito come pacchetto Python via Git privato. Per integrarlo in un progetto esistente:
 
 ```bash
-pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.5.0"
+pip install "velora-ui @ git+https://github.com/gioelecavallo13/Velora.git@v0.8.0"
 ```
 
-Gli stessi tag `v0.5.0` pubblicano anche gli **asset Web** (`.min.css` / `.min.js`) sulla relativa GitHub Release: vedi [`docs/INTEGRATION_STATIC.md`](docs/INTEGRATION_STATIC.md) se ti servono solo i file statici.
+Gli stessi tag `v0.8.0` pubblicano anche gli **asset Web** (`.min.css` / `.min.js`) sulla relativa GitHub Release: vedi [`docs/INTEGRATION_STATIC.md`](docs/INTEGRATION_STATIC.md) se ti servono solo i file statici.
 
 Poi nel `settings.py`:
 
@@ -115,7 +115,7 @@ VELORA_HEADER_APP_NAME = "Il mio gestionale"
 VELORA_HEADER_APP_ICON_URL = "/static/img/logo.svg"
 
 # Opzionale: carica CSS/JS dalla stessa GitHub Release (prefisso download, solo https + github.com)
-# VELORA_ASSETS_BASE_URL = "https://github.com/TUO_ORG/Velora/releases/download/v0.5.0/"
+# VELORA_ASSETS_BASE_URL = "https://github.com/TUO_ORG/Velora/releases/download/v0.8.0/"
 # VELORA_ASSETS_JS_FULL = True   # False per bundle core senza Chart.js
 ```
 
@@ -228,6 +228,7 @@ Lo stack di sviluppo e` documentato per esteso in [`docs/INFRASTRUCTURE.md`](doc
 | **v0.3.0** | rilasciato | Form avanzati (datepicker, datetimepicker, multiselect, autocomplete locale + remoto, image_preview, rating_stars, timer_fields, redactor), tabelle interattive con form-in-cell AJAX e bulk-actions, checkbox tag con 5 varianti colore |
 | **v0.4.0** | rilasciato | Chart.js da tabella, sync Ionicons + galleria showcase, `velora_logo`, `velora_satisfaction_bar`, tema dark CSS, i18n (IT/EN showcase) |
 | **v0.5.0** | in release | Asset Web su GitHub Releases (core/full), `INTEGRATION_STATIC` + snippet, CI release + pytest, `ui_registry` SSoT, opzionale `VELORA_ASSETS_BASE_URL` |
+| **v0.8.0** | in release | Allineamento versione (Python/npm/JS runtime), showcase (classi CSS, chart da `velora_table`, stile Chart.js), toast come alert, dropdown e form avanzati |
 
 Dettagli e milestone in [`velora-ui_django_framework_61f8855e.plan.md`](.cursor/plans/velora-ui_django_framework_61f8855e.plan.md) (cartella piani locale).
 

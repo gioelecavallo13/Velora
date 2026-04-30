@@ -1,8 +1,4 @@
-{% comment %}
-  Separatore fra gruppi di campi: linea orizzontale con eventuale label
-  centrale (es. "oppure"). Niente testo => linea sola.
-  Stile a forma di "fieldset divider" gestito in _form-row.scss.
-{% endcomment %}
+{% comment %}CSS: .velora-fields-separator, .velora-fields-separator--plain, .velora-fields-separator__label{% endcomment %}
 <div class="velora-fields-separator{% if not label %} velora-fields-separator--plain{% endif %} {{ extra_class }}"
      role="separator"
      {% if label %}aria-label="{{ label }}"{% endif %}>

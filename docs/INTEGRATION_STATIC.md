@@ -4,7 +4,7 @@ Gli asset CSS e JS ufficiali sono distribuiti **unicamente** come allegati delle
 
 ## Convenzione nomi file (`dist/` in CI)
 
-Per la versione semver `X.Y.Z` (es. `0.5.0`), la build di release produce nella cartella `dist/` del runner (e allega alla Release):
+Per la versione semver `X.Y.Z` (es. `0.8.0`), la build di release produce nella cartella `dist/` del runner (e allega alla Release):
 
 | File | Contenuto |
 |------|-----------|
@@ -35,16 +35,16 @@ https://github.com/{owner}/{repo}/releases/download/v{X.Y.Z}/velora-{X.Y.Z}.full
 
 Repository di riferimento: `https://github.com/gioelecavallo13/Velora.git` — sostituisci `{owner}`, `{repo}` e la versione con quelli effettivi.
 
-### Esempio core (versione 0.5.0)
+### Esempio core (versione 0.8.0)
 
 ```html
 <link
   rel="stylesheet"
-  href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+  href="https://github.com/gioelecavallo13/Velora/releases/download/v0.8.0/velora-0.8.0.min.css"
 />
 <script
   type="module"
-  src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.js"
+  src="https://github.com/gioelecavallo13/Velora/releases/download/v0.8.0/velora-0.8.0.min.js"
 ></script>
 ```
 
@@ -53,11 +53,11 @@ Repository di riferimento: `https://github.com/gioelecavallo13/Velora.git` — s
 ```html
 <link
   rel="stylesheet"
-  href="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.min.css"
+  href="https://github.com/gioelecavallo13/Velora/releases/download/v0.8.0/velora-0.8.0.min.css"
 />
 <script
   type="module"
-  src="https://github.com/gioelecavallo13/Velora/releases/download/v0.5.0/velora-0.5.0.full.min.js"
+  src="https://github.com/gioelecavallo13/Velora/releases/download/v0.8.0/velora-0.8.0.full.min.js"
 ></script>
 ```
 
@@ -84,7 +84,7 @@ Le URL `releases/download/...` su repository **privati** richiedono una richiest
 
 ## Pinning, integrità e aggiornamenti
 
-- **Pinning:** usa sempre una versione esplicita nell’URL (`v0.5.0`), non `main` o `HEAD`.
+- **Pinning:** usa sempre una versione esplicita nell’URL (`v0.8.0`), non `main` o `HEAD`.
 - **Subresource Integrity (SRI):** dopo aver scaricato i file per una release, puoi aggiungere `integrity` e `crossorigin` su `<link>` e `<script>` secondo le best practice MDN. Rigenera l’hash quando cambi versione.
 - **Aggiornamento:** consulta [CHANGELOG.md](../CHANGELOG.md), incrementa il tag nelle URL e verifica eventuali breaking change su classi o API JS.
 

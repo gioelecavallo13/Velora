@@ -1,6 +1,4 @@
-{% comment %}
-  Form row: input testo (type fra text|email|number|password|url|tel|search).
-{% endcomment %}
+{% comment %}CSS: .velora-form-row.velora-form-row--text, .velora-form-row__label, .velora-form-row__required, .velora-form-row__control, .velora-form-row__input, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error{% endcomment %}
 <div class="velora-form-row velora-form-row--text{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     {% include "velora_ui/components/form_row/_label.html" %}
     <input

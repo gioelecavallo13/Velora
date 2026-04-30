@@ -1,17 +1,5 @@
 {% load velora_data %}{% comment %}
-  Tabella con supporto v0.3:
-    - selectable: aggiunge una colonna iniziale con checkbox di riga
-    - form_in_cell: render input editabile inline (text/select/checkbox/onoff)
-
-  Aspetta:
-    headers       : list[{label, key, width, extra_class, align}]
-    rows          : list[list[{value, align, form_in_cell}]]
-    row_ids       : list[str]  (parallelo a rows; valorizzato se selectable=True)
-    selectable    : bool
-    empty_message : str
-    extra_class   : str
-    id            : str
-    colspan       : int  (per la cella vuota; gia` include la colonna selectable)
+CSS: .velora-table-wrapper, .velora-table, .velora-table--selectable, .velora-table__th, .velora-table__td, .velora-table__select-master, .velora-table__select-row
 {% endcomment %}
 <div class="velora-table-wrapper">
     <table class="velora-table {{ extra_class }}{% if selectable %} velora-table--selectable{% endif %}"

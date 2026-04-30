@@ -1,6 +1,5 @@
 {% comment %}
-  Progress bar "X di Y" (10.12). Mostra contatore "current di total"
-  + label opzionale + barra (omessa se total <= 0).
+CSS: .velora-progress-xy, .velora-progress-xy--*, .velora-progress-xy__header, .velora-progress-xy__label, .velora-progress-xy__counter, .velora-progress-xy__counter-current, .velora-progress-xy__counter-total, .velora-progress-xy__track, .velora-progress-xy__fill
 {% endcomment %}
 <div class="velora-progress-xy velora-progress-xy--{{ variant }} {{ extra_class }}"
      {% if has_bar %}role="progressbar"

@@ -1,8 +1,4 @@
-{% comment %}
-  Form row: singola checkbox booleana.
-  La label e` posta a destra del control (pattern checkbox standard); usiamo
-  un wrapper `<label>` esplicito per accessibilita`.
-{% endcomment %}
+{% comment %}CSS: .velora-form-row.velora-form-row--checkbox, .velora-form-row__inline-label, .velora-form-row__checkbox, .velora-form-row__help, .velora-form-row__error, .velora-form-row--error{% endcomment %}
 <div class="velora-form-row velora-form-row--checkbox{% if error %} velora-form-row--error{% endif %} {{ extra_class }}">
     <label class="velora-form-row__inline-label" for="{{ id }}">
         <input
